@@ -1,0 +1,95 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+	<!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+        <item name="android:editTextStyle">@style/App_EditTextStyle</item>
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="NOABTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!--   darker variant for the status bar and contextual app bars -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--   theme UI controls like checkboxes and text fields e.g. FloatActionButton -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Title Text Color -->
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <!-- color of the menu overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/textColorPrimary</item>
+        <!--
+        <item name="android:windowBackground">@color/windowBackground</item> -->
+        <item name="android:alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert</item>
+        
+        <item name="android:textColor">@android:color/darker_gray</item>
+        
+        <item name="android:editTextStyle">@style/App_EditTextStyle</item>
+    </style>
+    
+    <style name="App_EditTextStyle" parent="@android:style/Widget.EditText">
+    	<item name="android:textColor">#000000</item>
+    	<item name="android:textColorHint">#BDBDBD</item>
+	</style>
+    
+    <!-- Config -->
+    <style name="configText">
+        <item name="android:textColor">#555555</item>
+    </style>
+
+
+
+    
+    <style name="buttonStart">
+		<item name="android:textColor">@drawable/button_start_text_color</item>
+		<item name="android:background">@drawable/button_start_states</item>
+		<!--<item name="backgroundTint">@color/white</item> -->
+	</style>
+
+    <style name="buttonMain">
+		<item name="android:textColor">@color/gemaltoRed</item>
+		<item name="backgroundTint">@color/buttonMainBkgNormal</item>
+		<item name="android:textAllCaps">true</item>
+	</style>
+
+    <style name="buttonSuccess" parent="@style/Widget.AppCompat.Button.Colored">
+		<item name="android:textColor">#ffffff</item>
+		<item name="backgroundTint">@color/greenValid</item>
+	</style>
+
+    <style name="buttonGrey" parent="@style/Widget.AppCompat.Button.Colored">
+		<item name="android:textColor">@color/button_grey_textcolor</item>
+		<item name="backgroundTint">@color/buttonGreyBkgNormal</item>
+	</style>
+
+
+    <!-- Button Style -->
+    <style name="AppTheme.Button" parent="Base.TextAppearance.AppCompat.Medium">
+        <item name="android:background">@drawable/btn_aplication_main</item>
+        <item name="android:clickable">true</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textColor">@color/bt_text_application_main</item>
+        <item name="android:gravity">center</item>
+        <item name="android:shadowColor">@color/bt_text_shadow_application_main</item>
+        <item name="android:shadowDx">4</item>
+        <item name="android:shadowDy">4</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:minWidth">150dp</item>
+        <item name="android:lines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@string/default_font</item>
+        <item name="fontFamily">?attr/fontFamily</item>
+    </style>
+
+
+</resources>

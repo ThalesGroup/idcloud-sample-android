@@ -1,0 +1,50 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@string/default_font</item>
+    </style>
+
+    <!-- Main Button Style -->
+    <style name="AppTheme.Button" parent="Base.TextAppearance.AppCompat.Medium">
+        <item name="android:background">@drawable/btn_application_main</item>
+        <item name="android:clickable">true</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textColor">@color/bt_text_application_main</item>
+        <item name="android:gravity">center</item>
+        <item name="android:shadowColor">@color/bt_text_shadow_application_main</item>
+        <item name="android:shadowDx">4</item>
+        <item name="android:shadowDy">4</item>
+        <item name="android:textSize">15dp</item>
+        <!--<item name="android:minWidth">150dp</item>-->
+        <item name="android:lines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@string/default_font</item>
+        <!--<item name="fontFamily">?attr/fontFamily</item>-->
+    </style>
+
+    <!-- Button Style 2 -->
+    <style name="AppTheme.Button2" parent="Base.TextAppearance.AppCompat.Medium">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:clickable">true</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:gravity">center</item>
+        <item name="android:shadowColor">@color/transparent</item>
+        <item name="android:shadowDx">4</item>
+        <item name="android:shadowDy">4</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:minWidth">150dp</item>
+        <item name="android:lines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@string/default_font</item>
+        <item name="fontFamily">?attr/fontFamily</item>
+    </style>
+
+</resources>

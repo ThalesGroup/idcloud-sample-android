@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ezio FaceID</string>
+    <string name="enroll">Enroll</string>
+    <string name="verify">Verify</string>
+
+    <!-- Configuration -->
+    <string name="title_Configuration">Settings</string>
+    <string name="label_enroll_simplified_Mode">Simplified Mode</string>
+    <string name="label_fenroll_full_Mode">Full Mode</string>
+    <string name="ON">ON</string>
+    <string name="OFF">OFF</string>
+    <string name="config_liveness_threshold">Liveness threshold (default 0)\nValue between 0 and 100</string>
+    <string name="config_quality_threshold">Quality threshold (default 48)\nValue between  0 and 100</string>
+    <string name="config_matching_threshold">Matching threshold (default 48)\nValue between 0 and 72</string>
+    <string name="config_blink_timeout">Blink timeout (default 4s)\nValue between 0 and 100s</string>
+    <string name="config_reset">Reset</string>
+    <string name="config_save">Save</string>
+
+    <!-- Enrollment -->
+    <string name="CANCEL">CANCEL</string>
+    <string name="START">START</string>
+    <string name="CONTINUE">CONTINUE</string>
+    <string name="OK">OK</string>
+    <string name="registration_successful">Registration successful !</string>
+
+    <!-- Verification -->
+    <string name="verification_successful">Verification successful !</string>
+    <string name="verification_process">Verification...</string>
+    <string name="verification_faceOut">Please position your face in the center of the circle</string>
+    <string name="verification_blinkLabel">BLINK !</string>
+    <string name="verification_keepstill">KEEP STILL !</string>
+
+    <!-- Errors -->
+    <string name="error_UNKNOWN">An error has occurred. You may retry again later</string>
+    <string name="error_BAD_QUALITY">We are not able to capture your face. Please make sure to position your face in front of the camera and to have good lighting conditions</string>
+    <string name="error_CAMERA_NOT_FOUND">We couldn\'t detect or use a camera on your device.</string>
+    <string name="error_MATCH_NOT_FOUND">We are sorry but your face does not seem to match the one registered.</string>
+    <string name="error_USER_REENROLL_NEEDED">Sorry but you need to enroll again !</string>
+    <string name="error_LIVENESS_CHECK_FAILED">We could not detect that you blinked. Please try again to blink and make sure to have good lighting conditions</string>
+    <string name="error_TIMEOUT">We could not detect your face. Please try again and make sure to have good lighting conditions</string>
+    <string name="error_USER_NOT_FOUND">The user you selected does not exist !</string><!--  THIS MESSAGE SHOULD NEVER HAPPEN  -->
+
+    <string name="default_font" translatable="false">sans-serif-light</string>
+
+
+    <string name="msg_token_fmt">Token: %s</string>
+</resources>

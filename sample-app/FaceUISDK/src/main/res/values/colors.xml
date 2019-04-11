@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#E00F3D</color>
+    <color name="colorPrimaryDark">#E00F3D</color>
+    <color name="textColorPrimary">@android:color/white</color>
+    <color name="colorAccent">#FF0000</color>
+    
+    <color name="greenValid">#88c548</color>
+    <color name="greenValidLight">#87c447</color>
+    
+    <color name="gemaltoRed">#ea0437</color>
+    
+    <color name="white">#ffffff</color>
+
+    <color name="buttonMainBkgNormal">#ffffff</color>
+    <color name="buttonMainBkgPressed">@color/gemaltoRed</color>
+    
+    <color name="buttonStartBkgNormal">#aaffffff</color>
+    <color name="buttonStartBkgPressed">#aa999999</color>
+    <color name="buttonStartTxtColorNormal">@color/greenValid</color>
+    <color name="buttonStartTxtColorDisabled">#999999</color>
+    
+    <color name="buttonGreyBkgNormal">#d0d2d3</color>
+    <color name="buttonGreyBkgPressed">#404040</color>
+    <color name="buttonGreyTextNormal">#404040</color>
+    <color name="buttonGreyTextPressed">#a7a7a7</color>
+    
+    <color name="buttonGreenPressed">#689737</color>
+    
+    
+    <color name="tvBlinkBackgroundColor">#cc000000</color>
+    <color name="tvBlinkText">#ffffff</color>
+
+    <color name="tvSuccessColor">#565656</color>
+    
+    <color name="switchbtn_background">#64b031</color>
+    <color name="switchbtn_background_selected">#76e42d</color>
+    <color name="switchbtn_background_disabled">#6d8a5a</color>
+
+    <!-- Application button -->
+    <color name="bt_text_application_main">#ffffff</color>
+    <color name="bt_text_shadow_application_main">#363636</color>
+    <color name="bt_color_application_main_unpressed">#22ade4</color>
+    <color name="bt_color_application_main_pressed">#0d89ba</color>
+    <color name="bt_color_application_main_disabled">#8f9599</color>
+    <color name="bt_color_shadow_application_main">#6b6b6b</color>
+
+</resources>

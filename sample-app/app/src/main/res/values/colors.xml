@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#E00F3D</color>
+    <color name="colorPrimaryDark">#E00F3D</color>
+    <color name="colorAccent">#363636</color>
+
+    <color name="text">#363636</color>
+
+    <color name="grayTransparent">#46969696</color>
+    <color name="grayTransparentDark">#78505050</color>
+
+    <!-- Basic colors -->
+    <color name="white">#ffffff</color>
+    <color name="gray">#969696</color>
+    <color name="red">#ef5350</color>
+    <color name="green">#8bc34a</color>
+    <color name="orange">#ff8000</color>
+    <color name="grey">#999999</color>
+    <color name="grey_dark">#313131</color>
+    <color name="transparent">#00ffffff</color>
+
+    <!-- Application button -->
+    <color name="bt_text_application_main">#ffffff</color>
+    <color name="bt_text_shadow_application_main">#363636</color>
+    <color name="bt_color_application_main_unpressed">@color/colorPrimary</color>
+    <color name="bt_color_application_main_pressed">#a60017</color>
+    <color name="bt_color_application_main_disabled">#8f9599</color>
+    <color name="bt_color_shadow_application_main">#6b6b6b</color>
+
+
+</resources>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/main_fragment_label_oob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/ui_label_out_of_band"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_offline" />
+
+    <TextView
+        android:id="@+id/main_fragment_label_oob_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/PUSH_STATUS_REGISTERED"
+        app:layout_constraintEnd_toStartOf="@+id/main_fragment_label_status_value"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_fragment_label_oob" />
+
+    <ImageView
+        android:id="@+id/main_fragment_label_status_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_check"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/main_fragment_label_oob_status" />
+
+    <ProgressBar
+        android:id="@+id/main_fragment_activity_oob_status"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="14sp"
+        android:layout_height="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/main_fragment_label_status_value"
+        app:layout_constraintEnd_toEndOf="@+id/main_fragment_label_status_value"
+        app:layout_constraintStart_toStartOf="@+id/main_fragment_label_status_value"
+        app:layout_constraintTop_toTopOf="@+id/main_fragment_label_status_value" />
+
+    <LinearLayout
+        android:id="@+id/layout_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/label_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/ui_label_amount"
+            tools:layout_editor_absoluteX="42dp"
+            tools:layout_editor_absoluteY="101dp" />
+
+        <EditText
+            android:id="@+id/text_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"
+            android:ems="10"
+            android:hint="@string/ui_label_amount"
+            android:inputType="textPersonName"
+            android:text="15"
+            tools:layout_editor_absoluteX="153dp"
+            tools:layout_editor_absoluteY="91dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_beneficiary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_amount">
+
+        <TextView
+            android:id="@+id/label_beneficiary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/ui_label_beneficiary"
+            tools:layout_editor_absoluteX="52dp"
+            tools:layout_editor_absoluteY="477dp" />
+
+        <EditText
+            android:id="@+id/text_beneficiary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"
+            android:ems="10"
+            android:hint="@string/ui_label_beneficiary"
+            android:inputType="textPersonName"
+            android:text="ACME Inc."
+            tools:layout_editor_absoluteX="127dp"
+            tools:layout_editor_absoluteY="462dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/label_in_band"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/ui_label_in_band"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_beneficiary" />
+
+    <LinearLayout
+        android:id="@+id/layout_in_band"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_in_band">
+
+        <Button
+            android:id="@+id/button_otp_pin_in_band"
+            style="@style/AppTheme.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_button_otp_pin" />
+
+        <Button
+            android:id="@+id/button_otp_touch_id_in_band"
+            style="@style/AppTheme.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="@string/ui_button_otp_touch_id" />
+
+        <Button
+            android:id="@+id/button_otp_face_id_in_band"
+            style="@style/AppTheme.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_button_otp_face_id" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/label_offline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/ui_label_offline"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_in_band" />
+
+    <LinearLayout
+        android:id="@+id/layout_offline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_offline">
+
+        <Button
+            android:id="@+id/button_otp_pin_offline"
+            style="@style/AppTheme.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_button_otp_pin" />
+
+        <Button
+            android:id="@+id/button_otp_touch_id_offline"
+            style="@style/AppTheme.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="@string/ui_button_otp_touch_id" />
+
+        <Button
+            android:id="@+id/button_otp_face_id_offline"
+            style="@style/AppTheme.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_button_otp_face_id" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

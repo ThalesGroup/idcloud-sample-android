@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_enroll"
+        android:icon="@drawable/outline_account_box_black_24"
+        android:title="@string/tab_title_enroll" />
+
+    <item
+        android:id="@+id/navigation_authentication"
+        android:icon="@drawable/outline_lock_black_24"
+        android:title="@string/tab_title_authentication" />
+
+    <item
+        android:id="@+id/navigation_transaction"
+        android:icon="@drawable/outline_credit_card_black_24"
+        android:title="@string/tab_title_transaction" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/outline_settings_black_24"
+        android:title="@string/tab_title_settings" />
+
+    <item
+        android:id="@+id/navigation_gemalto_face_id"
+        android:icon="@drawable/outline_face_black_24"
+        android:title="@string/tab_title_gemalto_face_id" />
+
+</menu>

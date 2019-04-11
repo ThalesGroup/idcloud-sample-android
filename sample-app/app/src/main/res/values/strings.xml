@@ -1,0 +1,137 @@
+<resources>
+    <string name="app_name">IdCloud Sample App</string>
+    <string name="default_notification_channel_id">default</string>
+
+    <string name="toast_exit">Press Back again to Exit.</string>
+    <string name="tab_title_enroll">Enroll user</string>
+    <string name="tab_title_authentication">Authentication</string>
+    <string name="tab_title_transaction">Sign transaction</string>
+    <string name="tab_title_msp_frame">MSP Frame Reader</string>
+    <string name="tab_title_settings">Settings</string>
+    <string name="tab_title_gemalto_face_id">Gemalto Face ID</string>
+
+
+    // Secure key pad + pin related stuff
+
+    <string name="SECURE_KEY_PAD_OLD_PIN">Old pin</string>
+    <string name="SECURE_KEY_PAD_NEW_PIN">New pin</string>
+    <string name="PIN_CHANGE_CAPTION">Change pin</string>
+    <string name="PIN_CHANGE_DESCRIPTION">Pin was changed successfully.</string>
+    <string name="FACE_ID_DESCRIPTION">FaceIdMessage TODO</string>
+    <string name="TOUCH_ID_DESCRIPTION">TouchIdMessage TODO</string>
+
+    // Push
+
+    <string name="PUSH_APPROVE_QUESTION">Incoming message</string>
+    <string name="PUSH_APPROVE_QUESTION_APPROVE">Approve</string>
+    <string name="PUSH_APPROVE_QUESTION_DENY">Deny</string>
+    <string name="PUSH_SENT">Request was successfully sent.</string>
+    <string name="PUSH_STATUS_REGISTERED">Ready to receive notification:</string>
+    <string name="PUSH_STATUS_PENDING">Registration in progress:</string>
+    <string name="PUSH_PROCESSING">Processing…</string>
+    <string name="PUSH_FCM_CHANNEL_NAME">MSP Frame Channel</string>
+    <string name="PUSH_FCM_CHANNEL_DESCRIPTION">MSP Frame Communication Channel</string>
+
+    // Common messages
+
+    <string name="COMMON_MESSAGE_OK">OK</string>
+    <string name="COMMON_MESSAGE_SUCCESS">Success</string>
+    <string name="COMMON_MESSAGE_ERROR_CAPTION">Something went wrong.</string>
+    <string name="COMMON_MSG_NO_CLIENT_ID">No client id is registered.</string>
+    <string name="COMMON_MSG_MISSING_CLIENT_ID">Missing Client Id.</string>
+    <string name="COMMON_MSG_NO_PUSH_TOKEN">Missing push token.</string>
+    <string name="COMMON_MSG_UNSUPORTED_FRAME">Unsupported frame type.</string>
+    <string name="COMMON_MSG_WRONG_COMPONENTS">Unexpected components count.</string>
+    <string name="COMMON_MSG_WRONG_FRAME">Failed to parse frame.</string>
+
+    // Auth mode options
+
+    <string name="AUTH_MODE_TOUCH_ID_ENABLE">Enable TouchID</string>
+    <string name="AUTH_MODE_TOUCH_ID_DISABLE">Disable TouchID</string>
+    <string name="AUTH_MODE_FACE_ID_ENABLE">Enable FaceID</string>
+    <string name="AUTH_MODE_FACE_ID_DISABLE">Disable FaceID</string>
+    <string name="AUTH_MODE_GEM_FACE_ID_ENABLE">Enable Gemalto Face ID</string>
+    <string name="AUTH_MODE_GEM_FACE_ID_DISABLE">Disable Gemalto Face ID</string>
+
+    // Gemalto Face Id
+
+    <string name="GEMALTO_FACE_ID_STATE_UNDEFINED">Undefined</string>
+    <string name="GEMALTO_FACE_ID_STATE_NOT_SUPPORTED">Not supported</string>
+    <string name="GEMALTO_FACE_ID_STATE_LICENSED">Licensed</string>
+    <string name="GEMALTO_FACE_ID_STATE_UNLICENSED">Not licensed</string>
+    <string name="GEMALTO_FACE_ID_STATE_INITED">Initialised</string>
+    <string name="GEMALTO_FACE_ID_STATE_INIT_FAILED">Failed to init</string>
+    <string name="GEMALTO_FACE_ID_STATE_READY">Ready to use</string>
+    <string name="GEMALTO_FACE_ID_ENROLL">Enroll Face ID</string>
+    <string name="GEMALTO_FACE_ID_UNENROLL">Unenroll Face ID</string>
+
+    // Loading bar indicator
+
+    <string name="LOADING_MESSAGE_SENDING">Sending...</string>
+    <string name="LOADING_MESSAGE_SCANNING">Scanning</string>
+    <string name="LOADING_MESSAGE_ENROLLING">Enrolling</string>
+    <string name="LOADING_MESSAGE_REMOVING">Removing</string>
+    <string name="LOADING_MESSAGE_PROCESSING">Processing</string>
+    <string name="LOADING_MESSAGE_INIT">Initialising</string>
+
+
+    // OTP
+
+    <string name="OTP_VALUE_CAPTION">OTP</string>
+    <string name="OTP_VALUE_DESCRIPTION_VALID">\n%s\n\nOTP is valid for next %ds.</string>
+
+    // Designer
+
+    <string name="ui_label_domain">Domain:</string>
+    <string name="ui_label_enroll_with_qr">Enroll with QR Code</string>
+    <string name="ui_label_enroll_manually">Enroll Manually</string>
+    <string name="ui_label_user_id">User ID:</string>
+    <string name="ui_label_registration_code">Registration Code:</string>
+    <string name="ui_label_out_of_band">Out of Band</string>
+    <string name="ui_label_out_of_band_ready">✔️</string>
+    <string name="ui_label_in_band">In Band</string>
+    <string name="ui_label_generate_otp">Generate an OTP using</string>
+    <string name="ui_label_confirm_transaction">Confirm Transaction using</string>
+    <string name="ui_label_generic_info">Generic info</string>
+    <string name="ui_label_credentials">Credentials</string>
+    <string name="ui_label_pin">Pin:</string>
+    <string name="ui_label_token">Token:</string>
+    <string name="ui_label_status">Status:</string>
+    <string name="ui_label_generate_otp_alone">Generate OTP</string>
+    <string name="ui_label_verify_finger">Verify fingerprint to continue</string>
+    <string name="ui_label_touch_sensor">Touch sensor</string>
+    <string name="ui_label_msp_frame_scanner">MSP Frame Scanner</string>
+
+
+    <string name="ui_button_scan_and_enroll">Scan and enroll</string>
+    <string name="ui_button_enroll">Enroll</string>
+    <string name="ui_button_otp_pin">Pin</string>
+    <string name="ui_button_otp_face_id">Face Id</string>
+    <string name="ui_button_otp_touch_id">Touch Id</string>
+    <string name="ui_button_change_pin">Change PIN</string>
+    <string name="ui_button_privacy_policy">Privacy &amp; Policy</string>
+    <string name="ui_button_delete_token">Delete Token</string>
+    <string name="ui_button_use_pin">USE PIN</string>
+    <string name="ui_button_cancel">CANCEL</string>
+    <string name="ui_button_msp_transfer">Money Transfer</string>
+    <string name="ui_button_msp_atm">ATM</string>
+    <string name="ui_label_offline_token">Offline Token</string>
+    <string name="ui_label_login_using">Login using</string>
+    <string name="ui_label_offline">Offline</string>
+    <string name="ui_label_amount">Amount (in USD):</string>
+    <string name="ui_label_beneficiary">Beneficiary:</string>
+    <string name="ui_label_failed_attempts">Failed attempts:</string>
+
+    // Server Messages
+    <string name="message_subject_authentication">Please authenticate to login to the tutorial site.</string>
+    <string name="message_subject_transaction">Please approve the transaction of $%amount to %beneficiary</string>
+    <string name="message_not_found">Missing translation.</string>
+
+    // Missing permissions
+    <string name="ui_label_permissions_caption">Missing permission</string>
+    <string name="ui_label_permissions_description">Please make sure, that non permission is permanently blocked in the settings.</string>
+    <string name="ui_button_permissions">Ask for permissions</string>
+
+    <string name="default_font" translatable="false">sans-serif-light</string>
+
+</resources>
