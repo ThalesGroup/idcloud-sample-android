@@ -1,4 +1,4 @@
-/**
+/*
  *
  * MIT License
  *
@@ -146,8 +146,8 @@ public class FragmentTabSettings extends MainFragmentWithAuthSolver {
             return;
         }
 
-        mLabelDomainValue.setText(Configuration.C_CFG_OOB_DOMAIN);    // Domain is fixed from config.
-        mLabelUserIdValue.setText(device.getToken().getName());         // We use user id as token name in sample app.
+        mLabelDomainValue.setText(Configuration.CFG_OOB_DOMAIN);    // Domain is fixed from config.
+        mLabelUserIdValue.setText(device.getToken().getName());     // We use user id as token name in sample app.
 
         // Non of the button is enabled with loading in place.
         final boolean enabled = !getMainActivity().loadingIndicatorIsPresent();
@@ -172,7 +172,7 @@ public class FragmentTabSettings extends MainFragmentWithAuthSolver {
         mButtonToggleTouchId.setEnabled(status.isTouchSupported && enabled);
         mButtonToggleFaceId.setEnabled(status.isFaceSupported && enabled);
 
-        mButtonPrivacyPolicy.setVisibility(Configuration.C_CFG_PRIVACY_POLICY_URL == null ? View.INVISIBLE : View.VISIBLE);
+        mButtonPrivacyPolicy.setVisibility(Configuration.CFG_PRIVACY_POLICY_URL == null ? View.INVISIBLE : View.VISIBLE);
     }
 
     /**
@@ -241,8 +241,8 @@ public class FragmentTabSettings extends MainFragmentWithAuthSolver {
      * Button pressed listener for Privacy policy.
      */
     private void onButtonPressedPrivacyPolicy() {
-        if (Configuration.C_CFG_PRIVACY_POLICY_URL != null) {
-            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Configuration.C_CFG_PRIVACY_POLICY_URL);
+        if (Configuration.CFG_PRIVACY_POLICY_URL != null) {
+            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Configuration.CFG_PRIVACY_POLICY_URL);
             startActivity(browserIntent);
         }
     }

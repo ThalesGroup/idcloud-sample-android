@@ -1,4 +1,4 @@
-/**
+/*
  *
  * MIT License
  *
@@ -56,13 +56,13 @@ public class HttpManager {
 
     //region Defines
 
-    private static final String C_CFG_TUTO_XML_AUTH = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" +
+    private static final String CFG_TUTO_XML_AUTH = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" +
             "<AuthenticationRequest> \n" +
             "  <UserID>%s</UserID> \n" +
             "  <OTP>%s</OTP> \n" +
             "</AuthenticationRequest>";
 
-    private static final String C_CFG_TUTO_XML_SIGN = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    private static final String CFG_TUTO_XML_SIGN = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<SignatureRequest>\n" +
             "   <Transaction>\n" +
             "       <Amount>%s</Amount>\n" +
@@ -98,13 +98,13 @@ public class HttpManager {
             // Demo app use user name for token name since it's unique.
             final String userName = CMain.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
             // Final application might use some XML parser rather that simple format, to ensure data integrity.
-            final String body = String.format(C_CFG_TUTO_XML_AUTH, userName, otp.toString());
+            final String body = String.format(CFG_TUTO_XML_AUTH, userName, otp.toString());
 
             // We don't need otp any more. Wipe it.
             otp.wipe();
 
             // Post message and wait for results in mProcessResponse.
-            doPostMessage(Configuration.C_CFG_TUTO_URL_AUTH, "text/xml", authHeaders(), body, mProcessResponse);
+            doPostMessage(Configuration.CFG_TUTO_URL_AUTH, "text/xml", authHeaders(), body, mProcessResponse);
         } else if (currentListener != null) {
             currentListener.showErrorIfExists(error);
         }
@@ -143,13 +143,13 @@ public class HttpManager {
             // Demo app use user name for token name since it's unique.
             final String userName = CMain.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
             // Final application might use some XML parser rather that simple format, to ensure data integrity.
-            final String body = String.format(C_CFG_TUTO_XML_SIGN, getValidString(amount), getValidString(beneficiary), userName, otp.toString());
+            final String body = String.format(CFG_TUTO_XML_SIGN, getValidString(amount), getValidString(beneficiary), userName, otp.toString());
 
             // We don't need otp any more. Wipe it.
             otp.wipe();
 
             // Post message and wait for results in mProcessResponse.
-            doPostMessage(Configuration.C_CFG_TUTO_URL_SIGN, "text/xml", authHeaders(), body, mProcessResponse);
+            doPostMessage(Configuration.CFG_TUTO_URL_SIGN, "text/xml", authHeaders(), body, mProcessResponse);
         } else if (currentListener != null) {
             currentListener.showErrorIfExists(error);
         }
@@ -207,7 +207,7 @@ public class HttpManager {
     @SuppressWarnings("Basic authentication is used for connecting to tutorial website. "
                       + "Note that this is only for the purpose of the sample application. ")
     private Map<String, String> authHeaders() {
-        final String hash = "Basic " + new String(Base64.encode((Configuration.C_CFG_TUTO_BASICAUTH_USERNAME + ":" + Configuration.C_CFG_TUTO_BASICAUTH_PASSWORD).getBytes(), 0));
+        final String hash = "Basic " + new String(Base64.encode((Configuration.CFG_TUTO_BASICAUTH_USERNAME + ":" + Configuration.CFG_TUTO_BASICAUTH_PASSWORD).getBytes(), 0));
         final HashMap<String, String> retValue = new HashMap<>();
         retValue.put("Authorization", hash);
         return retValue;

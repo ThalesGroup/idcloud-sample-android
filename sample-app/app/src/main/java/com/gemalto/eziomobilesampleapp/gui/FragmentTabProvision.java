@@ -1,4 +1,4 @@
-/**
+/*
  *
  * MIT License
  *
@@ -75,7 +75,7 @@ public class FragmentTabProvision extends MainFragment implements FragmentQRCode
         final View retValue = initGui(inflater, R.layout.fragment_provision);
 
         mLabelDomainValue = retValue.findViewById(R.id.label_domain_value);
-        mLabelDomainValue.setText(Configuration.C_CFG_OOB_DOMAIN);
+        mLabelDomainValue.setText(Configuration.CFG_OOB_DOMAIN);
 
         return retValue;
     }

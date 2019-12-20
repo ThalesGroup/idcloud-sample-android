@@ -1,4 +1,4 @@
-/**
+/*
  *
  * MIT License
  *
@@ -82,7 +82,7 @@ public class TokenDevice {
 
         // Create device based on specific ocra suite.
         final SoftOathSettings oathSettings = factory.createSoftOathSettings();
-        oathSettings.setOcraSuite(CMain.secureStringFromString(Configuration.C_CFG_OTP_OCRA_SUITE));
+        oathSettings.setOcraSuite(CMain.secureStringFromString(Configuration.CFG_OTP_OCRA_SUITE));
         mDevice = factory.createSoftOathDevice((SoftOathToken) token, oathSettings);
         mToken = token;
     }

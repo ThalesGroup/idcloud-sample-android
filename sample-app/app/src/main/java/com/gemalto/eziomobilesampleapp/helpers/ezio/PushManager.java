@@ -1,4 +1,4 @@
-/**
+/*
  *
  * MIT License
  *
@@ -137,11 +137,11 @@ public class PushManager {
 
     public void initWithPermissions() throws MalformedURLException {
         mOobManager = OobModule.create().createOobManager(
-                new URL(Configuration.C_CFG_OOB_URL),
-                Configuration.C_CFG_OOB_DOMAIN,
-                Configuration.C_CFG_OOB_APP_ID,
-                Configuration.C_CFG_OOB_RSA_KEY_EXPONENT,
-                Configuration.C_CFG_OOB_RSA_KEY_MODULUS);
+                new URL(Configuration.CFG_OOB_URL),
+                Configuration.CFG_OOB_DOMAIN,
+                Configuration.CFG_OOB_APP_ID,
+                Configuration.CFG_OOB_RSA_KEY_EXPONENT,
+                Configuration.CFG_OOB_RSA_KEY_MODULUS);
 
         // Call register just in case we did get token already.
         registerCurrent(null);
@@ -269,7 +269,7 @@ public class PushManager {
             }
 
             // Prepare manager with current client and provider id.
-            final OobMessageManager oobMessageManager = mOobManager.getOobMessageManager(locClientId, Configuration.C_CFG_OOB_PROVIDER_ID);
+            final OobMessageManager oobMessageManager = mOobManager.getOobMessageManager(locClientId, Configuration.CFG_OOB_PROVIDER_ID);
 
             // Display loading bar to indicate message downloading.
             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -534,7 +534,7 @@ public class PushManager {
      */
     private void registerOOBClientId(@NonNull final String clientId, @NonNull final String token, @NonNull final Protocols.GenericHandler completionHandler) {
         final OobNotificationManager notifyManager = mOobManager.getOobNotificationManager(clientId);
-        final List<OobNotificationProfile> arrProfiles = Collections.singletonList(new OobNotificationProfile(Configuration.C_CFG_OOB_CHANNEL, token));
+        final List<OobNotificationProfile> arrProfiles = Collections.singletonList(new OobNotificationProfile(Configuration.CFG_OOB_CHANNEL, token));
 
         notifyManager.setNotificationProfiles(arrProfiles, new OobSetNotificationProfileCallback() {
             @Override

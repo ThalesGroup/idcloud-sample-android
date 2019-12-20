@@ -1,4 +1,4 @@
-/**
+/*
  *
  * MIT License
  *
@@ -171,7 +171,7 @@ public class CMain {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mCore = IdpCore.configure(Configuration.C_CFG_SDK_ACTIVATION_CODE,
+                mCore = IdpCore.configure(Configuration.CFG_SDK_ACTIVATION_CODE,
                         getConfigurationOob(),
                         getConfigurationOtp(),
                         getConfigurationMsp());
@@ -384,15 +384,15 @@ public class CMain {
         }
 
         // Support sample app even without face id.
-        if (Configuration.C_CFG_FACE_ID_PRODUCT_KEY == null || Configuration.C_CFG_FACE_ID_PRODUCT_KEY.isEmpty() ||
-                Configuration.C_CFG_FACE_ID_SERVER_URL == null || Configuration.C_CFG_FACE_ID_SERVER_URL.isEmpty()) {
+        if (Configuration.CFG_FACE_ID_PRODUCT_KEY == null || Configuration.CFG_FACE_ID_PRODUCT_KEY.isEmpty() ||
+                Configuration.CFG_FACE_ID_SERVER_URL == null || Configuration.CFG_FACE_ID_SERVER_URL.isEmpty()) {
             setGemaloFaceIdState(GemaloFaceIdState.GemaloFaceIdStateUnlicensed);
             return;
         }
 
         final FaceAuthLicense license = new FaceAuthLicense.Builder()
-                .setProductKey(Configuration.C_CFG_FACE_ID_PRODUCT_KEY)
-                .setServerUrl(Configuration.C_CFG_FACE_ID_SERVER_URL)
+                .setProductKey(Configuration.CFG_FACE_ID_PRODUCT_KEY)
+                .setServerUrl(Configuration.CFG_FACE_ID_SERVER_URL)
                 .build();
 
         faceIdService.configureLicense(license, new FaceAuthLicenseConfigurationCallback() {
@@ -455,7 +455,7 @@ public class CMain {
      */
     private OtpConfiguration getConfigurationOtp() {
         // OTP module is required for token management and OTP calculation.
-        return new OtpConfiguration.Builder().setRootPolicy(Configuration.C_CFG_OTP_ROOT_POLICY).build();
+        return new OtpConfiguration.Builder().setRootPolicy(Configuration.CFG_OTP_ROOT_POLICY).build();
     }
 
     /**
@@ -467,11 +467,11 @@ public class CMain {
         return new OobConfiguration.Builder()
                 // Device fingerprint is used for security reason. This way app can add some additional input for internal encryption mechanism.
                 // This value must remain the same all the time. Othewise all provisioned tokens will not be valid any more.
-                .setDeviceFingerprintSource(Configuration.C_CFG_SDK_DEVICE_FINGERPRINT_SOURCE)
+                .setDeviceFingerprintSource(Configuration.CFG_SDK_DEVICE_FINGERPRINT_SOURCE)
                 // Jailbreak policy for OOB module. See EMOobJailbreakPolicyIgnore for more details.
-                .setRootPolicy(Configuration.C_CFG_OOB_ROOT_POLICY)
+                .setRootPolicy(Configuration.CFG_OOB_ROOT_POLICY)
                 // For debug and ONLY debug reasons we might lower some TLS configuration.
-                .setTlsConfiguration(Configuration.C_CFG_SDK_TLS_CONFIGURATION).build();
+                .setTlsConfiguration(Configuration.CFG_SDK_TLS_CONFIGURATION).build();
     }
 
     /**
@@ -483,12 +483,12 @@ public class CMain {
         final MspConfiguration.Builder builder = new MspConfiguration.Builder();
 
         // Set obfuscation
-        if (Configuration.C_CFG_MSP_OBFUSCATION_CODE != null) {
-            builder.setObfuscationKeys(Configuration.C_CFG_MSP_OBFUSCATION_CODE);
+        if (Configuration.CFG_MSP_OBFUSCATION_CODE != null) {
+            builder.setObfuscationKeys(Configuration.CFG_MSP_OBFUSCATION_CODE);
         }
         // Set signature
-        if (Configuration.C_CFG_MSP_SIGN_KEYS != null) {
-            builder.setSignatureKeys(Configuration.C_CFG_MSP_SIGN_KEYS);
+        if (Configuration.CFG_MSP_SIGN_KEYS != null) {
+            builder.setSignatureKeys(Configuration.CFG_MSP_SIGN_KEYS);
         }
 
         return builder.build();
