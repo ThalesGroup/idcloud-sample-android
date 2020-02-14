@@ -1,27 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:gto="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:orientation="vertical" >
-
-    <LinearLayout
-        android:id="@+id/layoutHeader"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/header_red_background"
-        android:gravity="center"
-        android:padding="8dp" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="0dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/logo_white" />
-    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -58,13 +40,6 @@
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
                         android:visibility="gone" />
-                    <!--
-                    <View
-                        android:id="@+id/nFaceView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true" />
-                    -->
 
                     <com.gemalto.idp.mobile.authentication.mode.face.ui.internal.gui.view.FaceMaskView
                         android:id="@+id/faceMaskView"
@@ -73,62 +48,6 @@
                         android:layout_centerVertical="true"
                         android:visibility="gone" />
 
-
-<!--
-                    <RelativeLayout
-                        android:id="@+id/layoutRegisteredUser"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignBottom="@+id/faceMaskView"
-                        android:layout_alignTop="@+id/faceMaskView"
-                        android:background="@color/white"
-                        android:gravity="center"
-                        android:visibility="gone" >
-
-                        <ImageView
-                            android:id="@+id/imageViewRegisteredUser"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="20dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/face_demo" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/imageViewRegisteredUser"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="8dp"
-                            android:orientation="horizontal" >
-
-                            <View
-                                android:layout_width="0dp"
-                                android:layout_height="1dp"
-                                android:layout_weight="25"
-                                android:visibility="invisible" />
-
-                            <TextView
-                                android:id="@+id/textViewSuccess"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="50"
-                                android:gravity="center"
-                                android:text="@string/verification_successful"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="#ffffff"
-                                android:textSize="22sp" />
-
-                            <View
-                                android:layout_width="0dp"
-                                android:layout_height="1dp"
-                                android:layout_weight="25"
-                                android:visibility="invisible" />
-                        </LinearLayout>
-
-                    </RelativeLayout>
--->
                 </RelativeLayout>
 
                 <View
@@ -181,24 +100,24 @@
                 android:text="@string/verification_blinkLabel"
                 android:gravity="center_horizontal"
                 android:textAllCaps="true"
-                android:textSize="@dimen/verify_instructions_size"
+                android:textSize="@dimen/dimensionTextSizeHeaderSecondary"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
         </RelativeLayout>
 
 <RelativeLayout
-    android:id="@+id/layoutRegisteredUser"
+    android:id="@+id/layoutRegistredUser"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
     android:paddingBottom="@dimen/clippView_bottom_padding"
     android:layout_alignParentTop="true"
-    android:background="@drawable/background_enroll"
+    android:background="@drawable/img_gradient_primary"
     android:visibility="gone" >
 
                         <ImageView
-                            android:id="@+id/imageViewRegisteredUser"
+                            android:id="@+id/imageViewRegistredUser"
                             android:layout_width="@dimen/face_size"
                             android:layout_height="@dimen/face_size"
                             android:layout_alignParentTop="true"
@@ -210,7 +129,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/imageViewRegisteredUser"
+                            android:layout_below="@+id/imageViewRegistredUser"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="8dp"
                             android:orientation="horizontal" >
@@ -219,13 +138,10 @@
                                 android:id="@+id/textViewSuccess"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingLeft="@dimen/label_success_padding"
-                                android:paddingRight="@dimen/label_success_padding"
                                 android:gravity="center"
                                 android:text="@string/verification_successful"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:textColor="@color/tvSuccessColor"
-                                android:textSize="@dimen/label_success_textSize" />
+                                android:textSize="@dimen/dimensionTextSizeHeaderSecondary" />
 
                         </LinearLayout>
 
@@ -237,24 +153,21 @@
             android:layout_height="@dimen/clippView_bottom_padding"
             android:layout_alignParentBottom="true"
             android:orientation="vertical"
+            android:gravity="center"
             android:paddingBottom="20dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="20dp" >
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/buttonCancel"
-                style="@style/buttonGrey"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/AppTheme.Button"
                 android:text="@string/CANCEL"
                 android:visibility="gone" />
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/buttonSuccess"
-                style="@style/buttonSuccess"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/AppTheme.Button"
                 android:text="@string/CONTINUE" />
         </LinearLayout>
     </RelativeLayout>

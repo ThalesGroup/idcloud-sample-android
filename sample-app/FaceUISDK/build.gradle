@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 27
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 27
     }
 
     publishNonDefault true
@@ -27,13 +27,23 @@ android {
             // apart from ezio native libs, you need to add libjnidispatch.so from JNA, version to be aligned with jna.jar
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
+    // Android stuff
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+
     // JNA lib
     compileOnly 'net.java.dev.jna:jna:4.5.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
 
-    compileOnly fileTree(dir: '../libs', include: ['*.jar'])
+    // UI Style
+    implementation project(':idcloudstyle')
+
+    compileOnly fileTree(dir: '../libs/debug', include: ['*.jar'])
 }

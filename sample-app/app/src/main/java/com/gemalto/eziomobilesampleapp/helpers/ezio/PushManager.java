@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers.ezio;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.gemalto.eziomobilesampleapp.Configuration;
 import com.gemalto.eziomobilesampleapp.MainActivity;
 import com.gemalto.eziomobilesampleapp.R;
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
-import com.gemalto.idp.mobile.authentication.AuthInput;
+import com.gemalto.idp.mobile.core.ApplicationContextHolder;
 import com.gemalto.idp.mobile.core.util.SecureString;
 import com.gemalto.idp.mobile.msp.MspBaseAlgorithm;
 import com.gemalto.idp.mobile.msp.MspData;
@@ -52,7 +56,6 @@ import com.gemalto.idp.mobile.oob.OobMessageResponse;
 import com.gemalto.idp.mobile.oob.OobModule;
 import com.gemalto.idp.mobile.oob.OobResponse;
 import com.gemalto.idp.mobile.oob.message.OobFetchMessageCallback;
-import com.gemalto.idp.mobile.oob.message.OobFetchMessageResponse;
 import com.gemalto.idp.mobile.oob.message.OobIncomingMessage;
 import com.gemalto.idp.mobile.oob.message.OobIncomingMessageType;
 import com.gemalto.idp.mobile.oob.message.OobMessageManager;
@@ -76,8 +79,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
 /**
  * Manager handling all push related actions. Register / unregister from OOB, updating push token etc.
  */
@@ -85,7 +86,7 @@ public class PushManager {
 
     //region Defines
 
-    private static final String TAG = "PushManager";
+    public static final String NOTIFICATION_ID_INCOMING_MESSAGE = "NotificationIdIncomingMessage";
 
 
     public enum ClientIdState {
@@ -104,22 +105,22 @@ public class PushManager {
     }
 
     // Last token provided by application
-    private final static String C_STORAGE_LAST_PROVIDED_TOKEN_ID = "LastProvidedTokenId";
+    private final static String STORAGE_LAST_PROVIDED_TOKEN_ID = "LastProvidedTokenId";
 
     // Last token actually registered with current ClientId.
-    // Since demo app is for single token only we don't care about relations.
-    private final static String C_STORAGE_LAST_REGISTERED_TOKEN_ID = "LastRegistredTokenId";
+    // Since demo app is for singe token only we don't care about relations.
+    private final static String STORAGE_LAST_REGISTERED_TOKEN_ID = "LastRegistredTokenId";
 
     // Last registered OOB ClientId.
-    private final static String C_STORAGE_KEY_CLIENT_ID = "ClientId";
+    private final static String STORAGE_KEY_CLIENT_ID = "ClientId";
 
     // Stored in fast storage to prevent reading encrypted data.
-    private final static String C_STORAGE_KEY_CLIENT_ID_STAT = "ClientIdState";
+    private final static String STORAGE_KEY_CLIENT_ID_STAT = "ClientIdState";
 
     // Message type we want to handle. Contain message id to fetch and origin client id.
-    private final static String C_PUSH_MESSAGE_TYPE = "com.gemalto.msm";
-    private final static String C_PUSH_MESSAGE_CLIENT_ID = "clientId";
-    private final static String C_PUSH_MESSAGE_MESSAGE_ID = "messageId";
+    public final static String PUSH_MESSAGE_TYPE = "com.gemalto.msm";
+    private final static String PUSH_MESSAGE_CLIENT_ID = "clientId";
+    private final static String PUSH_MESSAGE_MESSAGE_ID = "messageId";
 
     private String mCurrentPushToken = null;
     private OobManager mOobManager = null;
@@ -128,11 +129,8 @@ public class PushManager {
 
     //region Life Cycle
 
-    /**
-     * Creates a new {@code PushManager} object.
-     */
     public PushManager()  {
-        mCurrentPushToken = CMain.sharedInstance().getStorageFast().readString(C_STORAGE_LAST_PROVIDED_TOKEN_ID);
+        mCurrentPushToken = Main.sharedInstance().getStorageFast().readString(STORAGE_LAST_PROVIDED_TOKEN_ID);
     }
 
     public void initWithPermissions() throws MalformedURLException {
@@ -151,22 +149,22 @@ public class PushManager {
 
     //region Public API
 
-    /**
-     * Checks if push token is already registered.
-     * @return {@code True} if push token is registered, else {@code false}.
-     */
     public boolean isPushTokenRegistered() {
-        return CMain.sharedInstance().getStorageFast().readString(C_STORAGE_LAST_REGISTERED_TOKEN_ID) != null;
+        return Main.sharedInstance().getStorageFast().readString(STORAGE_LAST_REGISTERED_TOKEN_ID) != null;
     }
 
     /**
-     * Registers the token with OOB.
-     * @param token Token name to register.
+     * Whenever there is some incoming message from server ready to be fetched.
+     * @return True if there is an message in queue.
      */
+    public boolean isIncomingMessageInQueue() {
+        return lastMessageIdRead() != null;
+    }
+
     void registerToken(@Nullable final String token) {
         // Store provided token.
         if (mCurrentPushToken == null || (token != null && !mCurrentPushToken.equalsIgnoreCase(token))) {
-            CMain.sharedInstance().getStorageFast().writeString(token, C_STORAGE_LAST_PROVIDED_TOKEN_ID);
+            Main.sharedInstance().getStorageFast().writeString(token, STORAGE_LAST_PROVIDED_TOKEN_ID);
             mCurrentPushToken = token;
         }
 
@@ -174,28 +172,18 @@ public class PushManager {
         registerCurrent(null);
     }
 
-    /**
-     * Registers the client ID with OOB.
-     * @param clientId Client ID to register.
-     */
     void registerClientId(@NonNull final String clientId) {
-        final CMain main = CMain.sharedInstance();
+        final Main main = Main.sharedInstance();
 
         // There is not much secure about Client Id, we are using secure storage just as showcase.
         // Because of that we will also update state in fast storage to not affect performance.
-        main.getStorageSecure().writeString(clientId, C_STORAGE_KEY_CLIENT_ID);
-        main.getStorageFast().writeInteger(ClientIdState.Registered.mKey, C_STORAGE_KEY_CLIENT_ID_STAT);
+        main.getStorageSecure().writeString(clientId, STORAGE_KEY_CLIENT_ID);
+        main.getStorageFast().writeInteger(ClientIdState.Registered.mKey, STORAGE_KEY_CLIENT_ID_STAT);
 
         // Check if new registration is needed.
         registerCurrent(clientId);
     }
 
-    /**
-     * Registers User ID with OOB.
-     * @param userId User ID.
-     * @param regCode Registration code.
-     * @param completionHandler Callback returned back to the application on completion.
-     */
     void registerOOBWithUserId(@NonNull final String userId, @Nullable final SecureString regCode, final OobRegistrationCallback completionHandler) {
         final OobRegistrationManager regManager = mOobManager.getOobRegistrationManager();
         final OobRegistrationRequest request = new OobRegistrationRequest(userId, userId, OobRegistrationRequest.RegistrationMethod.REGISTRATION_CODE, regCode);
@@ -204,124 +192,124 @@ public class PushManager {
         regManager.register(request, completionHandler);
     }
 
-    /**
-     * Unregister with OOB.
-     * @param completionHandler Callback returned back to the application on completion.
-     */
-    void unregisterOOBWithCompletionHandler(@NonNull final Protocols.GenericHandler completionHandler) {
-        final CMain main = CMain.sharedInstance();
+    public void unregisterOOBWithCompletionHandler(@NonNull final Protocols.GenericHandler handler) {
+        final Main main = Main.sharedInstance();
+        final Protocols.GenericHandler.Sync syncHandler = new Protocols.GenericHandler.Sync(handler);
 
         // Push token is registered
         if (isPushTokenRegistered()) {
             // Call unregister
-            unRegisterOOBClientId(main.getStorageSecure().readString(C_STORAGE_KEY_CLIENT_ID), new Protocols.GenericHandler() {
-                @Override
-                public void onFinished(final boolean success, final String error) {
-                    if (success) {
-                        // Remove all stored values.
-                        main.getStorageFast().removeValue(C_STORAGE_LAST_REGISTERED_TOKEN_ID);
-                        main.getStorageFast().removeValue(C_STORAGE_KEY_CLIENT_ID_STAT);
-                        main.getStorageSecure().removeValue(C_STORAGE_KEY_CLIENT_ID);
-
-                        notifyAboutStatusChange();
-                    }
-
-                    // Do not return in UI thread. It's used only from token manager.
-                    completionHandler.onFinished(success, error);
+            unRegisterOOBClientId(main.getStorageSecure().readString(STORAGE_KEY_CLIENT_ID), (success, error) -> {
+                if (success) {
+                    // Remove all stored values.
+                    main.getStorageFast().removeValue(STORAGE_LAST_REGISTERED_TOKEN_ID);
+                    main.getStorageFast().removeValue(STORAGE_KEY_CLIENT_ID_STAT);
+                    main.getStorageSecure().removeValue(STORAGE_KEY_CLIENT_ID);
                 }
+
+                // Do not return in UI thread. It's used only from token manager.
+                syncHandler.onFinished(success, error);
             });
         } else {
-            returnSuccessToHandler(completionHandler);
+            syncHandler.onFinished(true, null);
         }
     }
 
-    /**
-     * Processes incoming push message
-     * @param data Incoming push message data.
-     */
-    public void processIncommingPush(@Nullable final Map<String, String> data) {
+    public void fetchMessage() {
         // We don't have all required permissions. Wait for init.
-        // Full application should hande this scenario even if it might happen only when user
+        // Full application should handle this scenario even if it might happen only when user
         // disable some permission after they was already acquires.
         if (mOobManager == null) {
             return;
         }
 
-        final MainActivity listener = CMain.sharedInstance().getCurrentListener();
+        final MainActivity listener = Main.sharedInstance().getCurrentListener();
 
         // React on message type com.gemalto.msm with supported view controller on screen.
         // This is just to simplify sample app scenario. Real application should handle all notification all the time.
-        if (listener == null || data == null || !data.containsKey(C_PUSH_MESSAGE_TYPE)) {
+        if (listener == null) {
+            return;
+        }
+
+        // Display loading bar to indicate message downloading.
+        if (Looper.getMainLooper().equals(Looper.myLooper())) {
+            listener.loadingIndicatorShow(Main.getString(R.string.PUSH_PROCESSING));
+        } else {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                listener.loadingIndicatorShow(Main.getString(R.string.PUSH_PROCESSING));
+            });
+        }
+
+        // Operation is asynchronous, but it still block UI since it's slow.
+        // Run it in background directly to have UI smoother.
+        AsyncTask.execute(() -> {
+            final String locClientId = Main.sharedInstance().getStorageSecure().readString(STORAGE_KEY_CLIENT_ID);
+
+
+            // Prepare manager with current client and provider id.
+            final OobMessageManager oobMessageManager = mOobManager.getOobMessageManager(locClientId, Configuration.CFG_OOB_PROVIDER_ID);
+
+            // Download message content.
+            // Some messages might already be pre-fetched so we don't have to download them.
+            // For simplicity we will download all of them.
+            final OobFetchMessageCallback fetchMessageCallback = oobFetchMessageResponse -> {
+                // After fetch keep everything in UI thread since there is a lot of user interaction.
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    // Notify about possible error
+                    if (!oobFetchMessageResponse.isSucceeded() || oobFetchMessageResponse.getOobIncomingMessage() == null) {
+                        listener.loadingIndicatorHide();
+                        listener.showMessage(R.string.PUSH_NOTHING_TO_FETCH);
+                        return;
+                    }
+
+                    // Since we might support multiple message type, it's cleaner to have separate method for that.
+                    if (!processIncomingMessage(oobFetchMessageResponse.getOobIncomingMessage(), oobMessageManager, listener)) {
+                        // Hide indicator in case that message was not processed.a
+                        // Otherwise indicator will be hidden by specific method.
+                        new Handler(Looper.getMainLooper()).post(listener::loadingIndicatorHide);
+                    }
+                });
+            };
+
+            // Check if there is any stored incoming message id.
+            final String messageId = this.lastMessageIdRead();
+            if (messageId != null) {
+                // Remove last stored id and notify UI.
+                this.lastMessageIdDelete();
+
+                oobMessageManager.fetchMessage(messageId, fetchMessageCallback);
+            } else {
+                // Try to fetch any possible messages on server.
+                oobMessageManager.fetchMessage(30, fetchMessageCallback);
+            }
+        });
+    }
+
+    public void processIncomingPush(@Nullable final Map<String, String> data) {
+        // React on message type com.gemalto.msm
+        if (data == null || !data.containsKey(PUSH_MESSAGE_TYPE)) {
             return;
         }
 
         try {
-            final JSONObject dataJSON = new JSONObject(data.get(C_PUSH_MESSAGE_TYPE));
-
             // Get client and message id out of it.
-            final String msgClientId = dataJSON.getString(C_PUSH_MESSAGE_CLIENT_ID);
-            final String msgMessageId = dataJSON.getString(C_PUSH_MESSAGE_MESSAGE_ID);
-            final String locClientId = CMain.sharedInstance().getStorageSecure().readString(C_STORAGE_KEY_CLIENT_ID);
+            final JSONObject dataJSON = new JSONObject(data.get(PUSH_MESSAGE_TYPE));
+            final String msgClientId = dataJSON.getString(PUSH_MESSAGE_CLIENT_ID);
+            final String msgMessageId = dataJSON.getString(PUSH_MESSAGE_MESSAGE_ID);
+            final String locClientId = Main.sharedInstance().getStorageSecure().readString(STORAGE_KEY_CLIENT_ID);
 
             // Find related token / client id on local. React only on current one.
             if (!msgClientId.equalsIgnoreCase(locClientId)) {
                 return;
             }
 
-            // Prepare manager with current client and provider id.
-            final OobMessageManager oobMessageManager = mOobManager.getOobMessageManager(locClientId, Configuration.CFG_OOB_PROVIDER_ID);
-
-            // Display loading bar to indicate message downloading.
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    listener.loadingIndicatorShow(CMain.getString(R.string.PUSH_PROCESSING));
-                }
-            });
-
-            // Download message content.
-            // Some messages might already be prefetched so we don't have to download them.
-            // For simplicity we will download all of them.
-            oobMessageManager.fetchMessage(msgMessageId, new OobFetchMessageCallback() {
-                @Override
-                public void onFetchMessageResult(final OobFetchMessageResponse oobFetchMessageResponse) {
-                    // After fetch keep everything in UI thread since there is a lot of user interaction.
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Notify about possible error
-                            if (!oobFetchMessageResponse.isSucceeded() || oobFetchMessageResponse.getOobIncomingMessage() == null) {
-                                listener.loadingIndicatorHide();
-                                listener.showErrorIfExists(oobFetchMessageResponse.getMessage());
-
-                                return;
-                            }
-
-                            // Since we might support multiple message type, it's cleaner to have separate method for that.
-                            if (!processIncommingMessage(oobFetchMessageResponse.getOobIncomingMessage(), oobMessageManager, listener)) {
-                                // Hide indicator in case that message was not processed.a
-                                // Otherwise indicator will be hidden by specific method.
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        listener.loadingIndicatorHide();
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-            });
-
-        } catch (JSONException e) {
+            // Store current id and send local notification to UI.
+            this.lastMessageIdWrite(msgMessageId);
+        } catch (final JSONException exception) {
             // Ignore invalid message in demo.
         }
     }
 
-    /**
-     * Retrieves the current push token.
-     * @return Current push token.
-     */
     public String getCurrentPushToken() {
         return mCurrentPushToken;
     }
@@ -330,16 +318,9 @@ public class PushManager {
 
     //region Message handlers
 
-    /**
-     * Processes incoming OOB message.
-     * @param message OOB message.
-     * @param oobMessageManager {@code OobMessageManager}.
-     * @param handler Underlying {@code Activity}.
-     * @return {@code True} if incoming message was processed successfully, else {@code false}.
-     */
-    private boolean processIncommingMessage(@NonNull final OobIncomingMessage message,
-                                            @NonNull final OobMessageManager oobMessageManager,
-                                            @NonNull final MainActivity handler) {
+    private boolean processIncomingMessage(@NonNull final OobIncomingMessage message,
+                                           @NonNull final OobMessageManager oobMessageManager,
+                                           @NonNull final MainActivity handler) {
         boolean retValue = false;
 
         // Sign request.
@@ -350,12 +331,6 @@ public class PushManager {
         return retValue;
     }
 
-    /**
-     * Processes incoming OOB message.
-     * @param oobMessageManager {@code OobMessageManager}.
-     * @param handler Underlying {@code Activity}.
-     * @return {@code True} if incoming message was processed successfully, else {@code false}.
-     */
     private boolean processTransactionSigningRequest(@NonNull final OobTransactionSigningRequest request,
                                                      @NonNull final OobMessageManager oobMessageManager,
                                                      @NonNull final MainActivity handler) {
@@ -363,7 +338,7 @@ public class PushManager {
         final String[] errorMessage = {null};
 
         // Get message subject key and fill in all values.
-        String subject = CMain.getStringByKeyName(request.getSubject().toString());
+        String subject = Main.getStringByKeyName(request.getSubject().toString());
         for (final Map.Entry<String, String> entry : request.getMeta().entrySet()) {
             final String placeholder = "%" + entry.getKey();
             subject = subject.replace(placeholder, entry.getValue());
@@ -387,27 +362,21 @@ public class PushManager {
                 serverChallange = ocraServerChallenge.getValue();
             }
 
-            handler.approveOTP(subject, serverChallange, new Protocols.OTPDelegate() {
-                @Override
-                public void onOTPDelegateFinished(final SecureString otp,
-                                                  final String error,
-                                                  final AuthInput authInput,
-                                                  final SecureString serverChallenge) {
-                    // If we get OTP it mean, that user did approved request.
-                    try {
-                        final OobTransactionSigningResponse response = request.createResponse(otp != null ?
-                                OobTransactionSigningResponse.OobTransactionSigningResponseValue.ACCEPTED :
-                                OobTransactionSigningResponse.OobTransactionSigningResponseValue.REJECTED, otp, null);
-                        // Send message and wait display result.
-                        oobMessageManager.sendMessage(response, new OobSendMessageCallback() {
-                            @Override
-                            public void onSendMessageResult(final OobMessageResponse oobMessageResponse) {
-                                retValue[0] = notifyHandlerAboutPushSend(handler, oobMessageResponse);
-                            }
-                        });
-                    } catch (final OobException exception) {
-                        errorMessage[0] = exception.getLocalizedMessage();
-                    }
+            handler.approveOTP(subject, serverChallange, (otp, error, authInput, serverChallenge) -> {
+                // If we get OTP it mean, that user did approved request.
+                try {
+                    final OobTransactionSigningResponse response = request.createResponse(otp != null ?
+                            OobTransactionSigningResponse.OobTransactionSigningResponseValue.ACCEPTED :
+                            OobTransactionSigningResponse.OobTransactionSigningResponseValue.REJECTED, otp, null);
+                    // Send message and wait display result.
+                    oobMessageManager.sendMessage(response, new OobSendMessageCallback() {
+                        @Override
+                        public void onSendMessageResult(final OobMessageResponse oobMessageResponse) {
+                            retValue[0] = notifyHandlerAboutPushSend(handler, oobMessageResponse);
+                        }
+                    });
+                } catch (final OobException exception) {
+                    errorMessage[0] = exception.getLocalizedMessage();
                 }
             });
         } catch (final MspException exception) {
@@ -428,11 +397,6 @@ public class PushManager {
 
     // MARK: - Private Helpers
 
-    /**
-     * Hides the loading indicator on the underlying {@code Activity}.
-     * @param handler Underlying {@code Activity}.
-     * @param oobMessageResponse {@code OOBMessageResponse}.
-     */
     private boolean notifyHandlerAboutPushSend(@NonNull final MainActivity handler,
                                                @Nullable final OobMessageResponse oobMessageResponse) {
         final boolean retValue = oobMessageResponse != null;
@@ -442,8 +406,7 @@ public class PushManager {
                 @Override
                 public void run() {
                     handler.loadingIndicatorHide();
-                    Toast.makeText(handler, CMain.getString(R.string.PUSH_SENT),
-                            Toast.LENGTH_LONG).show();
+                    handler.showMessage(R.string.PUSH_SENT);
                 }
             });
         }
@@ -451,10 +414,6 @@ public class PushManager {
         return retValue;
     }
 
-    /**
-     * Registers the current client ID with OOB.
-     * @param clientId Client ID to register.
-     */
     private void registerCurrent(@Nullable final String clientId) {
         String processedClientId = clientId;
 
@@ -469,23 +428,23 @@ public class PushManager {
             return;
         }
 
-        final CMain main = CMain.sharedInstance();
+        final Main main = Main.sharedInstance();
 
         // We don't have any client id at all.
-        if (main.getStorageFast().readInteger(C_STORAGE_KEY_CLIENT_ID_STAT) == ClientIdState.Unregistered.mKey) {
+        if (main.getStorageFast().readInteger(STORAGE_KEY_CLIENT_ID_STAT) == ClientIdState.Unregistered.mKey) {
             // This will probably happen when app will get push token without any enrolled token / client id.
             return;
         }
 
         // Last registered token is same as current one.
-        final String lastReg = main.getStorageFast().readString(C_STORAGE_LAST_REGISTERED_TOKEN_ID);
+        final String lastReg = main.getStorageFast().readString(STORAGE_LAST_REGISTERED_TOKEN_ID);
         if (lastReg != null && lastReg.equalsIgnoreCase(mCurrentPushToken)) {
             return;
         }
 
         // Get current Client Id or use one provided from API to safe some time.
         if (processedClientId == null) {
-            processedClientId = main.getStorageSecure().readString(C_STORAGE_KEY_CLIENT_ID);
+            processedClientId = main.getStorageSecure().readString(STORAGE_KEY_CLIENT_ID);
         }
 
         // This should not happen. If client Id is registered, we should have it.
@@ -495,43 +454,13 @@ public class PushManager {
         }
 
         // Now we have everything to register token to OOB it self.
-        registerOOBClientId(processedClientId, mCurrentPushToken, new Protocols.GenericHandler() {
-            @Override
-            public void onFinished(final boolean success, final String error) {
-                if (success) {
-                    main.getStorageFast().writeString(mCurrentPushToken, C_STORAGE_LAST_REGISTERED_TOKEN_ID);
-                    notifyAboutStatusChange();
-                }
+        registerOOBClientId(processedClientId, mCurrentPushToken, (success, error) -> {
+            if (success) {
+                main.getStorageFast().writeString(mCurrentPushToken, STORAGE_LAST_REGISTERED_TOKEN_ID);
             }
         });
     }
 
-    /**
-     * Calls the success callback.
-     * @param completionHandler Completion handler.
-     */
-    private void returnSuccessToHandler(@Nullable final Protocols.GenericHandler completionHandler) {
-        if (completionHandler != null) {
-            completionHandler.onFinished(true, null);
-        }
-    }
-
-    /**
-     * Calls the error callback.
-     * @param completionHandler Completion handler.
-     */
-    private void returnErrorToHandler(@Nullable final Protocols.GenericHandler completionHandler, @Nullable final String error) {
-        if (completionHandler != null) {
-            completionHandler.onFinished(false, TAG + ": " + error);
-        }
-    }
-
-    /**
-     * Registers the client ID with OOB.
-     * @param clientId Client ID.
-     * @param token Token.
-     * @param completionHandler Callback returned back to the application on completion.
-     */
     private void registerOOBClientId(@NonNull final String clientId, @NonNull final String token, @NonNull final Protocols.GenericHandler completionHandler) {
         final OobNotificationManager notifyManager = mOobManager.getOobNotificationManager(clientId);
         final List<OobNotificationProfile> arrProfiles = Collections.singletonList(new OobNotificationProfile(Configuration.CFG_OOB_CHANNEL, token));
@@ -545,11 +474,6 @@ public class PushManager {
         });
     }
 
-    /**
-     * Unregisters the client ID from OOB.
-     * @param clientId Client ID.
-     * @param completionHandler Callback returned back to the application on completion.
-     */
     private void unRegisterOOBClientId(@NonNull final String clientId, @NonNull final Protocols.GenericHandler completionHandler) {
 
         final OobNotificationManager notifyManager = mOobManager.getOobNotificationManager(clientId);
@@ -562,19 +486,39 @@ public class PushManager {
         });
     }
 
-    /**
-     * Notifies about changed status.
-     */
-    private void notifyAboutStatusChange() {
-        // Notify in UI thread.
-        final MainActivity listener = CMain.sharedInstance().getCurrentListener();
-        if (listener != null) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    listener.updatePushRegistrationStatus();
-                }
-            });
+
+    //region Storage - Message Id
+
+    private static final String STORAGE_LAST_MESSAGE_ID = "LastIncomingMessageId";
+
+    private boolean lastMessageIdWrite(final String messageId) {
+        final boolean retValue = Main.sharedInstance().getStorageFast().writeString(messageId, STORAGE_LAST_MESSAGE_ID);
+        if (retValue) {
+            notifyAboutIncomingMessageStatusChange();
+        }
+        return retValue;
+    }
+
+    private String lastMessageIdRead() {
+        return Main.sharedInstance().getStorageFast().readString(STORAGE_LAST_MESSAGE_ID);
+    }
+
+    private boolean lastMessageIdDelete() {
+        final boolean retValue = Main.sharedInstance().getStorageFast().removeValue(STORAGE_LAST_MESSAGE_ID);
+        if (retValue) {
+            notifyAboutIncomingMessageStatusChange();
+        }
+        return retValue;
+    }
+
+    private void notifyAboutIncomingMessageStatusChange() {
+        // Notify about status change only when SDK is initialized with proper context.
+        final Context context = ApplicationContextHolder.getContext();
+        if (context != null) {
+            final Intent intent = new Intent(NOTIFICATION_ID_INCOMING_MESSAGE);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
     }
+
+    //endregion
 }

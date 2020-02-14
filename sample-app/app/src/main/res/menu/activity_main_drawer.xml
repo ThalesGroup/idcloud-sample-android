@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+        <item
+            android:id="@+id/nav_face_id"
+            android:icon="@drawable/icon_small_eye"
+            android:title="@string/face_id"
+            app:actionLayout="@layout/layout_switch"/>
+        <item
+            android:id="@+id/nav_touch_id"
+            android:icon="@drawable/icon_small_touch_id"
+            android:title="@string/touch_id"
+            app:actionLayout="@layout/layout_switch"/>
+        <item
+            android:id="@+id/nav_change_pin"
+            android:icon="@drawable/icon_small_repeat"
+            android:title="@string/change_pin"/>
+        <item
+            android:id="@+id/nav_delete_token"
+            android:icon="@drawable/icon_small_delete"
+            android:title="@string/delete_token"/>
+</menu>

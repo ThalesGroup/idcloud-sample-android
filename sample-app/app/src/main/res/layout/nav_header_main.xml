@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="176dp"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:layout_margin="@dimen/dimensionMarginNormal">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/img_logo_idcloud"
+        android:contentDescription="@android:string/untitled" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimensionMarginNormal"
+        android:text="@string/app_name"
+        android:textAlignment="viewStart"
+        android:textColor="@color/idCloudRed"
+        android:textSize="@dimen/dimensionTextSizeNormal" />
+
+</LinearLayout>

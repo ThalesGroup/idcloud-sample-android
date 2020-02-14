@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,58 +21,114 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AlertDialog;
+import android.support.annotation.StringRes;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gemalto.eziomobilesampleapp.gui.AbstractMainFragment;
+import com.gemalto.eziomobilesampleapp.gui.AbstractMainFragmentWithAuthSolver;
+import com.gemalto.eziomobilesampleapp.gui.FragmentAuthentication;
 import com.gemalto.eziomobilesampleapp.gui.FragmentMissingPermissions;
-import com.gemalto.eziomobilesampleapp.gui.MainFragment;
+import com.gemalto.eziomobilesampleapp.gui.FragmentOtp;
+import com.gemalto.eziomobilesampleapp.gui.FragmentProvision;
+import com.gemalto.eziomobilesampleapp.gui.FragmentSign;
+import com.gemalto.eziomobilesampleapp.gui.overlays.FragmentIncomingMessage;
 import com.gemalto.eziomobilesampleapp.gui.overlays.FragmentLoadingIndicator;
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
+import com.gemalto.eziomobilesampleapp.helpers.ezio.PushManager;
+import com.gemalto.eziomobilesampleapp.helpers.ezio.TokenDevice;
+import com.gemalto.idp.mobile.authentication.AuthInput;
+import com.gemalto.idp.mobile.authentication.AuthenticationModule;
+import com.gemalto.idp.mobile.authentication.mode.biofingerprint.BioFingerprintAuthService;
+import com.gemalto.idp.mobile.core.IdpCore;
 import com.gemalto.idp.mobile.core.util.SecureString;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
 /**
- * App main activity and entry point.
+ * App main activity and enter point.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //region Defines
 
     // UI Elements
-    private TextView mLabelCaption = null;
-    private BottomNavigationView mTabBar = null;
     private FragmentLoadingIndicator mLoadingBar = null;
-    private MainFragment mLastFragment = null;
-    private Toolbar mToolbar = null;
+    private FragmentIncomingMessage mIncomingMessage = null;
+
+
+    private AbstractMainFragment mLastFragment = null;
+    private SwitchCompat mFaceIdSwitch = null;
+    private SwitchCompat mTouchIdSwitch = null;
+    private DrawerLayout mDrawer;
+    private Toolbar mToolbar;
 
     // Helpers
     protected EzioSampleApp mMyApp = null;
     private boolean mExitConfirmed = false;
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            final Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if (currentFragment instanceof FragmentAuthentication) {
+                final PushManager managerPush = Main.sharedInstance().getManagerPush();
+                if (managerPush.isIncomingMessageInQueue()) {
+                    // Incoming push notification on main screen while is still visible and no loading bar is in front
+                    // can be processed automatically.
+                    if (!isOverlayViewVisible()) {
+                        managerPush.fetchMessage();
+                    }
+                } else {
+                    // No stored ID mean, that it was processed and removed.
+                    if (mLastFragment != null) {
+                        mLastFragment.reloadGUI();
+                    }
+                }
+
+            } else {
+                showMessage(R.string.PUSH_APPROVE_QUESTION);
+                if (mLastFragment != null) {
+                    mLastFragment.reloadGUI();
+                }
+            }
+        }
+    };
 
     //endregion
 
@@ -91,18 +146,22 @@ public class MainActivity extends AppCompatActivity {
         mMyApp = (EzioSampleApp) getApplicationContext();
 
         // Initialise basic stuff that does not require all permissions.
-        CMain.sharedInstance().init(this);
+        Main.sharedInstance().init(this);
 
         // Load basic ui components like tab bar etc...
         initGui();
 
-        // Check for permissions or display fragment with informations.
+
+        // Check for permissions or display fragment with information.
         if (!checkMandatoryPermissions(true)) {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .replace(R.id.fragment_container, new FragmentMissingPermissions(), null)
-                    .commit();
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                                       .replace(R.id.fragment_container, new FragmentMissingPermissions(), null)
+                                       .commit();
         }
+
+        // Make application fullscreen
+        final int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        getWindow().setFlags(uiOptions, uiOptions);
     }
 
     @Override
@@ -111,11 +170,36 @@ public class MainActivity extends AppCompatActivity {
 
         mMyApp.setCurrentActivity(this);
 
-        if (!CMain.sharedInstance().isInited()) {
+        // Register for incoming message change.
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter(PushManager.NOTIFICATION_ID_INCOMING_MESSAGE));
+
+        if (!Main.sharedInstance().isInited()) {
             checkPermissionsAndInit();
         } else {
-            processIncommiongNotifications();
+            try {
+                Main.sharedInstance().getManagerPush().initWithPermissions();
+            } catch (MalformedURLException e) {
+                // this should not happen
+                throw new IllegalStateException(e);
+            }
+
+            if (Main.sharedInstance().getManagerToken().getTokenDevice() != null) {
+                showAuthenticationFragment();
+            } else {
+                showProvisioningFragment();
+            }
+
+            processIncomingNotifications();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        // Unregister from incoming message change handler.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+
+        super.onPause();
     }
 
     @Override
@@ -144,8 +228,17 @@ public class MainActivity extends AppCompatActivity {
 
     //region Private Helpers
 
+    private void showFragment(final AbstractMainFragment fragment) {
+        mLastFragment = fragment;
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
+                                                                           R.anim.fade_out,
+                                                                           R.anim.fade_in,
+                                                                           R.anim.fade_out)
+                                   .replace(R.id.fragment_container, mLastFragment, null).addToBackStack(null).commit();
+    }
+
     /**
-     * Requests runtime permissions for in Android 6.0+.
+     * Checks the required runtime permissions and initializes the main SDK.
      */
     private void checkPermissionsAndInit() {
         // In case we don't have permissions yet, simple wait for another call.
@@ -155,33 +248,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // SDK init take some time.. display loading bar.
-        loadingIndicatorShow(CMain.getString(R.string.LOADING_MESSAGE_INIT));
+        loadingIndicatorShow(Main.getString(R.string.LOADING_MESSAGE_INIT));
 
         // Init rest of the stuff with dependency on permissions.
-        CMain.sharedInstance().initWithPermissions(new Protocols.GenericHandler() {
-            @Override
-            public void onFinished(final boolean success, @Nullable final String error) {
+        Main.sharedInstance().initWithPermissions((success, error) -> {
 
-                // Hide loading indicator.
-                loadingIndicatorHide();
+            // Hide loading indicator.
+            loadingIndicatorHide();
 
-                if (success) {
-                    tabBarSwitchToCurrentState();
-
-                    // Process possible incoming notification.
-                    processIncommiongNotifications();
+            if (success) {
+                if (Main.sharedInstance().getManagerToken().getTokenDevice() != null) {
+                    showAuthenticationFragment();
                 } else {
-                    // Error in such case mean, that we have broken configuration or some internal state of SDK.
-                    // Most probably wrong license, different fingerprint etc. We should not continue at that point.
-                    System.exit(0);
+                    showProvisioningFragment();
                 }
+
+                // Process possible incoming notification.
+                processIncomingNotifications();
+            } else {
+                // Error in such case mean, that we have broken configuration or some internal state of SDK.
+                // Most probably wrong license, different fingerprint etc. We should not continue at that point.
+                throw new IllegalStateException();
             }
         });
     }
 
     /**
      * Shows or hides the loading indicator.
-     * @param show {@code True} if the loading indicator should be showed, {@code false} to hide the loading indicator.
+     *
+     * @param show
+     *         {@code True} to show the loading indicator, else {@code false}.
      */
     private void loadingIndicatorShow(final boolean show) {
         // Avoid switch to same state.
@@ -193,11 +289,10 @@ public class MainActivity extends AppCompatActivity {
             mLoadingBar = new FragmentLoadingIndicator();
 
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .replace(R.id.fragment_container_loading_bar, mLoadingBar, null)
-                    .commit();
+                                       .replace(R.id.fragment_container_loading_bar, mLoadingBar, null).commit();
         } else {
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .remove(mLoadingBar).commit();
+                                       .remove(mLoadingBar).commit();
             mLoadingBar = null;
         }
 
@@ -207,8 +302,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Sets the caption for the loading indicator.
-     * @param caption Caption.
+     * Sets the caption of the loading indicator.
+     *
+     * @param caption
+     *         Caption of the loading indicator.
      */
     private void loadingIndicatorSetCaption(final String caption) {
         if (mLoadingBar != null) {
@@ -217,45 +314,71 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Disables screenshots.
+     * Disables screenshots of the application.
      */
     private void disableScreenShot() {
-        getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE,
-                android.view.WindowManager.LayoutParams.FLAG_SECURE);
+//        getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE,
+//                             android.view.WindowManager.LayoutParams.FLAG_SECURE);
     }
 
     /**
-     * Initializes the GUI of the application.
+     * Initializes the UI.
      */
     private void initGui() {
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_with_drawer);
 
-        mLabelCaption = findViewById(R.id.label_caption);
-        mTabBar = findViewById(R.id.navigation);
         mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
-        mTabBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-                return handleNavigationItemSelected(item);
-            }
-        });
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        mDrawer = findViewById(R.id.drawer_layout);
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
+                                                                       mDrawer,
+                                                                       mToolbar,
+                                                                       R.string.navigation_drawer_open,
+                                                                       R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        final NavigationView navigationView = findViewById(R.id.nav_view);
+        mFaceIdSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.nav_face_id).getActionView();
+        mFaceIdSwitch.setOnClickListener(this::onSwitchPressedFaceId);
+
+        mTouchIdSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.nav_touch_id).getActionView();
+        mTouchIdSwitch.setOnClickListener(this::onSwitchPressedTouchId);
+
+        navigationView.setNavigationItemSelectedListener(this);
+
+        final TextView versionApp = findViewById(R.id.textViewAppVersion);
+        versionApp.setText(String.format("App Version: %s", BuildConfig.VERSION_NAME));
+
+        final TextView versionSdk = findViewById(R.id.textViewSdkVersion);
+        versionSdk.setText(String.format("SDK Version: %s", IdpCore.getVersion()));
+
+        final TextView privacyPolicy = findViewById(R.id.textViewPrivacy);
+        privacyPolicy.setOnClickListener(this::onTextPressedPrivacyPolicy);
     }
 
     /**
-     * Clears the reference to the current {@code Activity}.
+     * Clears all references.
      */
     private void clearReferences() {
         final Activity currActivity = mMyApp.getCurrentActivity();
         if (this.equals(currActivity)) {
             mMyApp.setCurrentActivity(null);
         }
+
+        Main.sharedInstance().unregisterUiHandler();
+        mLoadingBar = null;
     }
 
     /**
-     * Processes incoming notification.
+     * Processes incoming push notifications.
      */
-    private void processIncommiongNotifications() {
+    private void processIncomingNotifications() {
         // Process possible incoming notification.
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -263,7 +386,9 @@ public class MainActivity extends AppCompatActivity {
             for (final String key : extras.keySet()) {
                 data.put(key, extras.getString(key));
             }
-            CMain.sharedInstance().getManagerPush().processIncommingPush(data);
+            Main.sharedInstance().getManagerPush().processIncomingPush(data);
+            // Mark intent as processed.
+            getIntent().removeExtra( PushManager.PUSH_MESSAGE_TYPE);
         }
     }
 
@@ -271,46 +396,41 @@ public class MainActivity extends AppCompatActivity {
 
     //region User Interface
 
-    /**
-     * Handles the selected navigation item.
-     * @param item Selected item.
-     * @return {@code True} if new {@code Fragment} was added, else {@code false}.
-     */
-    private boolean handleNavigationItemSelected(@NonNull final MenuItem item) {
-        // Ignore click on same fragment.
-        if (FragmentSolver.getFragmentId(mLastFragment) == item.getItemId()) {
-            return false;
-        }
+    private void onSwitchPressedFaceId(final View sender) {
+        mFaceIdSwitch.setChecked(!mFaceIdSwitch.isChecked());
+        mLastFragment.toggleFaceId();
+    }
 
-        mLabelCaption.setText(item.getTitle());
+    private void onSwitchPressedTouchId(final View sender) {
+        mTouchIdSwitch.setChecked(!mTouchIdSwitch.isChecked());
+        mLastFragment.toggleTouchId();
+    }
 
-        final MainFragment newFragment = FragmentSolver.getFragmentById(item.getItemId());
-
-        if (newFragment != null) {
-            // In case of transition to new tab. We want to clean out any stacked objects.
-            hideLastStackFragment();
-
-            mLastFragment = newFragment;
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .replace(R.id.fragment_container, newFragment, null)
-                    .commit();
-        }
-
-        return newFragment != null;
+    private void onTextPressedPrivacyPolicy(final View sender) {
+        final Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Configuration.CFG_PRIVACY_POLICY_URL);
+        startActivity(browserIntent);
     }
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
             super.onBackPressed();
+
+            final int indexOfTopFragment = getSupportFragmentManager().getFragments().size() - 1;
+            if (indexOfTopFragment >= 0) {
+                mLastFragment = (AbstractMainFragment) getSupportFragmentManager().getFragments()
+                                                                                  .get(indexOfTopFragment);
+                mLastFragment.reloadGUI();
+            }
+
             return;
         }
 
         if (mExitConfirmed) {
             finish();
         } else {
-            Toast.makeText(this, getString(R.string.toast_exit), Toast.LENGTH_SHORT).show();
+            showMessage(getString(R.string.toast_exit));
             mExitConfirmed = true;
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -321,34 +441,52 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
+        final int identification = item.getItemId();
+
+        if (identification == R.id.nav_change_pin) {
+            mLastFragment.changePin();
+        } else if (identification == R.id.nav_delete_token) {
+            mLastFragment.deleteToken();
+        }
+
+        return true;
+    }
 
     //endregion
 
     //region Public API
 
     /**
-     * Checks for mandatory permission.
-     * @param askForThem {@code True} if application should request missing permission.
-     * @return {@code True} if permissions were acquired successfully.
+     * Checks the required runtime permissions.
+     *
+     * @param askForThem
+     *         {@code True} if dialog application should request missing permissions, else {@code false}.
+     * @return {@code True} if all permissions are present, else {@code false}.
      */
     public boolean checkMandatoryPermissions(final boolean askForThem) {
-        return CMain.checkPermissions(this, askForThem,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.CAMERA,
-                Manifest.permission.INTERNET);
+        return Main.checkPermissions(this,
+                                      askForThem,
+                                      Manifest.permission.READ_PHONE_STATE,
+                                      Manifest.permission.CAMERA,
+                                      Manifest.permission.INTERNET);
     }
 
     /**
-     * Checks if the loading indicator is currently shown.
-     * @return {@code True} if loading indicator is currently shown, else {@code false}.
+     * Checks if loading indicator or incoming message  is present.
+     *
+     * @return {@code True} if present, else {@code false}.
      */
-    public boolean loadingIndicatorIsPresent() {
-        return mLoadingBar != null;
+    public boolean isOverlayViewVisible() {
+        return mLoadingBar != null || mIncomingMessage != null;
     }
 
     /**
-     * Shows the loading indicator with caption.
-     * @param caption Caption to show in loading indicator.
+     * Shows the loading indicator with a given caption.
+     *
+     * @param caption
+     *         Caption.
      */
     public void loadingIndicatorShow(final String caption) {
         loadingIndicatorShow(true);
@@ -363,40 +501,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Updates the tab bar.
-     */
-    public void tabBarUpdate() {
-        final boolean tokenEnrolled = CMain.sharedInstance().getManagerToken().getTokenDevice() != null;
-        for (int index = 0; index < mTabBar.getMenu().size(); index++) {
-            mTabBar.getMenu().getItem(index).setEnabled(tokenEnrolled ? index != 0 : index == 0);
-        }
-    }
-
-    /**
-     * Disables the tap bar.
-     */
-    public void tabBarDisable() {
-        for (int index = 0; index < mTabBar.getMenu().size(); index++) {
-            mTabBar.getMenu().getItem(index).setEnabled(false);
-        }
-    }
-
-    /**
-     * Switch the tab bar to current state based on if token is enrolled.
-     */
-    public void tabBarSwitchToCurrentState() {
-        // Unlike on iOS we have to reload tab state first. Otherwise switch is not triggered.
-        tabBarUpdate();
-
-        if (CMain.sharedInstance().getManagerToken().getTokenDevice() != null) {
-            mTabBar.setSelectedItemId(R.id.navigation_authentication);
-        } else {
-            mTabBar.setSelectedItemId(R.id.navigation_enroll);
-        }
-    }
-
-    /**
-     * Reloads the GUI.
+     * Updates the FaceId status.
      */
     public void updateFaceIdSupport() {
         // Performance is not an issue. Call unified method to reload GUI.
@@ -406,32 +511,95 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Updates the push registration status.
-     */
-    public void updatePushRegistrationStatus() {
-        if (mLastFragment != null) {
-            mLastFragment.updatePushRegistrationStatus();
-        }
-    }
-
-    /**
      * Approves the OTP.
-     * @param message Message to show.
-     * @param serverChallenge Server challenge.
-     * @param handler OTP calculation callback.
+     *
+     * @param message
+     *         Message.
+     * @param serverChallenge
+     *         Server challenge.
+     * @param handler
+     *         Handler.
      */
-    public void approveOTP(@NonNull final String message, @Nullable final SecureString serverChallenge, @NonNull final Protocols.OTPDelegate handler) {
-        if (mLastFragment != null) {
-            mLastFragment.approveOTP(message, serverChallenge, handler);
+    public void approveOTP(@NonNull final String message,
+                           @Nullable final SecureString serverChallenge,
+                           @NonNull final Protocols.OTPDelegate handler) {
+        // Current fragment must be auth solver child.
+        if (!(mLastFragment instanceof AbstractMainFragmentWithAuthSolver)) {
+            return;
         }
+
+        // Result is handed by main activity approveOTP_Result Approve/Reject
+        final AbstractMainFragmentWithAuthSolver authSolver = (AbstractMainFragmentWithAuthSolver) mLastFragment;
+        mIncomingMessage = new FragmentIncomingMessage();
+        mIncomingMessage.setApproveClickListener(view -> {
+            mIncomingMessage = null;
+            if (mLastFragment != null) {
+                mLastFragment.reloadGUI();
+            }
+            authSolver.totpWithMostComfortableOne(serverChallenge, handler);
+        });
+        mIncomingMessage.setRejectClickListener(view -> {
+            mIncomingMessage = null;
+            if (mLastFragment != null) {
+                mLastFragment.reloadGUI();
+            }
+            handler.onOTPDelegateFinished(null, null, null, null);
+        });
+
+        final Bundle agrs = new Bundle();
+        agrs.putString(FragmentIncomingMessage.FRAGMENT_ARGUMENT_CAPTION, message);
+        mIncomingMessage.setArguments(agrs);
+
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.fragment_container_loading_bar, mIncomingMessage, null).commit();
     }
 
     /**
-     * Removes the last {@code Fragment} from the back stack.
+     * Enables or disables the action bar.
+     *
+     * @param enable
+     *         {@code True} to enable, else {@code false}.
+     */
+    public void enableDrawer(final boolean enable) {
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar == null) {
+            return;
+        }
+
+        if (enable) {
+            mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mToolbar.setVisibility(View.VISIBLE);
+        } else {
+            mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mToolbar.setVisibility(View.GONE);
+        }
+    }
+
+    public void closeDrawer() {
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar == null) {
+            return;
+        }
+
+        mDrawer.closeDrawer(Gravity.LEFT);
+    }
+
+    /**
+     * Removes the top most fragment from the back-stack.
      */
     public void hideLastStackFragment() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
+        }
+    }
+
+    /**
+     * Clears the fragment stack.
+     */
+    public void clearFragmentStack() {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
+            fragmentManager.popBackStack();
         }
     }
 
@@ -448,50 +616,109 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Shows an error dialog.
-     * @param error Error message to show.
+     *
+     * @param error
+     *         Error the show.
      */
     public void showErrorIfExists(final String error) {
         if (error != null) {
-            showMessage(CMain.getString(R.string.COMMON_MESSAGE_ERROR_CAPTION), error);
+            showMessage(error);
         }
     }
 
     /**
-     * Show dialog.
-     * @param caption Caption.
-     * @param description Description.
+     * Shows a message dialog.
+     *
+     * @param message
+     *         Message to display.
      */
-    public void showMessage(final String caption, final String description) {
+    public void showMessage(@StringRes final int message) {
+        showErrorIfExists(Main.getString(message));
+    }
+
+    /**
+     * Shows a message dialog.
+     *
+     * @param message
+     *         Message to display.
+     */
+    public void showMessage(final String message) {
         final Context ctx = this;
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ctx);
-                dialogBuilder.setTitle(caption);
-                dialogBuilder.setMessage(description);
-                dialogBuilder.setPositiveButton(getString(R.string.COMMON_MESSAGE_OK), null);
-                dialogBuilder.setCancelable(true);
-                dialogBuilder.create().show();
+                Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
             }
         });
     }
 
     /**
-     * Hides the toolbar.
+     * Reloads the UI.
      */
-    public void hideToolbar() {
-        if(mToolbar != null) {
-            mToolbar.setVisibility(View.GONE);
+    public void reloadGui() {
+        final TokenDevice tokenDevice = Main.sharedInstance().getManagerToken().getTokenDevice();
+        if (tokenDevice != null) {
+            mFaceIdSwitch.setChecked(tokenDevice.getTokenStatus().isFaceEnabled);
+
+            final BioFingerprintAuthService service = BioFingerprintAuthService.create(AuthenticationModule.create());
+            if (service.isSupported() && service.isConfigured()) {
+                mTouchIdSwitch.setEnabled(true);
+                mTouchIdSwitch.setChecked(tokenDevice.getTokenStatus().isTouchEnabled);
+            } else {
+                mTouchIdSwitch.setEnabled(false);
+            }
         }
     }
 
     /**
-     * Shows the toolbar.
+     * Shows the provisioning fragment.
      */
-    public void showToolbar() {
-        if(mToolbar != null) {
-            mToolbar.setVisibility(View.VISIBLE);
+    public void showProvisioningFragment() {
+        // In case of transition to new tab. We want to clean out any stacked objects.
+        clearFragmentStack();
+
+        showFragment(new FragmentProvision());
+    }
+
+    /**
+     * Shows the authentication fragment.
+     */
+    public void showAuthenticationFragment() {
+        // In case of transition to new tab. We want to clean out any stacked objects.
+        clearFragmentStack();
+
+        showFragment(new FragmentAuthentication());
+    }
+
+    /**
+     * On pressed OTP button.
+     *
+     * @param authInput
+     *         Auth input used to calculate OTP. Used for recalculation.
+     * @param challenge
+     *         Challenge to be signed.
+     * @param amount
+     *         Amount.
+     * @param beneficiary
+     *         Beneficiary.
+     */
+
+    public void showOtpFragment(final AuthInput authInput,
+                                final SecureString challenge,
+                                final String amount,
+                                final String beneficiary) {
+        if (challenge != null) {
+            showFragment(FragmentOtp.transactionSign(authInput, challenge, amount, beneficiary));
+        } else {
+            showFragment(FragmentOtp.authentication(authInput));
         }
+    }
+
+    /**
+     * On pressed Sign button.
+     */
+    public void showSignFragment() {
+        showFragment(new FragmentSign());
     }
 
     //endregion

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <corners android:radius="@dimen/dimensionButtonBackgroundCornerRadius" />
+
+            <padding android:bottom="@dimen/dimensionButtonBackgroundPadding"
+                android:left="@dimen/dimensionButtonBackgroundPadding"
+                android:right="@dimen/dimensionButtonBackgroundPadding"
+                android:top="@dimen/dimensionButtonBackgroundPadding" />
+            <solid android:color="@color/colorButtonNegativeBackgroundPressed" />
+
+        </shape>
+    </item>
+
+    <item>
+        <shape>
+            <corners android:radius="@dimen/dimensionButtonBackgroundCornerRadius" />
+
+            <padding android:bottom="@dimen/dimensionButtonBackgroundPadding"
+                android:left="@dimen/dimensionButtonBackgroundPadding"
+                android:right="@dimen/dimensionButtonBackgroundPadding"
+                android:top="@dimen/dimensionButtonBackgroundPadding" />
+            <solid android:color="@color/colorButtonNegativeBackground" />
+        </shape>
+    </item>
+</selector>

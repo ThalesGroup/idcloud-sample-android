@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers.ezio;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.gemalto.eziomobilesampleapp.Configuration;
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.core.IdpException;
 import com.gemalto.idp.mobile.core.IdpStorageException;
+import com.gemalto.idp.mobile.core.devicefingerprint.DeviceFingerprintSource;
 import com.gemalto.idp.mobile.core.util.SecureString;
-import com.gemalto.idp.mobile.oob.registration.OobRegistrationCallback;
-import com.gemalto.idp.mobile.oob.registration.OobRegistrationResponse;
 import com.gemalto.idp.mobile.otp.OtpModule;
 import com.gemalto.idp.mobile.otp.Token;
+import com.gemalto.idp.mobile.otp.devicefingerprint.DeviceFingerprintTokenPolicy;
 import com.gemalto.idp.mobile.otp.oath.OathService;
 import com.gemalto.idp.mobile.otp.oath.OathToken;
 import com.gemalto.idp.mobile.otp.oath.OathTokenManager;
@@ -52,23 +51,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
 /**
  * Main provision / enroll and un-enroll flow. It also keep instance of OATH device.
  */
 public class TokenManager {
     //region Defines
 
-    /**
-     * Provisioning callback.
-     */
     public interface ProvisionerHandler {
-        /**
-         * Returns when provisioning is finished.
-         * @param token Provisioned token.
-         * @param error Error.
-         */
         void onProvisionerFinished(final OathToken token, final String error);
     }
 
@@ -79,9 +68,6 @@ public class TokenManager {
 
     //region Life Cycle
 
-    /**
-     * Creates a new {@code TokenManager} object.
-     */
     public TokenManager() {
         OathToken token;
         mOathManager = OathService.create(OtpModule.create()).getTokenManager();
@@ -101,12 +87,12 @@ public class TokenManager {
         if (tokenName != null) {
             // Try to get instance of saved token.
             try {
-                token = mOathManager.getToken(tokenName, Configuration.CUSTOM_FINGERPRINT_DATA);
+                token = mOathManager.getToken(tokenName, Configuration.getCustomFingerprintData());
                 mTokenDevice = new TokenDevice(token);
             } catch (final IdpException exception) {
                 // Error in such case mean, that we have broken configuration or some internal state of SDK.
                 // Most probably wrong license, different fingerprint etc. We should not continue at that point.
-                CMain.sharedInstance().getCurrentListener().finish();
+                Main.sharedInstance().getCurrentListener().finish();
             }
         }
     }
@@ -115,72 +101,36 @@ public class TokenManager {
 
     //region Public API
 
-    /**
-     * Retrieves the {@code TokenDevice}.
-     * @return {@code TokenDevice}.
-     */
     public TokenDevice getTokenDevice() {
         return mTokenDevice;
     }
 
-    /**
-     * Deletes the token.
-     * @param completionHandler Callback returned back to the application on completion.
-     */
-    public void deleteTokenWithCompletionHandler(final Protocols.GenericHandler completionHandler) {
-        // First we should unregister from oob and then delete token it self.
-        CMain.sharedInstance().getManagerPush().unregisterOOBWithCompletionHandler(new Protocols.GenericHandler() {
-            @Override
-            public void onFinished(final boolean success, final String error) {
-                boolean removed = false;
-                String processedError = error;
-                // In case of successful unregister, we can try to delete token it self.
-                if (success) {
-                    try {
-                        removed = mOathManager.removeToken(mTokenDevice.getToken());
-                    } catch (IdpException e) {
-                        processedError = e.getLocalizedMessage();
-                    }
-                }
-
-                // Remove stored reference
-                if (removed) {
-                    synchronized (TokenManager.this) {
-                        mTokenDevice = null;
-                    }
-                }
-
-                // Notify in UI thread.
-                if (completionHandler != null) {
-                    final boolean finalRemoved = removed;
-                    final String finalError = processedError;
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            completionHandler.onFinished(finalRemoved, finalError);
-                        }
-                    });
+    public void deleteTokenWithCompletionHandler(@NonNull final Protocols.GenericHandler handler) {
+        final Protocols.GenericHandler.Sync syncHandler = new Protocols.GenericHandler.Sync(handler);
+        try {
+            final boolean removed = mOathManager.removeToken(mTokenDevice.getToken());
+            if (removed) {
+                synchronized (this) {
+                    mTokenDevice = null;
                 }
             }
-        });
+
+            syncHandler.onFinished(removed, null);
+        } catch (final IdpException e) {
+            syncHandler.onFinished(false, e.getLocalizedMessage());
+        }
     }
 
-    /**
-     * Provisions a new token.
-     * @param userId User ID.
-     * @param regCode Registration code.
-     * @param completionHandler Callback returned back to the application on completion.
-     */
     public void provisionWithUserId(final String userId,
                                     final SecureString regCode,
                                     final ProvisionerHandler completionHandler) {
-        // Check inputs as SDK does throw runtime exception.
+        // Check input, because ezio does throw runtime exception.
         if (!regCode.toString().matches("[0-9]+")) {
             if (completionHandler != null) {
                 completionHandler.onProvisionerFinished(null, "Registration code can only contain digits.");
             }
             return;
-        } else if (regCode.toString().length() < 2 || regCode.toString().length() > 14) {
+        } else if (regCode.toString().length() < 2 || regCode.toString().length() > 11) {
             if (completionHandler != null) {
                 completionHandler.onProvisionerFinished(null, "Invalid registration code length.");
             }
@@ -189,35 +139,23 @@ public class TokenManager {
 
 
         // First try to register Client Id on OOB server.
-        CMain.sharedInstance().getManagerPush().registerOOBWithUserId(userId, regCode, new OobRegistrationCallback() {
-            @Override
-            public void onOobRegistrationResponse(final OobRegistrationResponse oobRegistrationResponse) {
+        Main.sharedInstance().getManagerPush().registerOOBWithUserId(userId, regCode, oobRegistrationResponse -> {
+            Log.d(TokenManager.class.getName(), oobRegistrationResponse.getMessage());
 
-                Log.d(TokenManager.class.getName(), oobRegistrationResponse.getMessage());
+            String clientId = "test_client";
 
-                String clientId = "test_client";
-
-                // If OOB registration was successful we can provision token.
-                if (oobRegistrationResponse != null && oobRegistrationResponse.isSucceeded()) {
-                    clientId = oobRegistrationResponse.getClientId();
-                }
-
+            // If OOB registration was successful we can provision token.
+            if (oobRegistrationResponse != null && oobRegistrationResponse.isSucceeded()) {
+                clientId = oobRegistrationResponse.getClientId();
                 doProvisioningWithUserId(userId, regCode, clientId, completionHandler);
-
-
+            } else {
                 // Notify about failure.
-//                else if (completionHandler != null) {
-//                    // Notify in UI thread.
-//                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            completionHandler.onProvisionerFinished(null, oobRegistrationResponse.getMessage());
-//                        }
-//                    });
-//                }
-
-
+                if (completionHandler != null) {
+                    completionHandler.onProvisionerFinished(null, oobRegistrationResponse.getMessage());
+                }
             }
+
+
         });
     }
 
@@ -225,23 +163,16 @@ public class TokenManager {
 
     //region Private Helpers
 
-    /**
-     * Provision a new token.
-     * @param userId User ID.
-     * @param regCode Registration code.
-     * @param clientId Client ID.
-     * @param completionHandler Callback returned back to the application on completion.
-     */
     private void doProvisioningWithUserId(final String userId,
                                           final SecureString regCode,
                                           final String clientId,
-                                          @NonNull final ProvisionerHandler completionHandler) {
+                                          final ProvisionerHandler completionHandler) {
         URL provisionUrl = null;
         try {
             provisionUrl = new URL(Configuration.CFG_OTP_PROVISION_URL);
         } catch (MalformedURLException e) {
             // Invalid configuration
-            CMain.sharedInstance().getCurrentListener().finish();
+            Main.sharedInstance().getCurrentListener().finish();
         }
 
         // Prepare provisioning configuration based on app data.
@@ -254,9 +185,16 @@ public class TokenManager {
                 Configuration.CFG_OTP_RSA_KEY_MODULUS)
                 .setTlsConfiguration(Configuration.CFG_SDK_TLS_CONFIGURATION).build();
 
+        final DeviceFingerprintSource
+                deviceFingerprintSource = new DeviceFingerprintSource(Configuration.getCustomFingerprintData(),
+                DeviceFingerprintSource.Type.SOFT);
+        final DeviceFingerprintTokenPolicy
+                deviceFingerprintTokenPolicy = new DeviceFingerprintTokenPolicy(true,
+                deviceFingerprintSource);
+
         mOathManager.createToken(userId,
                 config,
-                Configuration.CFG_OTP_DEVICE_FINGERPRINT_SOURCE,
+                deviceFingerprintTokenPolicy,
                 new com.gemalto.idp.mobile.otp.TokenManager.TokenCreationCallback() {
                     @Override
                     public void onSuccess(final Token token,
@@ -264,14 +202,19 @@ public class TokenManager {
                         try {
                             mTokenDevice = new TokenDevice((OathToken) token);
                         } catch (final IdpException exception) {
-                            completionHandler.onProvisionerFinished(null,
-                                    exception.getLocalizedMessage());
+                            if (completionHandler != null) {
+                                completionHandler.onProvisionerFinished(null,
+                                        exception
+                                                .getLocalizedMessage());
+                            }
                         }
 
-                        final CMain main = CMain.sharedInstance();
+                        final Main main = Main.sharedInstance();
                         main.getManagerPush().registerClientId(clientId);
 
-                        completionHandler.onProvisionerFinished((OathToken) token, null);
+                        if (completionHandler != null) {
+                            completionHandler.onProvisionerFinished((OathToken) token, null);
+                        }
                     }
 
                     @Override
@@ -280,6 +223,7 @@ public class TokenManager {
                                 exception.getLocalizedMessage());
                     }
                 });
+
     }
 
     //endregion

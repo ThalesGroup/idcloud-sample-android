@@ -1,2 +1,2 @@
-include ':app', ':FaceUISDK'
+include ':app', ':FaceUISDK', ':idcloudstyle'
 

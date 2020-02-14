@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="0dp"
+    android:layout_weight="@integer/topPartAspect"
+    android:gravity="center|bottom"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            tools:ignore="UseCompoundDrawables,UselessParent">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/img_logo_idcloud"
+                android:contentDescription="@android:string/untitled" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimensionMarginNormal"
+                android:text="@string/app_name"
+                android:textAlignment="viewStart"
+                android:textColor="@color/idCloudRed"
+                android:textSize="@dimen/dimensionTextSizeNormal" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_fragment_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimensionMarginSmall"
+            android:text="@android:string/untitled"
+            android:textColor="@color/idCloudRed"
+            android:textSize="@dimen/dimensionTextSizeNormal"/>
+    </LinearLayout>
+
+</RelativeLayout>

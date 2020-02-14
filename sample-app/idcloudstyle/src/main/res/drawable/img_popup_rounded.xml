@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@android:color/white"/>
+<!--    <gradient-->
+<!--        android:type="linear"-->
+<!--        android:angle="270"-->
+<!--        android:startColor="@color/colorOverlayGradientStart"-->
+<!--        android:centerColor="@color/colorOverlayGradientCenter"-->
+<!--        android:endColor="@color/colorOverlayGradientEnd" />-->
+
+    <padding android:left="1dp"
+        android:top="1dp"
+        android:right="1dp"
+        android:bottom="1dp"/>
+
+    <corners android:radius="20dp"/>
+</shape>

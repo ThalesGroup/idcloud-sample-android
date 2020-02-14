@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers.ezio;
 
 
 import com.gemalto.eziomobilesampleapp.Configuration;
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.authentication.AuthInput;
 import com.gemalto.idp.mobile.authentication.AuthenticationModule;
@@ -44,8 +45,6 @@ import com.gemalto.idp.mobile.otp.oath.OathService;
 import com.gemalto.idp.mobile.otp.oath.OathToken;
 import com.gemalto.idp.mobile.otp.oath.soft.SoftOathSettings;
 import com.gemalto.idp.mobile.otp.oath.soft.SoftOathToken;
-
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
 
 /**
  * To enable all TOTP features like last OTP lifespan we need to keep instance of OATH device.
@@ -72,17 +71,12 @@ public class TokenDevice {
 
     //region Life Cycle
 
-    /**
-     * Creates a new {@code TokenDevice} object.
-     * @param token
-     * @throws IdpException
-     */
     TokenDevice(final OathToken token) throws IdpException {
         final OathFactory factory = OathService.create(OtpModule.create()).getFactory();
 
         // Create device based on specific ocra suite.
         final SoftOathSettings oathSettings = factory.createSoftOathSettings();
-        oathSettings.setOcraSuite(CMain.secureStringFromString(Configuration.CFG_OTP_OCRA_SUITE));
+        oathSettings.setOcraSuite(Main.sharedInstance().secureStringFromString(Configuration.CFG_OTP_OCRA_SUITE));
         mDevice = factory.createSoftOathDevice((SoftOathToken) token, oathSettings);
         mToken = token;
     }
@@ -92,26 +86,14 @@ public class TokenDevice {
 
     //region Public API
 
-    /**
-     * Retrieves the {@code OathDevice}.
-     * @return {@code OathDevice}.
-     */
     public OathDevice getDevice() {
         return mDevice;
     }
 
-    /**
-     * Retrieves the {@code OathToken}.
-     * @return {@code OathToken}.
-     */
     public OathToken getToken() {
         return mToken;
     }
 
-    /**
-     * Retrieves the {@code TokenStatus}.
-     * @return {@code TokenStatus}.
-     */
     public TokenStatus getTokenStatus() {
         final TokenStatus retValue = new TokenStatus();
 
@@ -136,12 +118,7 @@ public class TokenDevice {
         return retValue;
     }
 
-    /**
-     * Generates OTP with any supported {@code AuthInput}
-     * @param authInput User authentication.
-     * @param serverChallenge Server challenge.
-     * @param handler Callback returned back to the application on completion.
-     */
+    // Generate OTP with any supported auth input.
     public void totpWithAuthInput(final AuthInput authInput,
                                   final SecureString serverChallenge,
                                   final Protocols.OTPDelegate handler) {

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="idCloudRed">#EA0437</color>
+    <color name="idCloudRedSecondary">#C1002B</color>
+    <color name="idCloudRedDark">#8C1713</color>
+
+    <color name="thalesBlue">#1B1B62</color>
+    <color name="darkGray">#525356</color>
+
+    <!--Main application theme based on Thales colors-->
+    <color name="colorPrimary">@color/thalesBlue</color>
+    <color name="colorPrimaryDark">@color/thalesBlue</color>
+    <color name="colorAccent">@color/thalesBlue</color>
+    <color name="colorTextPrimary">@color/thalesBlue</color>
+    <color name="colorTextSecondary">@color/thalesBlue</color>
+
+    <!--All main fragment gradient background-->
+    <color name="colorPrimaryGradientStart">#DCDCDC</color>
+    <color name="colorPrimaryGradientCenter">#EBEBEB</color>
+    <color name="colorPrimaryGradientEnd">#F5F6F5</color>
+
+    <!--All main button colors-->
+    <color name="colorButtonBackground">#FFFFFF</color>
+    <color name="colorButtonBackgroundDisabled">#80FFFFFF</color>
+    <color name="colorButtonText">@color/thalesBlue</color>
+    <color name="colorButtonTextShadow">#363636</color>
+
+    <!--Positive and negative buttons-->
+    <color name="colorButtonPositiveNegativeText">#FFFFFF</color>
+
+    <color name="colorButtonPositiveBackground">#9ED125</color>
+    <color name="colorButtonPositiveBackgroundPressed">#809ED125</color>
+
+    <color name="colorButtonNegativeBackground">#FB4E54</color>
+    <color name="colorButtonNegativeBackgroundPressed">#80FB4E54</color>
+
+    <!--Overlay Fragments-->
+    <color name="colorOverlayBackground">#65505050</color>
+    <color name="colorOverlayGradientStart">#D8D8D8</color>
+    <color name="colorOverlayGradientCenter">#EEEEEE</color>
+    <color name="colorOverlayGradientEnd">#EEEEEE</color>
+
+    <!--Edit Boxes-->
+    <color name="colorEditBackground">#FFFFFF</color>
+    <color name="colorEditStroke">#000000</color>
+
+    <!--Switches-->
+    <color name="colorSwitchNormal">@color/thalesBlue</color>
+    <color name="colorSwitchActivated">#FFFFFF</color>
+
+</resources>

@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers.ezio;
@@ -38,7 +39,7 @@ import com.android.volley.toolbox.Volley;
 import com.gemalto.eziomobilesampleapp.Configuration;
 import com.gemalto.eziomobilesampleapp.MainActivity;
 import com.gemalto.eziomobilesampleapp.R;
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.authentication.AuthInput;
 import com.gemalto.idp.mobile.core.ApplicationContextHolder;
@@ -47,14 +48,15 @@ import com.gemalto.idp.mobile.core.util.SecureString;
 import java.util.HashMap;
 import java.util.Map;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
 /**
- * Class used for http communication with demo server.
+ * Class used for http communication with demo server etc...
  */
 public class HttpManager {
 
     //region Defines
+
+    private static final String API_AUTH_RESPONSE_OK = "Authentication succeeded";
+    private static final String API_SIGN_RESPONSE_OK = "Signature verification succeeded";
 
     private static final String CFG_TUTO_XML_AUTH = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" +
             "<AuthenticationRequest> \n" +
@@ -76,35 +78,29 @@ public class HttpManager {
 
     //region Public API
 
-    /**
-     * Sends the verify request to the server.
-     * @param otp OTP to verify.
-     * @param error Error.
-     * @param authInput User authentication.
-     * @param serverChallenge Server challenge.
-     */
     public void sendAuthRequest(@Nullable final SecureString otp, @Nullable final String error,
-                                @Nullable final AuthInput authInput, final SecureString serverChallenge) {
+                                @Nullable final AuthInput authInput,
+                                @Nullable final Protocols.PostMessageInterface delegate) {
 
-        final MainActivity currentListener = CMain.sharedInstance().getCurrentListener();
+        final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
 
         // Send only valid results
         if (otp != null && error == null) {
             // Display loading indicator if UI is still valid.
             if (currentListener != null) {
-                currentListener.loadingIndicatorShow(CMain.getString(R.string.LOADING_MESSAGE_SENDING));
+                currentListener.loadingIndicatorShow(Main.getString(R.string.LOADING_MESSAGE_VALIDATING));
             }
 
             // Demo app use user name for token name since it's unique.
-            final String userName = CMain.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
+            final String userName = Main.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
             // Final application might use some XML parser rather that simple format, to ensure data integrity.
             final String body = String.format(CFG_TUTO_XML_AUTH, userName, otp.toString());
 
             // We don't need otp any more. Wipe it.
             otp.wipe();
 
-            // Post message and wait for results in mProcessResponse.
-            doPostMessage(Configuration.CFG_TUTO_URL_AUTH, "text/xml", authHeaders(), body, mProcessResponse);
+            // Post message and wait for results.
+            doPostMessage(Configuration.CFG_TUTO_URL_AUTH, "text/xml", authHeaders(), body, delegate);
         } else if (currentListener != null) {
             currentListener.showErrorIfExists(error);
         }
@@ -113,43 +109,59 @@ public class HttpManager {
         if (authInput != null) {
             authInput.wipe();
         }
-        if (serverChallenge != null) {
-            serverChallenge.wipe();
-        }
     }
 
-    /**
-     * Send the signed request to the verification server.
-     * @param otp OTP.
-     * @param error Error.
-     * @param authInput User authentication.
-     * @param serverChallenge Server challenge.
-     * @param amount Amount.
-     * @param beneficiary Beneficiary.
-     */
-    public void sendSignRequest(@Nullable final SecureString otp, @Nullable final String error,
-                                @Nullable final AuthInput authInput, final SecureString serverChallenge,
-                                @Nullable final String amount, @Nullable final String beneficiary) {
+    public void sendAuthRequestForChangePin(@Nullable final SecureString otp, @Nullable final String error,
+                                            @Nullable final Protocols.PostMessageInterface delegate) {
 
-        final MainActivity currentListener = CMain.sharedInstance().getCurrentListener();
+        final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
 
         // Send only valid results
         if (otp != null && error == null) {
             // Display loading indicator if UI is still valid.
             if (currentListener != null) {
-                currentListener.loadingIndicatorShow(CMain.getString(R.string.LOADING_MESSAGE_SENDING));
+                currentListener.loadingIndicatorShow(Main.getString(R.string.LOADING_MESSAGE_VERIFYING_PIN));
             }
 
             // Demo app use user name for token name since it's unique.
-            final String userName = CMain.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
+            final String userName = Main.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
+            // Final application might use some XML parser rather that simple format, to ensure data integrity.
+            final String body = String.format(CFG_TUTO_XML_AUTH, userName, otp.toString());
+
+            // We don't need otp any more. Wipe it.
+            otp.wipe();
+
+            // Post message and wait for results.
+            doPostMessage(Configuration.CFG_TUTO_URL_AUTH, "text/xml", authHeaders(), body, delegate);
+        } else if (currentListener != null) {
+            currentListener.showErrorIfExists(error);
+        }
+    }
+
+    public void sendSignRequest(@Nullable final SecureString otp, @Nullable final String error,
+                                @Nullable final AuthInput authInput, @Nullable final String amount,
+                                @Nullable final String beneficiary,
+                                @Nullable final Protocols.PostMessageInterface delegate) {
+
+        final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
+
+        // Send only valid results
+        if (otp != null && error == null) {
+            // Display loading indicator if UI is still valid.
+            if (currentListener != null) {
+                currentListener.loadingIndicatorShow(Main.getString(R.string.LOADING_MESSAGE_VALIDATING));
+            }
+
+            // Demo app use user name for token name since it's unique.
+            final String userName = Main.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
             // Final application might use some XML parser rather that simple format, to ensure data integrity.
             final String body = String.format(CFG_TUTO_XML_SIGN, getValidString(amount), getValidString(beneficiary), userName, otp.toString());
 
             // We don't need otp any more. Wipe it.
             otp.wipe();
 
-            // Post message and wait for results in mProcessResponse.
-            doPostMessage(Configuration.CFG_TUTO_URL_SIGN, "text/xml", authHeaders(), body, mProcessResponse);
+            // Post message and wait for results.
+            doPostMessage(Configuration.CFG_TUTO_URL_SIGN, "text/xml", authHeaders(), body, delegate);
         } else if (currentListener != null) {
             currentListener.showErrorIfExists(error);
         }
@@ -157,9 +169,6 @@ public class HttpManager {
         // Wipe all sensitive data.
         if (authInput != null) {
             authInput.wipe();
-        }
-        if (serverChallenge != null) {
-            serverChallenge.wipe();
         }
     }
 
@@ -167,45 +176,10 @@ public class HttpManager {
 
     //region Private Helpers
 
-    /**
-     * Returns an empty string on null string passed.
-     * @param string String to validate.
-     * @return Empty string if null string was passed as argument, else the original string is returned.
-     */
     private static String getValidString(final String string) {
         return string == null ? "" : string;
     }
 
-    /**
-     * Post message handler implementation.
-     */
-    final private Protocols.PostMessageInterface mProcessResponse = new Protocols.PostMessageInterface() {
-        @Override
-        public void onPostFinished(final String response, final String error) {
-            // Check if UI is still active.
-            final MainActivity currentListener = CMain.sharedInstance().getCurrentListener();
-            if (currentListener == null) {
-                return;
-            }
-
-            // Hide loading bar and display results.
-            currentListener.loadingIndicatorHide();
-
-             // Display server response or possible error.
-            if (response != null) {
-                currentListener.showMessage(null, response);
-            } else {
-                currentListener.showErrorIfExists(error);
-            }
-        }
-    };
-
-    /**
-     * Creates the authentication header for the server request.
-     * @return Authentication header
-     */
-    @SuppressWarnings("Basic authentication is used for connecting to tutorial website. "
-                      + "Note that this is only for the purpose of the sample application. ")
     private Map<String, String> authHeaders() {
         final String hash = "Basic " + new String(Base64.encode((Configuration.CFG_TUTO_BASICAUTH_USERNAME + ":" + Configuration.CFG_TUTO_BASICAUTH_PASSWORD).getBytes(), 0));
         final HashMap<String, String> retValue = new HashMap<>();
@@ -213,49 +187,44 @@ public class HttpManager {
         return retValue;
     }
 
-    /**
-     * Creates a new response listener.
-     * @param delegate Delegate.
-     * @return Response listener.
-     */
     private Response.Listener<String> getResponseListener(@Nullable final Protocols.PostMessageInterface delegate) {
         return new Response.Listener<String>() {
             @Override
             public void onResponse(final String response) {
+                // Hide loading
+                final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
+                if (currentListener != null) {
+                    currentListener.loadingIndicatorHide();
+                }
+
                 // Notify listener.
                 if (delegate != null) {
-                    delegate.onPostFinished(response, null);
+                    delegate.onPostFinished(
+                            API_AUTH_RESPONSE_OK.equals(response) ||
+                                    API_SIGN_RESPONSE_OK.equals(response), response);
                 }
             }
         };
     }
 
-    /**
-     * Creates a new error listener.
-     * @param delegate Delegate.
-     * @return Error listener.
-     */
     private Response.ErrorListener getResponseErrorListener(@Nullable final Protocols.PostMessageInterface delegate) {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(final VolleyError error) {
+                // Hide loading
+                final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
+                if (currentListener != null) {
+                    currentListener.loadingIndicatorHide();
+                }
+
                 // Notify listener.
                 if (delegate != null) {
-                    // TODO: Not use toString. Get some description based on error type.
-                    delegate.onPostFinished(null, error.toString());
+                    delegate.onPostFinished(false, error.toString());
                 }
             }
         };
     }
 
-    /**
-     * Performs the post request to the verification server.
-     * @param url URL of the verification server.
-     * @param contentType Content type.
-     * @param headers Headers.
-     * @param body Body.
-     * @param delegate Delegate.
-     */
     private void doPostMessage(@NonNull final String url,
                                @NonNull final String contentType,
                                @Nullable final Map<String, String> headers,

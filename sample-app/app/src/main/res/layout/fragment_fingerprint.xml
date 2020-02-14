@@ -3,15 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/img_gradient_primary">
 
 
     <TextView
         android:id="@+id/label_caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="@dimen/dimensionMarginNormal"
+
         android:text="@string/ui_label_generate_otp_alone"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -22,8 +23,8 @@
         android:id="@+id/label_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_margin="@dimen/dimensionMarginNormal"
+
         android:text="@string/ui_label_verify_finger"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label_caption" />
@@ -32,20 +33,18 @@
         android:id="@+id/image_touch_sensor"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="@dimen/dimensionMarginNormal"
+
         android:contentDescription="@string/ui_label_touch_sensor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label_description"
-        app:srcCompat="@drawable/outline_fingerprint_black_24" />
+        app:srcCompat="@drawable/icon_small_touch_id" />
 
     <TextView
         android:id="@+id/label_touch_sensor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_margin="@dimen/dimensionMarginNormal"
         android:text="@string/ui_label_touch_sensor"
         app:layout_constraintBottom_toBottomOf="@+id/image_touch_sensor"
         app:layout_constraintStart_toEndOf="@+id/image_touch_sensor"
@@ -55,10 +54,7 @@
         android:id="@+id/layout_buttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="@dimen/dimensionMarginNormal"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/layout_attempts"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,16 +63,14 @@
 
         <Button
             android:id="@+id/button_use_pin"
-            style="@style/AppTheme.Button2"
+            style="@style/AppTheme.Button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/ui_button_use_pin" />
 
         <Button
             android:id="@+id/button_cancel"
-            style="@style/AppTheme.Button2"
+            style="@style/AppTheme.Button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/ui_button_cancel" />
     </LinearLayout>
 
@@ -84,9 +78,7 @@
         android:id="@+id/layout_attempts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_margin="@dimen/dimensionMarginNormal"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -98,8 +90,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
+            android:layout_margin="@dimen/dimensionMarginSmall"
             android:text="@string/ui_label_failed_attempts"
-            android:textColor="@color/red"
+            android:textColor="@color/idCloudRedSecondary"
             tools:layout_editor_absoluteX="24dp"
             tools:layout_editor_absoluteY="533dp" />
 
@@ -107,10 +100,10 @@
             android:id="@+id/label_failed_attempts_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_margin="@dimen/dimensionMarginSmall"
             android:layout_weight="0"
             android:text="@android:string/untitled"
-            android:textColor="@color/red"
+            android:textColor="@color/idCloudRedSecondary"
             app:layout_constraintStart_toEndOf="@+id/label_failed_attempts"
             app:layout_constraintTop_toTopOf="@+id/label_failed_attempts" />
     </LinearLayout>

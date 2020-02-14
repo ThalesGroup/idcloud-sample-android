@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.gui.overlays;
@@ -35,15 +36,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.MainActivity;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.idp.mobile.core.util.SecureByteArray;
 import com.google.zxing.Result;
 
 import java.math.BigInteger;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
-
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
 
 /**
  * Simple QR Code reader.
@@ -79,15 +79,6 @@ public class FragmentQRCodeReader extends Fragment implements ZXingScannerView.R
 
     //endregion
 
-    //region QRCodeReaderDelegate
-
-    public void init(final QRCodeReaderDelegate delegate, final int customTag) {
-        mDelegate = delegate;
-        mCustomTag = customTag;
-    }
-
-    //endregion
-
     //region Life Cycle
 
     @Nullable
@@ -97,7 +88,7 @@ public class FragmentQRCodeReader extends Fragment implements ZXingScannerView.R
                              final Bundle savedInstanceState) {
         mScannerView = new ZXingScannerView(getActivity());
 
-        CMain.checkPermissions(getActivity(), true, Manifest.permission.CAMERA);
+        Main.checkPermissions(getActivity(), true, Manifest.permission.CAMERA);
 
         return mScannerView;
     }
@@ -106,7 +97,7 @@ public class FragmentQRCodeReader extends Fragment implements ZXingScannerView.R
     public void onResume() {
         super.onResume();
 
-        if (CMain.checkPermissions(getActivity(), true, Manifest.permission.CAMERA)) {
+        if (Main.checkPermissions(getActivity(), true, Manifest.permission.CAMERA)) {
             mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
             mScannerView.startCamera(); // Start camera on resume
         }
@@ -120,6 +111,15 @@ public class FragmentQRCodeReader extends Fragment implements ZXingScannerView.R
 
     //endregion
 
+    //region QRCodeReaderDelegate
+
+    public void init(final QRCodeReaderDelegate delegate, final int customTag) {
+        mDelegate = delegate;
+        mCustomTag = customTag;
+    }
+
+    //endregion
+
     //region ResultHandler
 
     @Override
@@ -127,13 +127,14 @@ public class FragmentQRCodeReader extends Fragment implements ZXingScannerView.R
 
         // Hide it self. This will also stop tracking after hide.
         // It's important to call before handler, because there might be some error popup etc.
-        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getActivity().getSupportFragmentManager().popBackStack();
+        final MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            mainActivity.hideLastStackFragment();
         }
 
         try {
             // Encrypt data and wipe source.
-            final SecureByteArray qrCode = CMain.secureByteArrayFromBytes(new BigInteger(result.getText(), 16).toByteArray(), true);
+            final SecureByteArray qrCode = Main.sharedInstance().secureByteArrayFromBytes(new BigInteger(result.getText(), 16).toByteArray(), true);
 
             // Notify listener
             if (mDelegate != null) {
@@ -151,4 +152,5 @@ public class FragmentQRCodeReader extends Fragment implements ZXingScannerView.R
     }
 
     //endregion
+
 }

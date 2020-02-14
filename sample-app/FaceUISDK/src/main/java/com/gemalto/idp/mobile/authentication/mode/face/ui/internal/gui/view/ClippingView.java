@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.idp.mobile.authentication.mode.face.ui.internal.gui.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.gemalto.idp.mobile.authentication.mode.face.ui.R;
-
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
 
 /**
  * A view that crop an image circularly to give impression of a circular video display
@@ -120,8 +121,15 @@ public class ClippingView extends View {
 	}
 	
 	private Bitmap getBackgroundBitmap() {
-		Bitmap bmp = BitmapFactory.decodeResource(getContext().getResources(),
-	            R.drawable.background_process);
-		return bmp;
+		final Point size = new Point();
+		((Activity) getContext()).getWindowManager().getDefaultDisplay().getSize(size);
+
+		final Drawable drawable = getContext().getResources().getDrawable(R.drawable.img_gradient_primary);
+		final Bitmap mutableBitmap = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888);
+		final Canvas canvas = new Canvas(mutableBitmap);
+		drawable.setBounds(0, 0, size.x, size.y);
+		drawable.draw(canvas);
+
+		return mutableBitmap;
 	}
 }

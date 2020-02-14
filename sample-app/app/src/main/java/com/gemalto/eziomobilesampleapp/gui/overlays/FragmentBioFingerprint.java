@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.gui.overlays;
@@ -38,8 +39,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gemalto.eziomobilesampleapp.R;
-
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
 
 /**
  * Fragment used for bio fingerprint input. It allow user to
@@ -73,11 +72,6 @@ public final class FragmentBioFingerprint extends DialogFragment {
 
     //region Life Cycle
 
-    /**
-     * Creates a new {@code FragmentBioFingerprint}.
-     * @param delegate Delegate.
-     * @return {@code FragmentBioFingerprint}.
-     */
     public static FragmentBioFingerprint create(final BioFpFragmentCallback delegate) {
         final FragmentBioFingerprint retValue = new FragmentBioFingerprint();
         retValue.mDelegate = delegate;
@@ -102,19 +96,8 @@ public final class FragmentBioFingerprint extends DialogFragment {
 
         final View retValue = inflater.inflate(R.layout.fragment_fingerprint, container, false);
 
-        retValue.findViewById(R.id.button_use_pin).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                onButtonPressedUsePin();
-            }
-        });
-
-        retValue.findViewById(R.id.button_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                onButtonPressedCancel();
-            }
-        });
+        retValue.findViewById(R.id.button_use_pin).setOnClickListener(this::onButtonPressedUsePin);
+        retValue.findViewById(R.id.button_cancel).setOnClickListener(this::onButtonPressedCancel);
 
         retValue.setFocusableInTouchMode(true);
         retValue.requestFocus();
@@ -140,10 +123,7 @@ public final class FragmentBioFingerprint extends DialogFragment {
 
     //region User Interface
 
-    /**
-     * On button pressed listener for user PIN.
-     */
-    private void onButtonPressedUsePin() {
+    private void onButtonPressedUsePin(final View sender) {
         dismiss();
 
         if (mDelegate != null) {
@@ -151,10 +131,7 @@ public final class FragmentBioFingerprint extends DialogFragment {
         }
     }
 
-    /**
-     * On button pressed listener for cancel.
-     */
-    private void onButtonPressedCancel() {
+    private void onButtonPressedCancel(final View sender) {
         dismiss();
 
         if (mDelegate != null) {
@@ -162,9 +139,6 @@ public final class FragmentBioFingerprint extends DialogFragment {
         }
     }
 
-    /**
-     * On button pressed listener for back pressed.
-     */
     private void onButtonPressedBack() {
         dismiss();
 
@@ -175,10 +149,8 @@ public final class FragmentBioFingerprint extends DialogFragment {
 
     //endregion
 
-    /**
-     * Sets the failure.
-     * @param failures
-     */
+    //region Private Helpers
+
     private void setFailures(final int failures) {
         mFailures = failures;
 
@@ -190,17 +162,18 @@ public final class FragmentBioFingerprint extends DialogFragment {
         }
     }
 
-    /**
-     * Increments the failures.
-     */
+    //endregion
+
+    //region Public API
+
     public void onFailure() {
         setFailures(mFailures + 1);
     }
 
-    /**
-     * Resets the failures.
-     */
     public void onSuccess() {
         setFailures(0);
     }
+
+    //endregion
+
 }

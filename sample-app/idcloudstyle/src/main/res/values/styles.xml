@@ -1,0 +1,72 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@string/default_font</item>
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+    </style>
+
+    <!-- Main Button Style -->
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">@drawable/btn_aplication_main</item>
+        <item name="android:layout_margin">@dimen/dimensionButtonMargin</item>
+        <item name="android:layout_width">@dimen/dimensionButtonWidth</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:clickable">true</item>
+        <item name="android:padding">@dimen/dimensionButtonPadding</item>
+        <item name="android:textColor">@color/colorButtonText</item>
+<!--        <item name="android:shadowColor">@color/colorButtonTextShadow</item>-->
+        <item name="android:gravity">center</item>
+<!--        <item name="android:shadowDx">4</item>-->
+<!--        <item name="android:shadowDy">4</item>-->
+        <item name="android:textSize">@dimen/dimensionButtonTextSize</item>
+        <item name="android:lines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@string/default_font</item>
+        <item name="android:drawableTint">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Button.Positive" parent="AppTheme.Button">
+        <item name="android:background">@drawable/btn_positive</item>
+        <item name="android:textColor">@color/colorButtonPositiveNegativeText</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTheme.Button.Negative" parent="AppTheme.Button">
+        <item name="android:background">@drawable/btn_negative</item>
+        <item name="android:textColor">@color/colorButtonPositiveNegativeText</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!--Main Editboxes-->
+    <style name="AppTheme.EditInverted" parent="AppTheme.Button">
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:background">@drawable/edit_application_main</item>
+    </style>
+
+    <!--Drawer Menu-->
+    <style name="AppTheme.ToolbarIcon" parent="AppTheme">
+        <item name="colorControlNormal">@color/colorTextPrimary</item>
+    </style>
+
+    <style name="AppTheme.DrawerSwitch" parent="AppTheme">
+        <!-- Active thumb color & Active track color -->
+        <item name="colorControlActivated">@color/colorSwitchActivated</item>
+        <!-- Inactive thumb color -->
+        <item name="colorSwitchThumbNormal">@color/colorSwitchNormal</item>
+        <!-- Inactive track color -->
+        <item name="android:colorForeground">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.Dialog" parent="Base.Theme.AppCompat.Light.Dialog">
+        <item name="android:textColor">@color/colorTextSecondary</item>
+        <item name="android:textColorPrimary">@color/darkGray</item>
+        <item name="android:colorAccent">@color/colorTextSecondary</item>
+    </style>
+
+</resources>

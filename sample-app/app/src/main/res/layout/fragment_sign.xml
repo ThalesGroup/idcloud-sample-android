@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/img_gradient_primary">
+
+    <!--Layout for top section. Logo etc...-->
+    <include layout="@layout/view_user_domain"
+        android:layout_weight="@integer/topPartAspect"
+        android:layout_height="0dp"
+        android:layout_width="match_parent" />
+
+    <!--Layout for the rest of the screen without logo-->
+    <LinearLayout
+        android:id="@+id/layout_buttons"
+        android:layout_weight="@integer/bottomPartAspect"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/dimensionMarginNormal"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/text_amount"
+            style="@style/AppTheme.EditInverted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimensionMarginSmall"
+            android:drawableEnd="@drawable/textbox_icon_euro"
+            android:ems="16"
+            android:gravity="start"
+            android:inputType="textPersonName"
+            android:text="@string/ui_label_amount_sign"
+            tools:layout_editor_absoluteY="219dp"/>
+
+        <EditText
+            android:id="@+id/text_beneficiary"
+            style="@style/AppTheme.EditInverted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimensionMarginSmall"
+            android:drawableEnd="@drawable/textbox_icon_person"
+            android:ems="16"
+            android:gravity="start"
+            android:inputType="textPersonName"
+            android:text="@string/ui_label_acme_sign" />
+
+        <Button
+            android:id="@+id/button_enroll"
+            android:layout_margin="@dimen/dimensionMarginBig"
+            android:text="@string/ui_button_proceed"
+            android:drawableStart="@drawable/icon_small_play"
+            style="@style/AppTheme.Button"/>
+    </LinearLayout>
+
+    <!--Thales logo-->
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        app:srcCompat="@drawable/img_logo_thales"
+        android:contentDescription="@android:string/untitled" />
+
+
+</LinearLayout>

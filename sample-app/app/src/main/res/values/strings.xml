@@ -13,12 +13,19 @@
 
     // Secure key pad + pin related stuff
 
-    <string name="SECURE_KEY_PAD_OLD_PIN">Old pin</string>
-    <string name="SECURE_KEY_PAD_NEW_PIN">New pin</string>
+    <string name="STRING_PIN_CHANGE_LABEL_ENTERY_PIN">Enter Pin</string>
+    <string name="STRING_PIN_CHANGE_LABEL_FIRST">New Pin</string>
+    <string name="STRING_PIN_CHANGE_LABEL_SECOND">Confirm Pin</string>
+    <string name="STRING_PIN_CHANGE_FAILED_DIFFERENT">Entered passwords are different.</string>
+
     <string name="PIN_CHANGE_CAPTION">Change pin</string>
     <string name="PIN_CHANGE_DESCRIPTION">Pin was changed successfully.</string>
-    <string name="FACE_ID_DESCRIPTION">FaceIdMessage TODO</string>
-    <string name="TOUCH_ID_DESCRIPTION">TouchIdMessage TODO</string>
+    <string name="FACE_ID_DESCRIPTION">FaceIdMessage</string>
+    <string name="TOUCH_ID_DESCRIPTION">TouchIdMessage</string>
+    <string name="PIN_CHANGE_FAILED">PIN change failed</string>
+    <string name="PIN_CHANGE_NO_MATCH">PIN\'s do not match</string>
+    <string name="KEYPAD_UNDERSCORE">_</string>
+    <string name="KEYPAD_CHAR_DOT">●</string>
 
     // Push
 
@@ -28,7 +35,8 @@
     <string name="PUSH_SENT">Request was successfully sent.</string>
     <string name="PUSH_STATUS_REGISTERED">Ready to receive notification:</string>
     <string name="PUSH_STATUS_PENDING">Registration in progress:</string>
-    <string name="PUSH_PROCESSING">Processing…</string>
+    <string name="PUSH_PROCESSING">Fetching</string>
+    <string name="PUSH_NOTHING_TO_FETCH">Nothing to fetch</string>
     <string name="PUSH_FCM_CHANNEL_NAME">MSP Frame Channel</string>
     <string name="PUSH_FCM_CHANNEL_DESCRIPTION">MSP Frame Communication Channel</string>
 
@@ -46,12 +54,15 @@
 
     // Auth mode options
 
-    <string name="AUTH_MODE_TOUCH_ID_ENABLE">Enable TouchID</string>
-    <string name="AUTH_MODE_TOUCH_ID_DISABLE">Disable TouchID</string>
-    <string name="AUTH_MODE_FACE_ID_ENABLE">Enable FaceID</string>
-    <string name="AUTH_MODE_FACE_ID_DISABLE">Disable FaceID</string>
-    <string name="AUTH_MODE_GEM_FACE_ID_ENABLE">Enable Gemalto Face ID</string>
-    <string name="AUTH_MODE_GEM_FACE_ID_DISABLE">Disable Gemalto Face ID</string>
+    <string name="AUTH_MODE_TOUCH_ID_ENABLED">TouchId successfully enabled</string>
+    <string name="AUTH_MODE_FACE_ID_ENABLED">FaceId successfully enabled</string>
+
+    <string name="AUTH_MODE_TOUCH_ID_ENABLE">Enable TouchId</string>
+    <string name="AUTH_MODE_TOUCH_ID_DISABLE">Disable TouchId</string>
+    <string name="AUTH_MODE_FACE_ID_ENABLE">Enable FaceId</string>
+    <string name="AUTH_MODE_FACE_ID_DISABLE">Disable FaceId</string>
+    <string name="AUTH_MODE_GEM_FACE_ID_ENABLE">Enable Gemalto Face Id</string>
+    <string name="AUTH_MODE_GEM_FACE_ID_DISABLE">Disable Gemalto Face Id</string>
 
     // Gemalto Face Id
 
@@ -67,17 +78,20 @@
 
     // Loading bar indicator
 
-    <string name="LOADING_MESSAGE_SENDING">Sending...</string>
+    <string name="LOADING_MESSAGE_SENDING">Sending…</string>
+    <string name="LOADING_MESSAGE_VALIDATING">Verifying</string>
     <string name="LOADING_MESSAGE_SCANNING">Scanning</string>
     <string name="LOADING_MESSAGE_ENROLLING">Enrolling</string>
     <string name="LOADING_MESSAGE_REMOVING">Removing</string>
     <string name="LOADING_MESSAGE_PROCESSING">Processing</string>
     <string name="LOADING_MESSAGE_INIT">Initialising</string>
+    <string name="LOADING_MESSAGE_VERIFYING_PIN">Verifying PIN</string>
 
 
     // OTP
 
     <string name="OTP_VALUE_CAPTION">OTP</string>
+    <string name="ONE_TIME_PASSCODE_VALUE_CAPTION">Authentication</string>
     <string name="OTP_VALUE_DESCRIPTION_VALID">\n%s\n\nOTP is valid for next %ds.</string>
 
     // Designer
@@ -103,9 +117,14 @@
     <string name="ui_label_msp_frame_scanner">MSP Frame Scanner</string>
 
 
-    <string name="ui_button_scan_and_enroll">Scan and enroll</string>
+    <string name="ui_button_scan_and_enroll">Use QR code</string>
     <string name="ui_button_enroll">Enroll</string>
     <string name="ui_button_otp_pin">Pin</string>
+    <string name="ui_button_otp_auth">Authentication</string>
+    <string name="ui_button_otp_verify">Verify Online</string>
+    <string name="ui_button_otp_sign">Sign transaction</string>
+    <string name="ui_button_otp_pull">Pull message</string>
+    <string name="ui_button_otp_open">Open message</string>
     <string name="ui_button_otp_face_id">Face Id</string>
     <string name="ui_button_otp_touch_id">Touch Id</string>
     <string name="ui_button_change_pin">Change PIN</string>
@@ -121,11 +140,15 @@
     <string name="ui_label_amount">Amount (in USD):</string>
     <string name="ui_label_beneficiary">Beneficiary:</string>
     <string name="ui_label_failed_attempts">Failed attempts:</string>
+    <string name="ui_button_proceed">Proceed</string>
+    <string name="ui_label_acme_sign">ACME Inc.</string>
+    <string name="ui_label_amount_sign">15</string>
 
     // Server Messages
     <string name="message_subject_authentication">Please authenticate to login to the tutorial site.</string>
     <string name="message_subject_transaction">Please approve the transaction of $%amount to %beneficiary</string>
     <string name="message_not_found">Missing translation.</string>
+    <string name="message_not_you">Not Initiated by you?</string>
 
     // Missing permissions
     <string name="ui_label_permissions_caption">Missing permission</string>
@@ -133,5 +156,39 @@
     <string name="ui_button_permissions">Ask for permissions</string>
 
     <string name="default_font" translatable="false">sans-serif-light</string>
+
+    <!-- Font definitions for TypeFaceFactory -->
+    <string name="gto_emt_font_regular" translatable="false">fonts/Roboto-Regular.ttf</string>
+    <string name="gto_emt_font_light" translatable="false">fonts/Roboto-Light.ttf</string>
+    <string name="gto_emt_font_medium" translatable="false">fonts/Roboto-Medium.ttf</string>
+    <string name="gto_emt_font_bold" translatable="false">fonts/Roboto-Bold.ttf</string>
+
+    <string name="navigation_drawer_open">open</string>
+    <string name="navigation_drawer_close">close</string>
+    <string name="navigation_drawer_privacy">Privacy Policy</string>
+
+    // side menu
+    <string name="face_id">Face ID</string>
+    <string name="touch_id">Touch ID</string>
+    <string name="change_pin">Change Pin</string>
+    <string name="verify_pin_network_issue">Failed to verify pin. Make sure your internet connection is working.</string>
+
+    <string name="delete_token">Delete Token</string>
+
+    <!-- Dialog -->
+    <string name="delete_token_title">Delete token</string>
+    <string name="delete_token_message">Do you want to remove provisioned token?</string>
+    <string name="delete_token_oob_error">Failed to unregister push notification. Make sure your internet connection is working.</string>
+    <string name="button_push_reject">Reject</string>
+    <string name="button_push_approve">Approve</string>
+
+    <!--Pin Rules-->
+    <string name="pin_rule_error_identical">Pin rule violation.\nYou cannot reuse the last PIN.</string>
+    <string name="pin_rule_error_length">Pin rule violation.\nA PIN rule that requires a PIN\'s length to be within a specific range.</string>
+    <string name="pin_rule_error_palindrome">Pin rule violation.\nThe PIN cannot be a palindrome, like 12321.</string>
+    <string name="pin_rule_error_series">Pin rule violation.\nThe PIN cannot be a serie, like 1234, 4321.</string>
+    <string name="pin_rule_error_uniform">Pin rule violation.\nThe PIN cannot be uniform, like 11111.</string>
+    <string name="pin_rule_error_unknown">Pin rule violation.\nThe PIN did not verify all the PIN rules.</string>
+
 
 </resources>

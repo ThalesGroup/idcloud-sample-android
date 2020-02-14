@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers;
@@ -34,8 +35,6 @@ import android.support.annotation.Nullable;
 import com.gemalto.idp.mobile.authentication.AuthInput;
 import com.gemalto.idp.mobile.authentication.mode.pin.PinAuthInput;
 import com.gemalto.idp.mobile.core.util.SecureString;
-
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
 
 /**
  * All app protocols, anonymous functions etc.
@@ -112,13 +111,12 @@ public class Protocols {
          * @param success Whenever was operation successful.
          * @param error Description of possible error. Return null in case of success.
          */
-        void onFinished(final boolean success,
-                        @Nullable final String error);
+        void onFinished(final boolean success, @Nullable final String error);
 
         class Sync implements GenericHandler {
             private final GenericHandler mCallback;
 
-            Sync(final GenericHandler callback) {
+            public Sync(final GenericHandler callback) {
                 mCallback = callback;
             }
 
@@ -178,7 +176,7 @@ public class Protocols {
     }
 
     public interface PostMessageInterface {
-        void onPostFinished(final String response, final String error);
+        void onPostFinished(final boolean success, final String message);
     }
 
 }

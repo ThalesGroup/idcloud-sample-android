@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers.app.storage;
@@ -31,8 +32,6 @@ import android.content.Context;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.core.ApplicationContextHolder;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
 /**
  * SharedPreferences wrapper to unify API with secure storage.
  */
@@ -40,7 +39,7 @@ public class SharedPreferences implements Protocols.StorageProtocol {
 
     //region Defines
 
-    private static final String C_SAMPLE_STORAGE = "SampleStorage";
+    private static final String SAMPLE_STORAGE = "SampleStorage";
 
     private final android.content.SharedPreferences mManager;
 
@@ -48,8 +47,11 @@ public class SharedPreferences implements Protocols.StorageProtocol {
 
     //region Life Cycle
 
+    /**
+     * Creates a new {@code SharedPreferences} instance.
+     */
     public SharedPreferences() {
-        mManager = ApplicationContextHolder.getContext().getSharedPreferences(C_SAMPLE_STORAGE, Context.MODE_PRIVATE);
+        mManager = ApplicationContextHolder.getContext().getSharedPreferences(SAMPLE_STORAGE, Context.MODE_PRIVATE);
     }
 
     //endregion

@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers.ezio;
@@ -30,44 +31,22 @@ import android.support.annotation.NonNull;
 
 import java.io.UnsupportedEncodingException;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
-/**
- * Key-value data model.
- */
 public class KeyValue {
     private final String mKey, mValue;
 
-    /**
-     * Creates a new {@code KeyValue} object.
-     * @param key Key.
-     * @param value Value.
-     */
     public KeyValue(@NonNull final String key, @NonNull final String value) {
         mKey = key;
         mValue = value;
     }
 
-    /**
-     * Gets the key.
-     * @return Key.
-     */
     public String getKey() {
         return mKey;
     }
 
-    /**
-     * Gets the value.
-     * @return Value.
-     */
     public String getValue() {
         return mValue;
     }
 
-    /**
-     * Gets the Key-value as UTF8 encoded.
-     * @return Key:Value string as UTF8 encoded.
-     */
     public byte[] getKeyValueUTF8() {
         try {
             final String keyValue = mKey + ":" + mValue;

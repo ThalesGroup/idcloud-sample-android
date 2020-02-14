@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers.ezio.storage;
 
 import android.support.annotation.NonNull;
 
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.core.devicefingerprint.DeviceFingerprintException;
 import com.gemalto.idp.mobile.core.passwordmanager.PasswordManagerException;
@@ -40,8 +41,6 @@ import com.gemalto.idp.mobile.securestorage.SecureStorageModule;
 
 import java.nio.ByteBuffer;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
 /**
  * SecureStorage example usage.
  */
@@ -49,7 +48,7 @@ public class SecureStorage implements Protocols.StorageProtocol {
 
     //region Defines
 
-    private static final String C_SAMPLE_STORAGE = "SampleStorage";
+    private static final String SAMPLE_STORAGE = "SampleStorage";
 
     private final SecureStorageManager mManager;
 
@@ -67,13 +66,13 @@ public class SecureStorage implements Protocols.StorageProtocol {
 
     @Override
     public boolean writeString(final String value, final String key) {
-        return writeValue(key, CMain.secureStringFromString(value));
+        return writeValue(key, Main.sharedInstance().secureStringFromString(value));
     }
 
     @Override
     public boolean writeInteger(final int value, final String key) {
         final byte[] bytes = ByteBuffer.allocate(4).putInt(value).array();
-        return writeValue(key, CMain.secureByteArrayFromBytes(bytes, false));
+        return writeValue(key, Main.sharedInstance().secureByteArrayFromBytes(bytes, false));
     }
 
     @Override
@@ -97,26 +96,32 @@ public class SecureStorage implements Protocols.StorageProtocol {
 
     //region Private Helpers
 
+    /**
+     * Reads a value.
+     *
+     * @param key Key.
+     *
+     * @return Read value, or {@code null} in not present.
+     */
     private SecureByteArray readValue(@NonNull final String key) {
         SecureByteArray retValue = null;
         PropertyStorage storage = null;
         try {
             // Try to get common storage.
-            storage = mManager.getPropertyStorage(C_SAMPLE_STORAGE);
+            storage = mManager.getPropertyStorage(SAMPLE_STORAGE);
             // Try to open given storage.
             storage.open();
             // Try to read property for given key.
             retValue = storage.readProperty(key.getBytes());
         } catch (PasswordManagerException | DeviceFingerprintException | IdpSecureStorageException e) {
-            // Show generic error to end user and try again.
-            // IdpSecureStorageException is thrown in case key is null.
+            // Ignore
         } finally {
             // In all cases try to close storage.
             if (storage != null) {
                 try {
                     storage.close();
                 } catch (IdpSecureStorageException e) {
-                    // Can't do anything on this place, we have to ignore it.
+                    // Ignore
                 }
             }
         }
@@ -124,12 +129,20 @@ public class SecureStorage implements Protocols.StorageProtocol {
         return retValue;
     }
 
+    /**
+     * Writes a value.
+     *
+     * @param key Key.
+     * @param value Value.
+     *
+     * @return
+     */
     private boolean writeValue(@NonNull final String key, final SecureByteArray value) {
         boolean retValue = false;
         PropertyStorage storage = null;
         try {
             // Try to get common storage.
-            storage = mManager.getPropertyStorage(C_SAMPLE_STORAGE);
+            storage = mManager.getPropertyStorage(SAMPLE_STORAGE);
             // Try to open given storage.
             storage.open();
             // Try to write property for given key.
@@ -141,15 +154,14 @@ public class SecureStorage implements Protocols.StorageProtocol {
 
             retValue = true;
         } catch (PasswordManagerException | DeviceFingerprintException | IdpSecureStorageException e) {
-            // Show generic error to end user and try again.
-            // IdpSecureStorageException is thrown in case key is null.
+            // Ignore
         } finally {
             // In all cases try to close storage.
             if (storage != null) {
                 try {
                     storage.close();
                 } catch (IdpSecureStorageException e) {
-                    // Can't do anything on this place, we have to ignore it.
+                    // Ignore
                 }
             }
         }

@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp;
@@ -35,19 +36,14 @@ import com.gemalto.idp.mobile.oob.OobConfiguration;
 import com.gemalto.idp.mobile.otp.OtpConfiguration;
 import com.gemalto.idp.mobile.otp.devicefingerprint.DeviceFingerprintTokenPolicy;
 
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
-/**
- * Class containing all values needed to properly configure Ezio SDK.
- */
 public class Configuration {
 
     //region Common SDK
 
-    public static final byte[] CUSTOM_FINGERPRINT_DATA = "CUSTOM_FINGERPRINT_DATA".getBytes(StandardCharsets.UTF_8);
+    private static final String CUSTOM_FINGERPRINT_DATA = "";
 
     /**
      Activation code is used to enable OOB features.
@@ -55,7 +51,17 @@ public class Configuration {
      */
     public static final byte[] CFG_SDK_ACTIVATION_CODE = new byte[]{
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            // ...
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
     };
 
@@ -67,14 +73,19 @@ public class Configuration {
     /**
      Optional value with custom finger print data. Used as input of encryption calculation
      */
-    public static final DeviceFingerprintSource CFG_SDK_DEVICE_FINGERPRINT_SOURCE =
-            new DeviceFingerprintSource(CUSTOM_FINGERPRINT_DATA, DeviceFingerprintSource.Type.SOFT);
+    public static final DeviceFingerprintSource CFG_SDK_DEVICE_FINGERPRINT_SOURCE = new DeviceFingerprintSource(
+            "".getBytes(),
+            DeviceFingerprintSource.Type.SOFT);
 
     /**
      For debug purposes we can weaken TLS configuration.
      In release mode all values must be set to NO. Otherwise it will cause runtime exception.
      */
     public static final TlsConfiguration CFG_SDK_TLS_CONFIGURATION = new TlsConfiguration();
+//        new TlsConfiguration(
+//                TlsConfiguration.Permit.SELF_SIGNED_CERTIFICATES,
+//                TlsConfiguration.Permit.HOSTNAME_MISMATCH,
+//                TlsConfiguration.Permit.INSECURE_CONNECTIONS);
 
     //endregion
 
@@ -87,41 +98,66 @@ public class Configuration {
     public static final OtpConfiguration.TokenRootPolicy CFG_OTP_ROOT_POLICY = OtpConfiguration.TokenRootPolicy.IGNORE;
 
     /**
-     Replace this byte array with your own EPS key modulus..
-     The EPS' RSA modulus. This is specific to the configuration of the bank's system. Therefore other values should be used here.
+     Replace this byte array with your own EPS key modulus unless you are using the EPS 2.X default key pair.
+     The EPS' RSA modulus. This is specific to the configuration of the bank's system.
+     Therefore other values should be used here.
      */
     public static final byte[] CFG_OTP_RSA_KEY_MODULUS = new byte[]{
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            // ...
-            (byte) 0x00, (byte) 0x00
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
     };
 
     /**
      Replace this byte array with your own EPS key exponent.
-     The EPS' RSA exponent. This is specific to the configuration of the bank's system. Therefore other values should be used here.
+     The EPS' RSA exponent. This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
     public static final byte[] CFG_OTP_RSA_KEY_EXPONENT = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00};
 
     /**
      Replace this URL with your EPS URL.
      */
-    public static final String CFG_OTP_PROVISION_URL = "OTP_PROVISION_URL";
+    public static final String CFG_OTP_PROVISION_URL = "";
 
     /**
      Replace this string with your own EPS key ID.
      This is specific to the configuration of the bank's system. Therefore other values should be used here.
      */
-    public static final String CFG_OTP_RSA_KEY_ID = "RSA_KEY_ID";
-
-    /**
-     The custom fingerprint data that seals all the token credentials in this example.
-     */
-    public static final DeviceFingerprintTokenPolicy CFG_OTP_DEVICE_FINGERPRINT_SOURCE = new DeviceFingerprintTokenPolicy(true, CFG_SDK_DEVICE_FINGERPRINT_SOURCE);
+    public static final String CFG_OTP_RSA_KEY_ID = "";
 
     /**
      Configuration of example OCRA suite used in this demo.
      */
-    public static final String CFG_OTP_OCRA_SUITE = "OTP_OCRA_SUITE";
+    public static final String CFG_OTP_OCRA_SUITE = "";
+
+    /**
+     * OTP Value lifespan used for graphical representation.
+     */
+    public static final int CFG_OTP_LIFESPAN = 30;
+
 
     //endregion
 
@@ -138,45 +174,69 @@ public class Configuration {
      This is specific to the configuration of the bank's system. Therefore other values should be used here.
      */
     public static final byte[] CFG_OOB_RSA_KEY_MODULUS = new byte[]{
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            // ...
-            (byte) 0x00, (byte) 0x0b};
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
+    };
 
     /**
      Replace this byte array with your own OOB key exponent.
-     This is specific to the configuration of the bank's system. Therefore other values should be used here.
+     This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
     public static final byte[] CFG_OOB_RSA_KEY_EXPONENT = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00};
 
     /**
      Replace this URL with your OOB server URL.
-     This is specific to the configuration of the bank's system. Therefore other values should be used here.
+     This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
-    public static final String CFG_OOB_URL = "OOB_URL";
+    public static final String CFG_OOB_URL = "";
 
     /**
      Replace this domain with your OOB server domain.
-     This is specific to the configuration of the bank's system. Therefore other values should be used here.
+     This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
-    public static final String CFG_OOB_DOMAIN = "OOB_DOMAIN";
+    public static final String CFG_OOB_DOMAIN = "";
 
     /**
      Replace this app id with your OOB server app id.
-     This is specific to the configuration of the bank's system. Therefore other values should be used here.
+     This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
-    public static final String CFG_OOB_APP_ID = "0";
+    public static final String CFG_OOB_APP_ID = "";
 
     /**
      Replace this push channel with your OOB server push channel.
-     This is specific to the configuration of the bank's system. Therefore other values should be used here.
+     This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
-    public static final String CFG_OOB_CHANNEL = "FCM"; // FCM
+    public static final String CFG_OOB_CHANNEL = ""; // FCM
 
     /**
      Replace this provider id with your OOB server provider id.
-     This is specific to the configuration of the bank's system. Therefore other values should be used here.
+     This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
-    public static final String CFG_OOB_PROVIDER_ID = "0";
+    public static final String CFG_OOB_PROVIDER_ID = "";
 
     //endregion
 
@@ -185,12 +245,12 @@ public class Configuration {
     /**
      Use in order to activate Gemalto Face ID support.
      */
-    public static final String CFG_FACE_ID_PRODUCT_KEY = "FACE_ID_PRODUCT_KEY";
+    public static final String CFG_FACE_ID_PRODUCT_KEY = "";
 
     /**
      Use in order to activate Gemalto Face ID support.
      */
-    public static final String CFG_FACE_ID_SERVER_URL = "FACE_ID_SERVER_URL";
+    public static final String CFG_FACE_ID_SERVER_URL = "";
 
     //endregion
 
@@ -214,7 +274,7 @@ public class Configuration {
      This value is optional. In case that URL is not null,
      it will display privacy policy button on settings page.
      */
-    public static final Uri CFG_PRIVACY_POLICY_URL = Uri.parse("PRIVACY_POLICY_URL");
+    public static final Uri CFG_PRIVACY_POLICY_URL = Uri.parse("");
 
     //endregion
 
@@ -223,28 +283,42 @@ public class Configuration {
     /**
      * Tuto page does require authentication.
      */
-    public static final String CFG_TUTO_BASICAUTH_USERNAME = "BASICAUTH_USERNAME";
+    public static final String CFG_TUTO_BASICAUTH_USERNAME = "";
 
     /**
      * Tuto page does require authentication.
      */
-    public static final String CFG_TUTO_BASICAUTH_PASSWORD = "BASICAUTH_PASSWORD";
+    public static final String CFG_TUTO_BASICAUTH_PASSWORD = "";
 
     /**
-     * Base tuto page URL. Used for In Band cases.
+     * Base totu page URL. Used for In Band cases.
      */
-    public static final String CFG_TUTO_URL_ROOT = "TUTO_URL_ROOT";
+    public static final String CFG_TUTO_URL_ROOT = "";
 
     /**
      *  Auth API url used for In Band cases.
      */
-    public static final String CFG_TUTO_URL_AUTH = "TUTO_URL_AUTH";
+    public static final String CFG_TUTO_URL_AUTH = CFG_TUTO_URL_ROOT + "";
 
     /**
      * Transaction sign API url used for In Band cases.
      */
-    public static final String CFG_TUTO_URL_SIGN = "TUTO_URL_SIGN";
+    public static final String CFG_TUTO_URL_SIGN = CFG_TUTO_URL_ROOT + "";
 
     //endregion
+
+    /**
+     * Gets the custom fingerprint data.
+     *
+     * @return Custom fingerprint data.
+     */
+    public static byte[] getCustomFingerprintData() {
+        try {
+            return CUSTOM_FINGERPRINT_DATA.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // This should not happen.
+            throw new IllegalStateException(e);
+        }
+    }
 
 }

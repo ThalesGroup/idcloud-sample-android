@@ -1,0 +1,33 @@
+<resources>
+
+    <!--All main button dimensions-->
+    <dimen name="dimensionButtonBackgroundStroke">0.5dp</dimen>
+    <dimen name="dimensionButtonBackgroundCornerRadius">12dp</dimen>
+    <dimen name="dimensionButtonBackgroundPadding">1dp</dimen>
+    <dimen name="dimensionButtonPadding">12dp</dimen>
+    <dimen name="dimensionButtonTextSize">15dp</dimen>
+    <dimen name="dimensionButtonWidth">220dp</dimen>
+    <dimen name="dimensionButtonMargin">8dp</dimen>
+
+    <!--All text sizes-->
+    <dimen name="dimensionTextSizeHeader">32dp</dimen>
+    <dimen name="dimensionTextSizeHeaderSecondary">22dp</dimen>
+    <dimen name="dimensionTextSizeNormal">16dp</dimen>
+
+    <!--Generic Offsets-->
+    <dimen name="dimensionMarginBig">32dp</dimen>
+    <dimen name="dimensionMarginNormal">16dp</dimen>
+    <dimen name="dimensionMarginSmall">8dp</dimen>
+    <dimen name="dimensionMarginMinimal">4dp</dimen>
+
+    <!--Secure Keypad Dynamic Size-->
+    <dimen name="dimensionKeypadDynSizeCharMin">10sp</dimen>
+    <dimen name="dimensionKeypadDynSizeCharMax">30sp</dimen>
+
+    <dimen name="dimensionKeypadDynSizeCaptionMin">30sp</dimen>
+    <dimen name="dimensionKeypadDynSizeCaptionMax">45sp</dimen>
+
+
+    <dimen name="dimensionTopPartMargin">100dp</dimen>
+
+</resources>

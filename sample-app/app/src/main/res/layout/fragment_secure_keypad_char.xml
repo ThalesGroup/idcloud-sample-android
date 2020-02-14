@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/char_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/dimensionMarginSmall"
+        android:text="@string/KEYPAD_CHAR_DOT"
+        android:textColor="@color/colorTextPrimary"
+        android:textSize="50sp"
+        android:gravity="center"
+        app:autoSizeMaxTextSize="@dimen/dimensionKeypadDynSizeCharMax"
+        app:autoSizeMinTextSize="@dimen/dimensionKeypadDynSizeCharMin"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
+        android:layout_weight="1"/>
+
+    <View
+        android:id="@+id/char_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="@dimen/dimensionMarginMinimal"
+        android:layout_marginRight="@dimen/dimensionMarginMinimal"
+        android:background="@color/colorPrimary"/>
+
+</LinearLayout>

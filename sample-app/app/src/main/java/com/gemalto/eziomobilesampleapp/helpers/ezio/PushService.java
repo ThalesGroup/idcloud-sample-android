@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
+
 package com.gemalto.eziomobilesampleapp.helpers.ezio;
 
 import android.app.Activity;
@@ -39,20 +41,19 @@ import android.support.v4.app.NotificationCompat;
 import com.gemalto.eziomobilesampleapp.EzioSampleApp;
 import com.gemalto.eziomobilesampleapp.MainActivity;
 import com.gemalto.eziomobilesampleapp.R;
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
 
 /**
  * Handle of incoming push notifications and token changes.
  */
 public class PushService extends FirebaseMessagingService {
 
-    private static final String C_DATA_KEY_MESSAGE = "message";
+    private static final String DATA_KEY_MESSAGE = "message";
 
     //region FirebaseMessagingService
 
@@ -66,7 +67,7 @@ public class PushService extends FirebaseMessagingService {
         final Activity currentActivity = ((EzioSampleApp) getApplicationContext()).getCurrentActivity();
         if (currentActivity != null) {
             // App is in foreground. Simple process message.
-            CMain.sharedInstance().getManagerPush().processIncommingPush(remoteMessage.getData());
+            Main.sharedInstance().getManagerPush().processIncomingPush(remoteMessage.getData());
         } else {
             sendNotification(remoteMessage.getData());
         }
@@ -74,17 +75,13 @@ public class PushService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(final String token) {
-        CMain.sharedInstance().getManagerPush().registerToken(token);
+        Main.sharedInstance().getManagerPush().registerToken(token);
     }
 
     //endregion
 
     //region Private Helpers
 
-    /**
-     * Sends a notification.
-     * @param data Notificatin data.
-     */
     private void sendNotification(final Map<String, String> data) {
 
         // First try to get notification manager.
@@ -103,7 +100,7 @@ public class PushService extends FirebaseMessagingService {
                 notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         final String channelId = getString(R.string.default_notification_channel_id);
-        final String message = data.containsKey(C_DATA_KEY_MESSAGE) ? data.get(C_DATA_KEY_MESSAGE) : getString(R.string.PUSH_APPROVE_QUESTION);
+        final String message = data.containsKey(DATA_KEY_MESSAGE) ? data.get(DATA_KEY_MESSAGE) : getString(R.string.PUSH_APPROVE_QUESTION);
 
         // New android does require channel.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

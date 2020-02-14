@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.gui;
@@ -36,24 +37,30 @@ import android.widget.Button;
 
 import com.gemalto.eziomobilesampleapp.R;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
-public class FragmentMissingPermissions extends MainFragment {
+/**
+ * Fragment to request mandatory runtime permissions.
+ */
+public class FragmentMissingPermissions extends AbstractMainFragment {
 
     //region Defines
 
-    public static final int FRAGMENT_CUSTOM_ID = -1;
+    private Button mButtonPermissions;
 
     //endregion
 
-    //region Override
+    //region Life Cycle
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              @Nullable final ViewGroup container,
                              @Nullable final Bundle savedInstanceState) {
-        return initGui(inflater, R.layout.fragment_missing_permissions);
+        final View retValue = inflater.inflate(R.layout.fragment_missing_permissions, null);
+
+        mButtonPermissions = retValue.findViewById(R.id.permissions_button);
+        mButtonPermissions.setOnClickListener(this::onButtonPressedPermissions);
+
+        return retValue;
     }
 
     //endregion
@@ -64,29 +71,23 @@ public class FragmentMissingPermissions extends MainFragment {
      * {@inheritDoc}
      */
     @Override
-    protected View initGui(final LayoutInflater inflater, final int fragmentId) {
-        final View retValue = super.initGui(inflater, fragmentId);
+    public void reloadGUI() {
+        // No matter what was set. If there is a loading indicator, we should disable everything.
+        if (getMainActivity().isOverlayViewVisible()) {
+            disableGUI();
+        } else {
+            mButtonPermissions.setEnabled(true);
+        }
 
-        final Button buttonPermissions = retValue.findViewById(R.id.permissions_button);
-        buttonPermissions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                onButtonPressedPermissions();
-            }
-        });
-
-        return retValue;
+        getMainActivity().enableDrawer(false);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void reloadGUI() {
-        // Do not call super.
-
-        // Disable bottom bar and wait for permissions.
-        getMainActivity().tabBarDisable();
+    public void disableGUI() {
+        mButtonPermissions.setEnabled(false);
     }
 
     //endregion
@@ -94,11 +95,12 @@ public class FragmentMissingPermissions extends MainFragment {
     //region User Interface
 
     /**
-     * On button pressed listener to request runtime permissions.
+     * Requests the mandatory runtime permissions.
      */
-    private void onButtonPressedPermissions() {
+    private void onButtonPressedPermissions(final View sender) {
         getMainActivity().checkMandatoryPermissions(true);
     }
 
     //endregion
+
 }

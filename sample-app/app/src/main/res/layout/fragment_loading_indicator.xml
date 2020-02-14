@@ -13,23 +13,49 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/grayTransparentDark" />
+        app:srcCompat="@color/colorOverlayBackground" />
 
-    <ImageView
-        android:id="@+id/image_loading_background"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_image"
-        android:contentDescription="@android:string/unknownName"
+<!--    <View-->
+<!--        android:layout_width="210dp"-->
+<!--        android:layout_height="210dp"-->
+<!--        android:background="@drawable/img_popup_rounded"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"/>-->
+
+    <com.dd.ShadowLayout
+        android:id="@+id/popup_background"
+        android:layout_width="210dp"
+        android:layout_height="210dp"
+        android:layout_margin="@dimen/dimensionMarginNormal"
+        app:sl_shadowRadius="10dp"
+        app:sl_shadowColor="#AA000000"
+        app:sl_dx="0dp"
+        app:sl_dy="0dp"
+        app:sl_cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/grayTransparent" />
+        app:layout_constraintTop_toTopOf="parent">
+        <!--Using disabled button to get best visual results. -->
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/img_popup_rounded"
+            android:enabled="false"/>
+    </com.dd.ShadowLayout>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:indeterminateDrawable="@drawable/prg_loading_indicator"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimensionMarginSmall"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/label_caption"
@@ -39,22 +65,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:text="@android:string/untitled"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressbar" />
-
-    <ProgressBar
-        android:id="@+id/progressbar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="48dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

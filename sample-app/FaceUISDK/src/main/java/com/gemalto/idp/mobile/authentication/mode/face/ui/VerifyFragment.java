@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.idp.mobile.authentication.mode.face.ui;
@@ -55,8 +56,6 @@ import com.gemalto.idp.mobile.authentication.mode.face.ui.internal.utils.logs.My
 import com.gemalto.idp.mobile.authentication.mode.face.view.FaceView;
 import com.gemalto.idp.mobile.core.IdpException;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
 /**
  * Activity of verification
  */
@@ -76,8 +75,8 @@ public class VerifyFragment extends Fragment implements ErrorDialogFragment.Erro
 	private FaceView mFaceView;
 	private CircularProgressView mProgressStepView;
 	private FaceMaskView mFaceMaskView;
-	private ImageView mIvRegisteredUser;
-	private RelativeLayout mLayoutRegisteredUser;
+	private ImageView mIvRegistredUser;
+	private RelativeLayout mLayoutRegistredUser;
 	private TextView mTvLivenssActionPrompt;
 	private Button mBtnCancel;
 	private Button mBtnSuccess;
@@ -113,8 +112,8 @@ public class VerifyFragment extends Fragment implements ErrorDialogFragment.Erro
 		mProgressStepView = (CircularProgressView) rootView.findViewById(R.id.circularProgressView);
 
 		mFaceMaskView = (FaceMaskView) rootView.findViewById(R.id.faceMaskView);
-		mIvRegisteredUser = (ImageView) rootView.findViewById(R.id.imageViewRegisteredUser);
-		mLayoutRegisteredUser = (RelativeLayout) rootView.findViewById(R.id.layoutRegisteredUser);
+		mIvRegistredUser = (ImageView) rootView.findViewById(R.id.imageViewRegistredUser);
+		mLayoutRegistredUser = (RelativeLayout) rootView.findViewById(R.id.layoutRegistredUser);
 
 
 		mBtnCancel = (Button) rootView.findViewById(R.id.buttonCancel);
@@ -180,7 +179,7 @@ public class VerifyFragment extends Fragment implements ErrorDialogFragment.Erro
 		mProgressStepView.setSurroundMode(true, ErrorMode.DISABLED);
 
 		mFaceView.setVisibility(View.VISIBLE);
-		mLayoutRegisteredUser.setVisibility(View.GONE);
+		mLayoutRegistredUser.setVisibility(View.GONE);
 		mBtnCancel.setVisibility(View.VISIBLE);
 		mBtnSuccess.setVisibility(View.GONE);
 		mTvLivenssActionPrompt.setVisibility(View.GONE);
@@ -312,17 +311,17 @@ public class VerifyFragment extends Fragment implements ErrorDialogFragment.Erro
     protected void onAuthSuccess(Bitmap image) {
         MyLog.i(TAG, "onAuthSuccess");
 
-        mLayoutRegisteredUser.setVisibility(View.VISIBLE);
+        mLayoutRegistredUser.setVisibility(View.VISIBLE);
         mFaceView.setVisibility(View.GONE);
 
         // Uncomment to display a round face image instead of placeholder
         //if(image != null) {
         //    Bitmap cover = ImageShapeTool.getRoundedCroppedBitmap(image, image.getWidth());
-        //    mIvRegisteredUser.setImageBitmap(cover);
+        //    mIvRegistredUser.setImageBitmap(cover);
         //}
         //else {
             // Always use the avatar for now as requested
-            mIvRegisteredUser.setImageResource(R.drawable.face_demo);
+            mIvRegistredUser.setImageResource(R.drawable.face_demo);
         //}
 
         mBtnCancel.setVisibility(View.GONE);

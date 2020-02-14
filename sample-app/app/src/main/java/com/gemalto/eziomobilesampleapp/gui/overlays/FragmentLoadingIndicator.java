@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.gui.overlays;
@@ -37,17 +38,19 @@ import android.widget.TextView;
 
 import com.gemalto.eziomobilesampleapp.R;
 
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
-
 /**
  * Overlay loading indicator covering UI during blocking asynchronous operations.
  */
 public class FragmentLoadingIndicator extends Fragment {
 
+    //region Defines
+
     private TextView mLabelCaption = null;
     private String mLastCaption = null;
 
-    //region Override
+    //endregion
+
+    //region Life cycle
 
     @Nullable
     @Override
@@ -67,10 +70,8 @@ public class FragmentLoadingIndicator extends Fragment {
 
     //endregion
 
-    /**
-     * Sets the caption.
-     * @param caption Caption.
-     */
+    //region Private Helpers
+
     public void setCaption(final String caption) {
         if (mLabelCaption != null) {
             mLabelCaption.setText(caption);
@@ -78,4 +79,6 @@ public class FragmentLoadingIndicator extends Fragment {
             mLastCaption = caption;
         }
     }
+
+    //endregion
 }

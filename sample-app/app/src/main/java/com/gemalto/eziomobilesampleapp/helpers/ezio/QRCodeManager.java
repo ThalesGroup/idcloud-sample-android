@@ -1,8 +1,7 @@
 /*
- *
  * MIT License
  *
- * Copyright (c) 2019 Thales DIS
+ * Copyright (c) 2020 Thales DIS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
+ * IMPORTANT: This source code is intended to serve training information purposes only.
+ *            Please make sure to review our IdCloud documentation, including security guidelines.
  */
 
 package com.gemalto.eziomobilesampleapp.helpers.ezio;
@@ -29,11 +30,9 @@ package com.gemalto.eziomobilesampleapp.helpers.ezio;
 import android.support.annotation.NonNull;
 
 import com.gemalto.eziomobilesampleapp.R;
-import com.gemalto.eziomobilesampleapp.helpers.CMain;
+import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.core.util.SecureByteArray;
-
-// IMPORTANT: This source code is intended to serve training information purposes only. Please make sure to review our IdCloud documentation, including security guidelines.
 
 /**
  Enrollment QR code reader
@@ -54,9 +53,9 @@ public class QRCodeManager {
 
         // Get actual values.
         if (components.length == 2) {
-            handler.onParseFinished(true, components[0], CMain.secureStringFromString(components[1]), null);
+            handler.onParseFinished(true, components[0], Main.sharedInstance().secureStringFromString(components[1]), null);
         } else {
-            handler.onParseFinished(false,null, null, CMain.getString(R.string.COMMON_MSG_WRONG_COMPONENTS));
+            handler.onParseFinished(false,null, null, Main.getString(R.string.COMMON_MSG_WRONG_COMPONENTS));
         }
     }
 
