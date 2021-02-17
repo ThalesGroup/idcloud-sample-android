@@ -29,7 +29,7 @@ package com.gemalto.eziomobilesampleapp.helpers.ezio;
 
 import android.support.annotation.NonNull;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public class KeyValue {
     private final String mKey, mValue;
@@ -48,11 +48,7 @@ public class KeyValue {
     }
 
     public byte[] getKeyValueUTF8() {
-        try {
-            final String keyValue = mKey + ":" + mValue;
-            return keyValue.getBytes("UTF8");
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
+        final String keyValue = mKey + ":" + mValue;
+        return keyValue.getBytes(StandardCharsets.UTF_8);
     }
 }

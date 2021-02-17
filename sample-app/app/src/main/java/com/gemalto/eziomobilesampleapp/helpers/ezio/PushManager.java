@@ -54,18 +54,14 @@ import com.gemalto.idp.mobile.oob.OobException;
 import com.gemalto.idp.mobile.oob.OobManager;
 import com.gemalto.idp.mobile.oob.OobMessageResponse;
 import com.gemalto.idp.mobile.oob.OobModule;
-import com.gemalto.idp.mobile.oob.OobResponse;
 import com.gemalto.idp.mobile.oob.message.OobFetchMessageCallback;
 import com.gemalto.idp.mobile.oob.message.OobIncomingMessage;
 import com.gemalto.idp.mobile.oob.message.OobIncomingMessageType;
 import com.gemalto.idp.mobile.oob.message.OobMessageManager;
-import com.gemalto.idp.mobile.oob.message.OobSendMessageCallback;
 import com.gemalto.idp.mobile.oob.message.OobTransactionSigningRequest;
 import com.gemalto.idp.mobile.oob.message.OobTransactionSigningResponse;
-import com.gemalto.idp.mobile.oob.notification.OobClearNotificationProfileCallback;
 import com.gemalto.idp.mobile.oob.notification.OobNotificationManager;
 import com.gemalto.idp.mobile.oob.notification.OobNotificationProfile;
-import com.gemalto.idp.mobile.oob.notification.OobSetNotificationProfileCallback;
 import com.gemalto.idp.mobile.oob.registration.OobRegistrationCallback;
 import com.gemalto.idp.mobile.oob.registration.OobRegistrationManager;
 import com.gemalto.idp.mobile.oob.registration.OobRegistrationRequest;
@@ -97,10 +93,6 @@ public class PushManager {
             mKey = value;
         }
 
-        int getKey() {
-            return mKey;
-        }
-
         final private int mKey;
     }
 
@@ -122,14 +114,14 @@ public class PushManager {
     private final static String PUSH_MESSAGE_CLIENT_ID = "clientId";
     private final static String PUSH_MESSAGE_MESSAGE_ID = "messageId";
 
-    private String mCurrentPushToken = null;
+    private String mCurrentPushToken;
     private OobManager mOobManager = null;
 
     //endregion
 
     //region Life Cycle
 
-    public PushManager()  {
+    public PushManager() {
         mCurrentPushToken = Main.sharedInstance().getStorageFast().readString(STORAGE_LAST_PROVIDED_TOKEN_ID);
     }
 
@@ -155,6 +147,7 @@ public class PushManager {
 
     /**
      * Whenever there is some incoming message from server ready to be fetched.
+     *
      * @return True if there is an message in queue.
      */
     public boolean isIncomingMessageInQueue() {
@@ -184,7 +177,11 @@ public class PushManager {
         registerCurrent(clientId);
     }
 
-    void registerOOBWithUserId(@NonNull final String userId, @Nullable final SecureString regCode, final OobRegistrationCallback completionHandler) {
+    void registerOOBWithUserId(
+            @NonNull String userId,
+            @Nullable SecureString regCode,
+            OobRegistrationCallback completionHandler
+    ) {
         final OobRegistrationManager regManager = mOobManager.getOobRegistrationManager();
         final OobRegistrationRequest request = new OobRegistrationRequest(userId, userId, OobRegistrationRequest.RegistrationMethod.REGISTRATION_CODE, regCode);
 
@@ -235,9 +232,7 @@ public class PushManager {
         if (Looper.getMainLooper().equals(Looper.myLooper())) {
             listener.loadingIndicatorShow(Main.getString(R.string.PUSH_PROCESSING));
         } else {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                listener.loadingIndicatorShow(Main.getString(R.string.PUSH_PROCESSING));
-            });
+            new Handler(Looper.getMainLooper()).post(() -> listener.loadingIndicatorShow(Main.getString(R.string.PUSH_PROCESSING)));
         }
 
         // Operation is asynchronous, but it still block UI since it's slow.
@@ -310,17 +305,15 @@ public class PushManager {
         }
     }
 
-    public String getCurrentPushToken() {
-        return mCurrentPushToken;
-    }
-
     //endregion
 
     //region Message handlers
 
-    private boolean processIncomingMessage(@NonNull final OobIncomingMessage message,
-                                           @NonNull final OobMessageManager oobMessageManager,
-                                           @NonNull final MainActivity handler) {
+    private boolean processIncomingMessage(
+            @NonNull final OobIncomingMessage message,
+            @NonNull final OobMessageManager oobMessageManager,
+            @NonNull final MainActivity handler
+    ) {
         boolean retValue = false;
 
         // Sign request.
@@ -331,11 +324,13 @@ public class PushManager {
         return retValue;
     }
 
-    private boolean processTransactionSigningRequest(@NonNull final OobTransactionSigningRequest request,
-                                                     @NonNull final OobMessageManager oobMessageManager,
-                                                     @NonNull final MainActivity handler) {
-        final boolean[] retValue = {false};
-        final String[] errorMessage = {null};
+    private boolean processTransactionSigningRequest(
+            @NonNull final OobTransactionSigningRequest request,
+            @NonNull final OobMessageManager oobMessageManager,
+            @NonNull final MainActivity handler
+    ) {
+        final boolean[] retValue = { false };
+        final String[] errorMessage = { null };
 
         // Get message subject key and fill in all values.
         String subject = Main.getStringByKeyName(request.getSubject().toString());
@@ -369,12 +364,7 @@ public class PushManager {
                             OobTransactionSigningResponse.OobTransactionSigningResponseValue.ACCEPTED :
                             OobTransactionSigningResponse.OobTransactionSigningResponseValue.REJECTED, otp, null);
                     // Send message and wait display result.
-                    oobMessageManager.sendMessage(response, new OobSendMessageCallback() {
-                        @Override
-                        public void onSendMessageResult(final OobMessageResponse oobMessageResponse) {
-                            retValue[0] = notifyHandlerAboutPushSend(handler, oobMessageResponse);
-                        }
-                    });
+                    oobMessageManager.sendMessage(response, oobMessageResponse -> retValue[0] = notifyHandlerAboutPushSend(handler, oobMessageResponse));
                 } catch (final OobException exception) {
                     errorMessage[0] = exception.getLocalizedMessage();
                 }
@@ -397,17 +387,16 @@ public class PushManager {
 
     // MARK: - Private Helpers
 
-    private boolean notifyHandlerAboutPushSend(@NonNull final MainActivity handler,
-                                               @Nullable final OobMessageResponse oobMessageResponse) {
+    private boolean notifyHandlerAboutPushSend(
+            @NonNull final MainActivity handler,
+            @Nullable final OobMessageResponse oobMessageResponse
+    ) {
         final boolean retValue = oobMessageResponse != null;
 
         if (retValue) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    handler.loadingIndicatorHide();
-                    handler.showMessage(R.string.PUSH_SENT);
-                }
+            new Handler(Looper.getMainLooper()).post(() -> {
+                handler.loadingIndicatorHide();
+                handler.showMessage(R.string.PUSH_SENT);
             });
         }
 
@@ -461,28 +450,28 @@ public class PushManager {
         });
     }
 
-    private void registerOOBClientId(@NonNull final String clientId, @NonNull final String token, @NonNull final Protocols.GenericHandler completionHandler) {
+    private void registerOOBClientId(
+            @NonNull final String clientId,
+            @NonNull final String token,
+            @NonNull final Protocols.GenericHandler completionHandler
+    ) {
         final OobNotificationManager notifyManager = mOobManager.getOobNotificationManager(clientId);
         final List<OobNotificationProfile> arrProfiles = Collections.singletonList(new OobNotificationProfile(Configuration.CFG_OOB_CHANNEL, token));
 
-        notifyManager.setNotificationProfiles(arrProfiles, new OobSetNotificationProfileCallback() {
-            @Override
-            public void onSetNotificationProfileResult(final OobResponse oobResponse) {
-                final boolean success = oobResponse != null && oobResponse.isSucceeded();
-                completionHandler.onFinished(success, oobResponse.getMessage());
-            }
+        notifyManager.setNotificationProfiles(arrProfiles, oobResponse -> {
+            final boolean success = oobResponse != null && oobResponse.isSucceeded();
+            completionHandler.onFinished(success, oobResponse == null ? null : oobResponse.getMessage());
         });
     }
 
-    private void unRegisterOOBClientId(@NonNull final String clientId, @NonNull final Protocols.GenericHandler completionHandler) {
-
+    private void unRegisterOOBClientId(
+            @NonNull final String clientId,
+            @NonNull final Protocols.GenericHandler completionHandler
+    ) {
         final OobNotificationManager notifyManager = mOobManager.getOobNotificationManager(clientId);
-        notifyManager.clearNotificationProfiles(new OobClearNotificationProfileCallback() {
-            @Override
-            public void onClearNotificationProfileResult(final OobResponse oobResponse) {
-                final boolean success = oobResponse != null && oobResponse.isSucceeded();
-                completionHandler.onFinished(success, success ? null : oobResponse.getMessage());
-            }
+        notifyManager.clearNotificationProfiles(oobResponse -> {
+            final boolean success = oobResponse != null && oobResponse.isSucceeded();
+            completionHandler.onFinished(success, oobResponse == null ? null : oobResponse.getMessage());
         });
     }
 
@@ -491,24 +480,22 @@ public class PushManager {
 
     private static final String STORAGE_LAST_MESSAGE_ID = "LastIncomingMessageId";
 
-    private boolean lastMessageIdWrite(final String messageId) {
+    private void lastMessageIdWrite(final String messageId) {
         final boolean retValue = Main.sharedInstance().getStorageFast().writeString(messageId, STORAGE_LAST_MESSAGE_ID);
         if (retValue) {
             notifyAboutIncomingMessageStatusChange();
         }
-        return retValue;
     }
 
     private String lastMessageIdRead() {
         return Main.sharedInstance().getStorageFast().readString(STORAGE_LAST_MESSAGE_ID);
     }
 
-    private boolean lastMessageIdDelete() {
+    private void lastMessageIdDelete() {
         final boolean retValue = Main.sharedInstance().getStorageFast().removeValue(STORAGE_LAST_MESSAGE_ID);
         if (retValue) {
             notifyAboutIncomingMessageStatusChange();
         }
-        return retValue;
     }
 
     private void notifyAboutIncomingMessageStatusChange() {

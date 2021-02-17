@@ -38,17 +38,11 @@ public class EzioSampleApp extends Application {
 
     private Activity mCurrentActivity = null;
 
-    public Activity getCurrentActivity(){
+    public Activity getCurrentActivity() {
         return mCurrentActivity;
     }
 
-    public void setCurrentActivity(final Activity mCurrentActivity){
+    public void setCurrentActivity(final Activity mCurrentActivity) {
         this.mCurrentActivity = mCurrentActivity;
     }
-
-//    @Override
-//    protected void attachBaseContext(final Context base) {
-//        super.attachBaseContext(base);
-//        MultiDex.install(this);
-//    }
 }

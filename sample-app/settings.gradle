@@ -1,2 +1,2 @@
-include ':app', ':FaceUISDK', ':idcloudstyle'
-
+include ':app', ':idcloudstyle'
+rootProject.name="IdCloud-Sample"

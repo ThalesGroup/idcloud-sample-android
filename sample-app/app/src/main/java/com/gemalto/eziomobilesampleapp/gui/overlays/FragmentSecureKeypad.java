@@ -27,6 +27,7 @@
 
 package com.gemalto.eziomobilesampleapp.gui.overlays;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,15 +43,15 @@ import com.gemalto.eziomobilesampleapp.R;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.authentication.mode.pin.PinAuthInput;
 import com.gemalto.idp.mobile.ui.UiModule;
-import com.gemalto.idp.mobile.ui.secureinput.SecureInputBuilderV2;
+import com.gemalto.idp.mobile.ui.secureinput.SecureInputBuilder;
 import com.gemalto.idp.mobile.ui.secureinput.SecureInputService;
 import com.gemalto.idp.mobile.ui.secureinput.SecureInputUi;
-import com.gemalto.idp.mobile.ui.secureinput.SecurePinpadListenerV2;
+import com.gemalto.idp.mobile.ui.secureinput.SecureKeypadListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentSecureKeypad extends Fragment implements SecurePinpadListenerV2 {
+public class FragmentSecureKeypad extends Fragment implements SecureKeypadListener {
 
     //region Defines
 
@@ -58,14 +59,17 @@ public class FragmentSecureKeypad extends Fragment implements SecurePinpadListen
     private final List<FragmentSecureKeypadChar> mSecondPin = new ArrayList<>();
 
     private Protocols.SecureInputHandler mHandler;
+    private SecureInputUi secureInput;
+    private SecureInputBuilder builder;
     private boolean mChangePin;
 
     //endregion
 
     //region Life Cycle
-
-    public static FragmentSecureKeypad create(@NonNull final Protocols.SecureInputHandler handler,
-                                              final boolean changePin) {
+    public static FragmentSecureKeypad create(
+            @NonNull final Protocols.SecureInputHandler handler,
+            final boolean changePin
+    ) {
         final FragmentSecureKeypad retValue = new FragmentSecureKeypad();
         retValue.mHandler = handler;
         retValue.mChangePin = changePin;
@@ -74,9 +78,12 @@ public class FragmentSecureKeypad extends Fragment implements SecurePinpadListen
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater,
-                             @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    @SuppressLint("InflateParams")
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState
+    ) {
         final View retValue = inflater.inflate(R.layout.fragment_secure_keypad, null);
 
         final TextView labelFirst = retValue.findViewById(R.id.label_first);
@@ -86,6 +93,8 @@ public class FragmentSecureKeypad extends Fragment implements SecurePinpadListen
         final LinearLayout firstPinView = retValue.findViewById(R.id.first_pin);
         final LinearLayout secondPinView = retValue.findViewById(R.id.second_pin);
         for (final Fragment loopFragment : getChildFragmentManager().getFragments()) {
+            if (loopFragment.getView() == null) continue;
+
             if (loopFragment.getView().getParent() == firstPinView) {
                 mFirstPin.add((FragmentSecureKeypadChar) loopFragment);
             } else if (loopFragment.getView().getParent() == secondPinView) {
@@ -103,44 +112,43 @@ public class FragmentSecureKeypad extends Fragment implements SecurePinpadListen
         }
 
         // Get secure keypad builder.
-        final SecureInputBuilderV2 builder = SecureInputService.create(UiModule.create()).getSecureInputBuilderV2();
+        builder = SecureInputService.create(UiModule.create()).getSecureInputBuilder();
 
         // Configure secure keypad behavior and visual.
         builder.setScreenBackgroundColor(getResources().getColor(android.R.color.transparent));
         builder.setMaximumAndMinimumInputLength(4, 4);
-        builder.setOkButtonBehavior(SecureInputBuilderV2.OkButtonBehavior.CUSTOM);
+        builder.setOkButtonBehavior(SecureInputBuilder.OkButtonBehavior.CUSTOM);
         builder.setButtonPressVisibility(true);
         builder.setKeypadFrameColor(getResources().getColor(android.R.color.transparent));
         builder.setButtonPressVisibility(true);
-        builder.setButtonBackgroundColor(SecureInputBuilderV2.UiControlState.NORMAL,
+        builder.setButtonBackgroundColor(SecureInputBuilder.UiControlState.NORMAL,
                 getResources().getColor(android.R.color.transparent));
         builder.setKeypadGridGradientColors(getResources().getColor(android.R.color.transparent),
                 getResources().getColor(android.R.color.black));
         builder.swapOkAndDeleteButton();
         builder.setDeleteButtonText("✕");
-        builder.setDeleteButtonGradientColor(SecureInputBuilderV2.UiControlState.NORMAL,
+        builder.setDeleteButtonGradientColor(SecureInputBuilder.UiControlState.NORMAL,
                 getResources().getColor(android.R.color.transparent),
                 getResources().getColor(android.R.color.transparent));
-        builder.setDeleteButtonGradientColor(SecureInputBuilderV2.UiControlState.DISABLED,
+        builder.setDeleteButtonGradientColor(SecureInputBuilder.UiControlState.DISABLED,
                 getResources().getColor(android.R.color.transparent),
                 getResources().getColor(android.R.color.transparent));
         builder.setOkButtonText("✔");
-        builder.setOkButtonGradientColor(SecureInputBuilderV2.UiControlState.NORMAL,
+        builder.setOkButtonGradientColor(SecureInputBuilder.UiControlState.NORMAL,
                 getResources().getColor(android.R.color.transparent),
                 getResources().getColor(android.R.color.transparent));
-        builder.setOkButtonGradientColor(SecureInputBuilderV2.UiControlState.DISABLED,
+        builder.setOkButtonGradientColor(SecureInputBuilder.UiControlState.DISABLED,
                 getResources().getColor(android.R.color.transparent),
                 getResources().getColor(android.R.color.transparent));
         builder.showTopScreen(false);
 
-        final SecureInputUi secureInput = builder.buildPinpad(false, mChangePin,
+        secureInput = builder.buildKeypad(false, mChangePin,
                 false, this);
 
         // Add secure keypad into bottom part.
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.secure_keypad_bottom, secureInput.getDialogFragment())
                 .commit();
-        builder.wipe();
 
         // Add touch listener, so we can switch between inputs
         firstPinView.setOnClickListener(view -> {
@@ -158,7 +166,7 @@ public class FragmentSecureKeypad extends Fragment implements SecurePinpadListen
 
     //endregion
 
-    //region SecurePinpadListenerV2
+    //region SecureKeypadListener
 
     @Override
     public void onKeyPressedCountChanged(final int newCount, final int inputField) {
@@ -203,6 +211,8 @@ public class FragmentSecureKeypad extends Fragment implements SecurePinpadListen
 
         // Notify handler
         mHandler.onSecureInputFinished(pinAuthInput, pinAuthInput1);
+
+        builder.wipe();
     }
 
     @Override

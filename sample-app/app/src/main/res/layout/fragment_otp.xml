@@ -3,17 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/img_gradient_primary"
     android:gravity="center"
-    android:background="@drawable/img_gradient_primary">
+    android:orientation="vertical">
 
     <!--Layout for top section. Logo etc...-->
     <LinearLayout
-        android:layout_weight="@integer/topPartAspect"
-        android:layout_height="0dp"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="@integer/topPartAspect"
         android:gravity="center|bottom"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/tv_fragment_caption"
             android:layout_width="wrap_content"
@@ -22,7 +23,6 @@
             android:text="@android:string/untitled"
             android:textColor="@color/idCloudRed"
             android:textSize="@dimen/dimensionTextSizeHeader" />
-
 
         <TextView
             android:id="@+id/tv_fragment_description"
@@ -33,23 +33,23 @@
             android:textColor="@color/idCloudRed"
             android:textSize="@dimen/dimensionTextSizeNormal" />
 
-
     </LinearLayout>
 
     <!--Layout for the rest of the screen without logo-->
     <LinearLayout
         android:id="@+id/layout_buttons"
-        android:layout_weight="@integer/bottomPartAspect"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/dimensionMarginNormal"
+        android:layout_weight="@integer/bottomPartAspect"
         android:gravity="center"
         android:orientation="vertical">
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
+
         <TextView
             android:id="@+id/text_view_otp"
             android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
             android:layout_margin="20dp"
             android:text="@android:string/untitled"
             android:textColor="@color/colorTextPrimary"
-            android:textSize="@dimen/dimensionTextSizeHeader"/>
+            android:textSize="@dimen/dimensionTextSizeHeader" />
 
         <RelativeLayout
             android:layout_width="180dp"
@@ -68,7 +68,8 @@
                 android:id="@+id/circleTimer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true" />
+
             <TextView
                 android:id="@+id/text_view_countdown"
                 android:layout_width="match_parent"
@@ -79,25 +80,24 @@
                 android:textSize="@dimen/dimensionTextSizeHeader" />
 
         </RelativeLayout>
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/button_otp_verify"
+            style="@style/AppTheme.Button"
             android:drawableStart="@drawable/icon_small_upload"
-            android:text="@string/ui_button_otp_verify"
-            style="@style/AppTheme.Button" />
+            android:text="@string/ui_button_otp_verify" />
     </LinearLayout>
-
 
     <!--Thales logo-->
     <ImageView
-        android:id="@+id/imageView2"
         android:layout_width="130dp"
         android:layout_height="60dp"
-        app:srcCompat="@drawable/img_logo_thales"
-        android:contentDescription="@android:string/untitled" />
+        android:contentDescription="@android:string/untitled"
+        app:srcCompat="@drawable/img_logo_thales" />
 
 </LinearLayout>

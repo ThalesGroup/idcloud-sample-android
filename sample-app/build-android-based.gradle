@@ -1,0 +1,27 @@
+// Common android build version properties
+allprojects {
+    ext {
+        propBuildToolsVersion = "30.0.1"
+        propCompileSdkVersion = 30
+        propMinSdkVersion = 22
+        propTargetSdkVersion = 30
+
+        propVersionCode = 600
+        propVersionName = "6.0.0"
+
+        propAndroidSupport = "28.0.0"
+    }
+}
+
+// Common android build config
+android {
+    compileSdkVersion propCompileSdkVersion
+
+    defaultConfig {
+        minSdkVersion propMinSdkVersion
+        targetSdkVersion propTargetSdkVersion
+
+        versionCode propVersionCode
+        versionName propVersionName
+    }
+}

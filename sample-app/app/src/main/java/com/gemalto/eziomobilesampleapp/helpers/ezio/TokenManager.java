@@ -142,10 +142,10 @@ public class TokenManager {
         Main.sharedInstance().getManagerPush().registerOOBWithUserId(userId, regCode, oobRegistrationResponse -> {
             Log.d(TokenManager.class.getName(), oobRegistrationResponse.getMessage());
 
-            String clientId = "test_client";
+            String clientId;
 
             // If OOB registration was successful we can provision token.
-            if (oobRegistrationResponse != null && oobRegistrationResponse.isSucceeded()) {
+            if (oobRegistrationResponse.isSucceeded()) {
                 clientId = oobRegistrationResponse.getClientId();
                 doProvisioningWithUserId(userId, regCode, clientId, completionHandler);
             } else {
@@ -154,8 +154,6 @@ public class TokenManager {
                     completionHandler.onProvisionerFinished(null, oobRegistrationResponse.getMessage());
                 }
             }
-
-
         });
     }
 
@@ -163,10 +161,12 @@ public class TokenManager {
 
     //region Private Helpers
 
-    private void doProvisioningWithUserId(final String userId,
-                                          final SecureString regCode,
-                                          final String clientId,
-                                          final ProvisionerHandler completionHandler) {
+    private void doProvisioningWithUserId(
+            final String userId,
+            final SecureString regCode,
+            final String clientId,
+            final ProvisionerHandler completionHandler
+    ) {
         URL provisionUrl = null;
         try {
             provisionUrl = new URL(Configuration.CFG_OTP_PROVISION_URL);
@@ -179,7 +179,7 @@ public class TokenManager {
         final ProvisioningConfiguration config = new EpsConfigurationBuilder(regCode,
                 provisionUrl,
                 Configuration.DOMAIN,
-                MobileProvisioningProtocol.PROVISIONING_PROTOCOL_V5,
+                MobileProvisioningProtocol.PROVISIONING_PROTOCOL_V3,
                 Configuration.CFG_OTP_RSA_KEY_ID,
                 Configuration.CFG_OTP_RSA_KEY_EXPONENT,
                 Configuration.CFG_OTP_RSA_KEY_MODULUS)
@@ -197,15 +197,16 @@ public class TokenManager {
                 deviceFingerprintTokenPolicy,
                 new com.gemalto.idp.mobile.otp.TokenManager.TokenCreationCallback() {
                     @Override
-                    public void onSuccess(final Token token,
-                                          final Map<String, String> map) {
+                    public void onSuccess(
+                            Token token,
+                            Map<String, String> map
+                    ) {
                         try {
                             mTokenDevice = new TokenDevice((OathToken) token);
                         } catch (final IdpException exception) {
                             if (completionHandler != null) {
                                 completionHandler.onProvisionerFinished(null,
-                                        exception
-                                                .getLocalizedMessage());
+                                        exception.getLocalizedMessage());
                             }
                         }
 
@@ -223,7 +224,6 @@ public class TokenManager {
                                 exception.getLocalizedMessage());
                     }
                 });
-
     }
 
     //endregion

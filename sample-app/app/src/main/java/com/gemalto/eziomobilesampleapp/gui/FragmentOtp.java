@@ -27,6 +27,7 @@
 
 package com.gemalto.eziomobilesampleapp.gui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -87,10 +88,12 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
         return retValue;
     }
 
-    public static FragmentOtp transactionSign(final AuthInput authInput,
-                                              final SecureString serverChallenge,
-                                              final String amount,
-                                              final String beneficiary) {
+    public static FragmentOtp transactionSign(
+            final AuthInput authInput,
+            final SecureString serverChallenge,
+            final String amount,
+            final String beneficiary
+    ) {
         final FragmentOtp retValue = new FragmentOtp();
         retValue.mAmount = amount;
         retValue.mBeneficiary = beneficiary;
@@ -104,9 +107,12 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater,
-                             @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    @SuppressLint("InflateParams")
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState
+    ) {
         final View retValue = inflater.inflate(R.layout.fragment_otp, null);
 
         final TextView caption = retValue.findViewById(R.id.tv_fragment_caption);
@@ -195,10 +201,12 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
 
     //region OTPDelegate
 
-    public void onOTPDelegateFinished(final SecureString otp,
-                                      final String error,
-                                      final AuthInput authInput,
-                                      final SecureString serverChallenge) {
+    public void onOTPDelegateFinished(
+            final SecureString otp,
+            final String error,
+            final AuthInput authInput,
+            final SecureString serverChallenge
+    ) {
         if (otp != null && error == null) {
             setLastOTP(otp);
             final int lifespan = Main.sharedInstance().getManagerToken().getTokenDevice().getDevice()
@@ -207,22 +215,19 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
                 scheduleAnimation(lifespan);
             }
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    // Animate OTP text change
-                    mOtp.startAnimation(mTextChangeAnim);
+            new Handler(Looper.getMainLooper()).post(() -> {
+                // Animate OTP text change
+                mOtp.startAnimation(mTextChangeAnim);
 
-                    // Schedule timer to check lifetime and recalculate OTP.
-                    if (mTimer == null) {
-                        mTimer = new Timer();
-                        mTimer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                checkOTPLifespan(authInput, serverChallenge);
-                            }
-                        }, 0, 500);
-                    }
+                // Schedule timer to check lifetime and recalculate OTP.
+                if (mTimer == null) {
+                    mTimer = new Timer();
+                    mTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            checkOTPLifespan(authInput, serverChallenge);
+                        }
+                    }, 0, 500);
                 }
             });
         } else {
@@ -234,7 +239,10 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
 
     //region Private Helpers
 
-    protected void checkOTPLifespan(final AuthInput authInput, final SecureString serverChallenge) {
+    protected void checkOTPLifespan(
+            final AuthInput authInput,
+            final SecureString serverChallenge
+    ) {
         // Read last otp lifespan from device.
         final int lifeSpan = Main.sharedInstance().getManagerToken().getTokenDevice().getDevice().getLastOtpLifespan();
 
@@ -247,16 +255,13 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
     }
 
     private void scheduleAnimation(final int lifeSpan) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                if (mCircleTimerAnimation != null) {
-                    mCircleTimerAnimation.cancel();
-                }
-
-                mCircleTimerAnimation = new CircleTimerAnimation(mCircleTimer, mLifespan, Configuration.CFG_OTP_LIFESPAN, lifeSpan);
-                mCircleTimer.startAnimation(mCircleTimerAnimation);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (mCircleTimerAnimation != null) {
+                mCircleTimerAnimation.cancel();
             }
+
+            mCircleTimerAnimation = new CircleTimerAnimation(mCircleTimer, mLifespan, Configuration.CFG_OTP_LIFESPAN, lifeSpan);
+            mCircleTimer.startAnimation(mCircleTimerAnimation);
         });
     }
 

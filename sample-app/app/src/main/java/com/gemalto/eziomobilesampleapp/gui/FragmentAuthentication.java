@@ -27,6 +27,7 @@
 
 package com.gemalto.eziomobilesampleapp.gui;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,12 +44,6 @@ import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.TokenDevice;
 import com.gemalto.idp.mobile.authentication.AuthenticationModule;
 import com.gemalto.idp.mobile.authentication.mode.biofingerprint.BioFingerprintAuthService;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthService;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthStatus;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthUnenrollerCallback;
-import com.gemalto.idp.mobile.authentication.mode.face.ui.EnrollFragment;
-import com.gemalto.idp.mobile.authentication.mode.face.ui.EnrollmentCallback;
-import com.gemalto.idp.mobile.authentication.mode.face.ui.FaceManager;
 import com.gemalto.idp.mobile.authentication.mode.pin.PinAuthInput;
 import com.gemalto.idp.mobile.authentication.mode.pin.PinRule;
 import com.gemalto.idp.mobile.authentication.mode.pin.PinRuleException;
@@ -78,9 +73,12 @@ public class FragmentAuthentication extends AbstractMainFragmentWithAuthSolver {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater,
-                             @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    @SuppressLint("InflateParams")
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState
+    ) {
         final View retValue = inflater.inflate(R.layout.fragment_authentication, null);
 
         final TextView domainTextView = retValue.findViewById(R.id.tv_fragment_description);
@@ -161,28 +159,8 @@ public class FragmentAuthentication extends AbstractMainFragmentWithAuthSolver {
         getMainActivity().reloadGui();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void toggleFaceId() {
-        final TokenDevice.TokenStatus status = Main.sharedInstance().getManagerToken().getTokenDevice()
-                .getTokenStatus();
-        final FaceAuthService service = FaceAuthService.create(AuthenticationModule.create());
-
-        if (status.isFaceEnabled) {
-            if (disableAuthMode(service.getAuthMode())) {
-                unenroll();
-            }
-        } else {
-            enroll();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+    @SuppressWarnings("deprecation")
     public void toggleTouchId() {
         final TokenDevice.TokenStatus status = Main.sharedInstance().getManagerToken().getTokenDevice()
                 .getTokenStatus();
@@ -236,19 +214,22 @@ public class FragmentAuthentication extends AbstractMainFragmentWithAuthSolver {
     }
 
     private String getPinRuleErrorDescription(final PinRule rule) {
-        if (rule instanceof PinRuleIdentical) {
+        if (rule instanceof PinRuleIdentical)
             return Main.getString(R.string.pin_rule_error_identical);
-        } else if (rule instanceof PinRuleLength) {
+
+        if (rule instanceof PinRuleLength)
             return Main.getString(R.string.pin_rule_error_length);
-        } else if (rule instanceof PinRulePalindrome) {
+
+        if (rule instanceof PinRulePalindrome)
             return Main.getString(R.string.pin_rule_error_palindrome);
-        } else if (rule instanceof PinRuleSeries) {
+
+        if (rule instanceof PinRuleSeries)
             return Main.getString(R.string.pin_rule_error_series);
-        } else if (rule instanceof PinRuleUniform) {
+
+        if (rule instanceof PinRuleUniform)
             return Main.getString(R.string.pin_rule_error_uniform);
-        } else {
-            return Main.getString(R.string.pin_rule_error_unknown);
-        }
+
+        return Main.getString(R.string.pin_rule_error_unknown);
     }
 
     /**
@@ -259,9 +240,7 @@ public class FragmentAuthentication extends AbstractMainFragmentWithAuthSolver {
         new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dialog).setTitle(R.string.delete_token_title)
                 .setMessage(R.string.delete_token_message)
                 .setPositiveButton(android.R.string.yes,
-                        (dialog, which) -> {
-                            deleteToken_FirstStep_UnenrollFace();
-                        })
+                        (dialog, which) -> deleteToken_SecondStep_UnregisterOob())
 
                 // A null listener allows the button to dismiss the dialog and take no
                 // further action.
@@ -271,31 +250,6 @@ public class FragmentAuthentication extends AbstractMainFragmentWithAuthSolver {
     //endregion
 
     //region Private Helpers
-
-    private void deleteToken_FirstStep_UnenrollFace() {
-        // Hide left side menu before continue
-        getMainActivity().closeDrawer();
-
-        // Display loading dialog. Since operation is asynchronous.
-        getMainActivity().loadingIndicatorShow(Main.getString(R.string.LOADING_MESSAGE_REMOVING));
-
-        FaceManager.getInstance().getFaceAuthEnroller().unenroll(new FaceAuthUnenrollerCallback() {
-            @Override
-            public void onUnenrollFinish(final FaceAuthStatus faceAuthStatus) {
-                // Propagate face id state change.
-                Main.sharedInstance().updateGemaltoFaceIdStatus();
-
-                // Continue in removing process.
-                deleteToken_SecondStep_UnregisterOob();
-            }
-
-            @Override
-            public void onUnenrollError(final IdpException exception) {
-                // Even on failure, we can still remove token. This is informative only.
-                deleteToken_SecondStep_UnregisterOob();
-            }
-        });
-    }
 
     private void deleteToken_SecondStep_UnregisterOob() {
         Main.sharedInstance().getManagerPush().unregisterOOBWithCompletionHandler((success, error) -> {
@@ -352,68 +306,6 @@ public class FragmentAuthentication extends AbstractMainFragmentWithAuthSolver {
         if (mButtonPull != null) {
             mButtonPull.setEnabled(enabled);
         }
-    }
-
-    /**
-     * Enrolls the face id.
-     */
-    private void enroll() {
-        final FaceAuthService service = FaceAuthService.create(AuthenticationModule.create());
-
-        // at least one face is enrolled - check just to be sure
-        if (service.isConfigured()) {
-            enableAuthMode(service.getAuthMode(), R.string.AUTH_MODE_FACE_ID_ENABLED);
-            return;
-        }
-
-        final EnrollFragment enrollmentFragment = FaceManager.getInstance().getEnrollmentFragment(10, 2000);
-        enrollmentFragment.setEnrollmentCallback(new EnrollmentCallback() {
-            @Override
-            public void onEnrollmentSuccess() {
-                getMainActivity().hideLastStackFragment();
-                enableAuthMode(service.getAuthMode(), R.string.AUTH_MODE_FACE_ID_ENABLED);
-            }
-
-            @Override
-            public void onCancel() {
-                getMainActivity().hideLastStackFragment();
-            }
-
-            @Override
-            public void onEnrollmentFailed(final FaceAuthStatus status) {
-                getMainActivity().showErrorIfExists(status.toString());
-            }
-
-            @Override
-            public void onEnrollmentRetry(final FaceAuthStatus status, final int remainingRetries) {
-                // Unused
-            }
-
-            @Override
-            public void onError(final IdpException exception) {
-                getMainActivity().showErrorIfExists(exception.getLocalizedMessage());
-            }
-        });
-
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, enrollmentFragment).addToBackStack(null).commit();
-    }
-
-    /**
-     * Un-enrolls the face id.
-     */
-    private void unenroll() {
-        FaceManager.getInstance().getFaceAuthEnroller().unenroll(new FaceAuthUnenrollerCallback() {
-            @Override
-            public void onUnenrollFinish(final FaceAuthStatus faceAuthStatus) {
-                Main.sharedInstance().updateGemaltoFaceIdStatus();
-            }
-
-            @Override
-            public void onUnenrollError(final IdpException exception) {
-                getMainActivity().showErrorIfExists(exception.getLocalizedMessage());
-            }
-        });
     }
 
     //endregion

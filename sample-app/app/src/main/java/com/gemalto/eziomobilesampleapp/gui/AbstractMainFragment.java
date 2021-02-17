@@ -61,13 +61,6 @@ public abstract class AbstractMainFragment extends Fragment {
     }
 
     /**
-     * Toggles the face id.
-     */
-    public void toggleFaceId() { // NOPMD - standard behaviour for most of subclasses is to do nothing
-        // Override
-    }
-
-    /**
      * Deletes token.
      */
     public void deleteToken() { // NOPMD - standard behaviour for most of subclasses is to do nothing

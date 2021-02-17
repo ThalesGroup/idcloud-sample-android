@@ -100,7 +100,6 @@ public class SecureStorage implements Protocols.StorageProtocol {
      * Reads a value.
      *
      * @param key Key.
-     *
      * @return Read value, or {@code null} in not present.
      */
     private SecureByteArray readValue(@NonNull final String key) {
@@ -132,10 +131,9 @@ public class SecureStorage implements Protocols.StorageProtocol {
     /**
      * Writes a value.
      *
-     * @param key Key.
+     * @param key   Key.
      * @param value Value.
-     *
-     * @return
+     * @return the status
      */
     private boolean writeValue(@NonNull final String key, final SecureByteArray value) {
         boolean retValue = false;

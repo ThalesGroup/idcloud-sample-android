@@ -48,22 +48,25 @@ public class Protocols {
 
         /**
          * Write string to storage. It will override existing key.
+         *
          * @param value Value we want to store.
-         * @param key Key of value to be stored.
+         * @param key   Key of value to be stored.
          * @return true if storing was successful.
          */
         boolean writeString(final String value, final String key);
 
         /**
          * Write int to storage. It will override existing key.
+         *
          * @param value Value we want to store.
-         * @param key Key of value to be stored.
+         * @param key   Key of value to be stored.
          * @return true if storing was successful.
          */
         boolean writeInteger(final int value, final String key);
 
         /**
          * Get stored string value. Return null if given key does not exists.
+         *
          * @param key Key of stored value.
          * @return Stored value.
          */
@@ -71,6 +74,7 @@ public class Protocols {
 
         /**
          * Get stored int value. Return null if given key does not exists.
+         *
          * @param key Key of stored value.
          * @return Stored value.
          */
@@ -78,6 +82,7 @@ public class Protocols {
 
         /**
          * Remove existing value from storage.
+         *
          * @param key Key of stored value.
          * @return true if removing was successful.
          */
@@ -90,16 +95,19 @@ public class Protocols {
     public interface OTPDelegate {
         /**
          * Triggered when OTP calculation is finished.
-         * @param otp Calculated OTP. Null in case of error.
-         * @param error Description of possible error. Return null in case of success.
-         * @param authInput Original auth input used for calculation.
-         *                  This is handy to automatic re-calc of OTP once it's not valid anymore.
+         *
+         * @param otp             Calculated OTP. Null in case of error.
+         * @param error           Description of possible error. Return null in case of success.
+         * @param authInput       Original auth input used for calculation.
+         *                        This is handy to automatic re-calc of OTP once it's not valid anymore.
          * @param serverChallenge Original server challenge. Same as authInput, but used only in OCRA.
          */
-        void onOTPDelegateFinished(@Nullable final SecureString otp,
-                                   @Nullable final String error,
-                                   @Nullable final AuthInput authInput,
-                                   final SecureString serverChallenge);
+        void onOTPDelegateFinished(
+                @Nullable final SecureString otp,
+                @Nullable final String error,
+                @Nullable final AuthInput authInput,
+                final SecureString serverChallenge
+        );
     }
 
     /**
@@ -108,8 +116,9 @@ public class Protocols {
     public interface GenericHandler {
         /**
          * Triggered when operation is finished.
+         *
          * @param success Whenever was operation successful.
-         * @param error Description of possible error. Return null in case of success.
+         * @param error   Description of possible error. Return null in case of success.
          */
         void onFinished(final boolean success, @Nullable final String error);
 
@@ -122,12 +131,7 @@ public class Protocols {
 
             @Override
             public void onFinished(final boolean success, final String error) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCallback.onFinished(success, error);
-                    }
-                });
+                new Handler(Looper.getMainLooper()).post(() -> mCallback.onFinished(success, error));
             }
         }
     }
@@ -138,15 +142,18 @@ public class Protocols {
     public interface QRCodeManagerHandler {
         /**
          * Triggered when parsing is done.
+         *
          * @param success Whenever was parsing operation successful.
-         * @param userId User id for enrollment.
+         * @param userId  User id for enrollment.
          * @param regCode Registration code for enrollment.
-         * @param error Description of possible error. Return null in case of success.
+         * @param error   Description of possible error. Return null in case of success.
          */
-        void onParseFinished(final boolean success,
-                             @Nullable final String userId,
-                             @Nullable final SecureString regCode,
-                             @Nullable final String error);
+        void onParseFinished(
+                final boolean success,
+                @Nullable final String userId,
+                @Nullable final SecureString regCode,
+                @Nullable final String error
+        );
     }
 
     /**
@@ -155,11 +162,14 @@ public class Protocols {
     public interface SecureInputHandler {
         /**
          * Triggered only when user press ok button with entered pin.
-         * @param firstPin Entered pin to generate OTP, or old pin in case of change pin action.
+         *
+         * @param firstPin  Entered pin to generate OTP, or old pin in case of change pin action.
          * @param secondPin New pin value. Used only on change pin. Otherwise null.
          */
-        void onSecureInputFinished(@NonNull final PinAuthInput firstPin,
-                                   @Nullable final PinAuthInput secondPin);
+        void onSecureInputFinished(
+                @NonNull final PinAuthInput firstPin,
+                @Nullable final PinAuthInput secondPin
+        );
     }
 
     /**
@@ -168,11 +178,14 @@ public class Protocols {
     public interface AuthInputHandler {
         /**
          * Method triggered when auth action is finished. (Back button will not trigger it).
+         *
          * @param authInput Desired auth input in case of success. Otherwise it's null.
-         * @param error Description of possible error. Return null in case of success.
+         * @param error     Description of possible error. Return null in case of success.
          */
-        void onFinished(@Nullable final AuthInput authInput,
-                        @Nullable final String error);
+        void onFinished(
+                @Nullable final AuthInput authInput,
+                @Nullable final String error
+        );
     }
 
     public interface PostMessageInterface {

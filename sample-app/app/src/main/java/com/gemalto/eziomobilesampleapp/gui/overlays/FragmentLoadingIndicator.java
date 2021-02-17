@@ -27,6 +27,7 @@
 
 package com.gemalto.eziomobilesampleapp.gui.overlays;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -54,9 +55,12 @@ public class FragmentLoadingIndicator extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater,
-                             @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    @SuppressLint("InflateParams")
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState
+    ) {
         final View retValue = inflater.inflate(R.layout.fragment_loading_indicator, null);
 
         mLabelCaption = retValue.findViewById(R.id.label_caption);

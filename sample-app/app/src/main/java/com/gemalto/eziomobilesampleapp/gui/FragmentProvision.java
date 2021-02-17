@@ -27,6 +27,7 @@
 
 package com.gemalto.eziomobilesampleapp.gui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,10 +44,8 @@ import com.gemalto.eziomobilesampleapp.Configuration;
 import com.gemalto.eziomobilesampleapp.R;
 import com.gemalto.eziomobilesampleapp.gui.overlays.FragmentQRCodeReader;
 import com.gemalto.eziomobilesampleapp.helpers.Main;
-import com.gemalto.eziomobilesampleapp.helpers.ezio.TokenManager;
 import com.gemalto.idp.mobile.core.util.SecureByteArray;
 import com.gemalto.idp.mobile.core.util.SecureString;
-import com.gemalto.idp.mobile.otp.oath.OathToken;
 
 /**
  * Enrolling and provisioning of new token using user id + registration code, or QR code.
@@ -66,11 +65,13 @@ public class FragmentProvision extends AbstractMainFragment implements FragmentQ
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater,
-                             @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    @SuppressLint("InflateParams")
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState
+    ) {
         final View retValue = inflater.inflate(R.layout.fragment_provision, null);
-
 
         mButtonEnrollWithQr = retValue.findViewById(R.id.button_enroll_with_qr);
         mButtonEnrollWithQr.setOnClickListener(this::onButtonPressedEnrollQr);
@@ -167,10 +168,13 @@ public class FragmentProvision extends AbstractMainFragment implements FragmentQ
     /**
      * Enrolls the user.
      *
-     * @param userId User id.
+     * @param userId           User id.
      * @param registrationCode Registration code.
      */
-    private void enrollWithUserId(final String userId, final SecureString registrationCode) {
+    private void enrollWithUserId(
+            final String userId,
+            final SecureString registrationCode
+    ) {
         final Main main = Main.sharedInstance();
 
         // Disable whole UI and display loading indicator.
@@ -178,18 +182,15 @@ public class FragmentProvision extends AbstractMainFragment implements FragmentQ
         getMainActivity().loadingIndicatorShow(Main.getString(R.string.LOADING_MESSAGE_ENROLLING));
 
         // Do provisioning and wait for response.
-        main.getManagerToken().provisionWithUserId(userId, registrationCode, new TokenManager.ProvisionerHandler() {
-            @Override
-            public void onProvisionerFinished(final OathToken token, final String error) {
-                // Hide loading indicator and reload gui.
-                getMainActivity().loadingIndicatorHide();
+        main.getManagerToken().provisionWithUserId(userId, registrationCode, (token, error) -> {
+            // Hide loading indicator and reload gui.
+            getMainActivity().loadingIndicatorHide();
 
-                // Token was created. Switch tabs.
-                if (token != null) {
-                    getMainActivity().showAuthenticationFragment();
-                } else {
-                    getMainActivity().showErrorIfExists(error);
-                }
+            // Token was created. Switch tabs.
+            if (token != null) {
+                getMainActivity().showAuthenticationFragment();
+            } else {
+                getMainActivity().showErrorIfExists(error);
             }
         });
     }
@@ -202,9 +203,11 @@ public class FragmentProvision extends AbstractMainFragment implements FragmentQ
      * {@inheritDoc}
      */
     @Override
-    public void onQRCodeFinished(final FragmentQRCodeReader sender,
-                                 final SecureByteArray qrCodeData,
-                                 final String error) {
+    public void onQRCodeFinished(
+            final FragmentQRCodeReader sender,
+            final SecureByteArray qrCodeData,
+            final String error
+    ) {
 
         // First check parser result.
         if (qrCodeData == null) {
@@ -234,11 +237,12 @@ public class FragmentProvision extends AbstractMainFragment implements FragmentQ
         final FragmentQRCodeReader fragment = new FragmentQRCodeReader();
         fragment.init(FragmentProvision.this, 0);
 
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, fragment, null)
-                .addToBackStack(null)
-                .commit();
+        if (getActivity() != null)
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                    .replace(R.id.fragment_container, fragment, null)
+                    .addToBackStack(null)
+                    .commit();
     }
 
     /**

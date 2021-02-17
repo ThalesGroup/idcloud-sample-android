@@ -49,15 +49,8 @@ import com.gemalto.eziomobilesampleapp.helpers.ezio.PushManager;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.QRCodeManager;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.TokenManager;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.storage.SecureStorage;
-import com.gemalto.idp.mobile.authentication.IdpAuthException;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthInitializeCallback;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthLicense;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthLicenseConfigurationCallback;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthService;
-import com.gemalto.idp.mobile.authentication.mode.face.ui.FaceManager;
 import com.gemalto.idp.mobile.core.ApplicationContextHolder;
 import com.gemalto.idp.mobile.core.IdpCore;
-import com.gemalto.idp.mobile.core.IdpException;
 import com.gemalto.idp.mobile.core.SecurityDetectionService;
 import com.gemalto.idp.mobile.core.passwordmanager.PasswordManager;
 import com.gemalto.idp.mobile.core.passwordmanager.PasswordManagerException;
@@ -66,6 +59,7 @@ import com.gemalto.idp.mobile.core.util.SecureString;
 import com.gemalto.idp.mobile.msp.MspConfiguration;
 import com.gemalto.idp.mobile.oob.OobConfiguration;
 import com.gemalto.idp.mobile.otp.OtpConfiguration;
+import com.thalesgroup.gemalto.securelog.SecureLogConfig;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -89,41 +83,7 @@ public class Main {
     private QRCodeManager mManagerQRCode = null;
     private HttpManager mManagerHttp = null;
     private IdpCore mCore = null;
-    private GemaloFaceIdState mGemaloFaceIdState = GemaloFaceIdState.GemaloFaceIdStateUndefined;
     private Protocols.GenericHandler mUiHandler;
-
-    public enum GemaloFaceIdState {
-        // Face Id service was not even started.
-        GemaloFaceIdStateUndefined(R.string.GEMALTO_FACE_ID_STATE_UNDEFINED, android.R.color.holo_red_dark),
-        // Face id is not supported
-        GemaloFaceIdStateNotSupported(R.string.GEMALTO_FACE_ID_STATE_NOT_SUPPORTED, android.R.color.holo_red_dark),
-        // Failed to registered.
-        GemaloFaceIdStateUnlicensed(R.string.GEMALTO_FACE_ID_STATE_UNLICENSED, android.R.color.holo_red_dark),
-        // Successfully registered.
-        GemaloFaceIdStateLicensed(R.string.GEMALTO_FACE_ID_STATE_LICENSED, android.R.color.holo_orange_dark),
-        // Failed to init service.
-        GemaloFaceIdStateInitFailed(R.string.GEMALTO_FACE_ID_STATE_INIT_FAILED, android.R.color.holo_red_dark),
-        // Registered and initialised.
-        GemaloFaceIdStateInited(R.string.GEMALTO_FACE_ID_STATE_INITED, android.R.color.holo_orange_dark),
-        // Registered, initialised and configured with at least one user enrolled.
-        GemaloFaceIdStateReadyToUse(R.string.GEMALTO_FACE_ID_STATE_READY, android.R.color.holo_green_dark);
-
-        GemaloFaceIdState(final int valueString, final int valueColor) {
-            mValueString = valueString;
-            mValueColor = valueColor;
-        }
-
-        private final int mValueString;
-        private final int mValueColor;
-
-        public int getValueString() {
-            return mValueString;
-        }
-
-        public int getValueColor() {
-            return mValueColor;
-        }
-    }
 
     //endregion
 
@@ -189,10 +149,14 @@ public class Main {
             @Override
             public void run() {
                 synchronized (sInstance) {
+                    IdpCore.configureSecureLog(new SecureLogConfig.Builder(ApplicationContextHolder.getContext())
+                            .publicKey(Configuration.CFG_SLOG_MODULUS, Configuration.CFG_SLOG_EXPONENT)
+                            .build());
+
                     mCore = IdpCore.configure(Configuration.CFG_SDK_ACTIVATION_CODE,
-                                              getConfigurationOob(),
-                                              getConfigurationOtp(),
-                                              getConfigurationMsp());
+                            getConfigurationOob(),
+                            getConfigurationOtp(),
+                            getConfigurationMsp());
                 }
 
                 final SecureString password = mCore.getSecureContainerFactory().fromString("SecureStoragePassword");
@@ -205,11 +169,6 @@ public class Main {
                         passwordManager.setPassword(password);
                     }
                     passwordManager.login(password);
-
-
-                    // This will also register and activate licence.
-                    FaceManager.initInstance();
-                    Main.this.updateGemaltoFaceIdStatus();
 
                     synchronized (sInstance) {
                         // Init rest of the managers and update basic one with new permissions.
@@ -246,7 +205,6 @@ public class Main {
      * Creates a {@code SecureString} from {@code String}.
      *
      * @param value {@code String} input.
-     *
      * @return {@code SecureString} output.
      */
     public synchronized SecureString secureStringFromString(final String value) {
@@ -257,7 +215,6 @@ public class Main {
      * Creates a {@code SecureByteArray} from {@code byte[]}.
      *
      * @param value {@code byte[]} input.
-     *
      * @return {@code SecureByteArray} output.
      */
     public synchronized SecureByteArray secureByteArrayFromBytes(final byte[] value, final boolean wipeSource) {
@@ -268,7 +225,6 @@ public class Main {
      * Gets a string resource.
      *
      * @param aString Name.
-     *
      * @return String resource.
      */
     public static String getStringByKeyName(final String aString) {
@@ -285,7 +241,6 @@ public class Main {
      * Gets a string resource.
      *
      * @param stringId Id.
-     *
      * @return String resource.
      */
     public static String getString(@StringRes final int stringId) {
@@ -295,10 +250,9 @@ public class Main {
     /**
      * Checks for runtime permission.
      *
-     * @param activity Calling activity.
-     * @param askForThem {@code True} if missing permission should be requested, else {@code false}.
+     * @param activity    Calling activity.
+     * @param askForThem  {@code True} if missing permission should be requested, else {@code false}.
      * @param permissions List of permissions.
-     *
      * @return {@code True} if permissions are present, else {@code false}.
      */
     @TargetApi(23)
@@ -342,6 +296,7 @@ public class Main {
 
     /**
      * Check whenever SDK was successfully initialised with all permisions.
+     *
      * @return True in case that SDK is ready to use.
      */
     public synchronized boolean isInited() {
@@ -391,85 +346,12 @@ public class Main {
     }
 
     /**
-     * Gemalto face id does have multiple step async activation.
-     * Check this value to see current state.
-     *
-     * @return Current state.
-     */
-    public synchronized GemaloFaceIdState getFaceIdState() {
-        return mGemaloFaceIdState;
-    }
-
-    /**
      * Retrieves {@code IdpCore} instance.
      *
      * @return {@code IdpCore} instance.
      */
     public synchronized IdpCore getCore() {
         return mCore;
-    }
-
-    /**
-     * Forces reload of gemalto face id status.
-     */
-    public synchronized void updateGemaltoFaceIdStatus() {
-        final FaceAuthService faceIdService = FaceManager.getInstance().getFaceAuthService();
-
-        if (!faceIdService.isSupported()) {
-            setGemaloFaceIdState(GemaloFaceIdState.GemaloFaceIdStateNotSupported);
-            return;
-        }
-
-        // Support sample app even without face id.
-        if (Configuration.CFG_FACE_ID_PRODUCT_KEY == null || Configuration.CFG_FACE_ID_PRODUCT_KEY.isEmpty() ||
-                Configuration.CFG_FACE_ID_SERVER_URL == null || Configuration.CFG_FACE_ID_SERVER_URL.isEmpty()) {
-            setGemaloFaceIdState(GemaloFaceIdState.GemaloFaceIdStateUnlicensed);
-            return;
-        }
-
-        final FaceAuthLicense license = new FaceAuthLicense.Builder()
-                .setProductKey(Configuration.CFG_FACE_ID_PRODUCT_KEY)
-                .setServerUrl(Configuration.CFG_FACE_ID_SERVER_URL)
-                .build();
-
-        faceIdService.configureLicense(license, new FaceAuthLicenseConfigurationCallback() {
-            @Override
-            public void onLicenseConfigurationSuccess() {
-                setGemaloFaceIdState(GemaloFaceIdState.GemaloFaceIdStateLicensed);
-
-                // Already inited.
-                if (faceIdService.isInitialized()) {
-                    updateGemaltoFaceIdStatusConfigured(faceIdService);
-                } else {
-                    // With license we can activate face id service.
-                    faceIdService.initialize(new FaceAuthInitializeCallback() {
-                        @Override
-                        public String onInitializeCamera(final String[] strings) {
-                            // Select one from the given list by returning null,
-                            // the SDK will pick a default camera which will be:
-                            // the first in the list which contains 'front'
-                            // or the first one if no 'front' is found
-                            return null;
-                        }
-
-                        @Override
-                        public void onInitializeSuccess() {
-                            updateGemaltoFaceIdStatusConfigured(faceIdService);
-                        }
-
-                        @Override
-                        public void onInitializeError(final IdpException exception) {
-                            setGemaloFaceIdState(GemaloFaceIdState.GemaloFaceIdStateInitFailed);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onLicenseConfigurationFailure(final IdpAuthException exception) {
-                setGemaloFaceIdState(GemaloFaceIdState.GemaloFaceIdStateUnlicensed);
-            }
-        });
     }
 
     /**
@@ -480,11 +362,9 @@ public class Main {
     @Nullable
     public MainActivity getCurrentListener() {
         final Activity currentActivity = ((EzioSampleApp) ApplicationContextHolder.getContext().getApplicationContext()).getCurrentActivity();
-        if (currentActivity != null && (currentActivity instanceof MainActivity)) {
+        if ((currentActivity instanceof MainActivity))
             return (MainActivity) currentActivity;
-        } else {
-            return null;
-        }
+        return null;
     }
 
     //endregion
@@ -537,38 +417,6 @@ public class Main {
         }
 
         return builder.build();
-    }
-
-    /**
-     * Updates the Gemalto Face id status.
-     *
-     * @param service {@code FaceAuthService}.
-     */
-    private void updateGemaltoFaceIdStatusConfigured(final FaceAuthService service) {
-        // Configured at this point mean, that there is at least one user enrolled.
-        if (service.isConfigured()) {
-            setGemaloFaceIdState(GemaloFaceIdState.GemaloFaceIdStateReadyToUse);
-        } else {
-            setGemaloFaceIdState(GemaloFaceIdState.GemaloFaceIdStateInited);
-        }
-    }
-
-    /**
-     * Sets the Gemalto Face id status.
-     *
-     * @param state Status.
-     */
-    private void setGemaloFaceIdState(final GemaloFaceIdState state) {
-        if (mGemaloFaceIdState.equals(state)) {
-            return;
-        }
-
-        mGemaloFaceIdState = state;
-
-        final MainActivity listener = getCurrentListener();
-        if (listener != null) {
-            listener.updateFaceIdSupport();
-        }
     }
 
     //endregion

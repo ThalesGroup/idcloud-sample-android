@@ -59,15 +59,13 @@ public class CircleTimer extends View {
     /**
      * Creates a new {@code TimeCircle} instance.
      *
-     * @param context
-     *         Android context.
-     * @param attrs
-     *         Attributes.
+     * @param context Android context.
+     * @param attrs   Attributes.
      */
     public CircleTimer(final Context context, final AttributeSet attrs) {
         super(context, attrs);
 
-        final int strokeWidth = (int) convertDpIntoPixel(5);
+        final float strokeWidth = convertDpIntoPixel(5);
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -112,8 +110,7 @@ public class CircleTimer extends View {
     /**
      * Set degrees.
      *
-     * @param degreesUpTillPreFill
-     *         Degrees.
+     * @param degreesUpTillPreFill Degrees.
      */
     public void setDegreesUpTillPreFill(final float degreesUpTillPreFill) {
         mDegreesUpTillPreFill = degreesUpTillPreFill;
@@ -126,8 +123,7 @@ public class CircleTimer extends View {
     /**
      * Method to convert DPs into Pixels..
      *
-     * @param densityIndependentPixel
-     *         Dp to convert.
+     * @param densityIndependentPixel Dp to convert.
      * @return Converted pixels.
      */
     private float convertDpIntoPixel(final float densityIndependentPixel) {

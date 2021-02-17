@@ -35,7 +35,7 @@ import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.core.util.SecureByteArray;
 
 /**
- Enrollment QR code reader
+ * Enrollment QR code reader
  */
 public class QRCodeManager {
 
@@ -43,19 +43,22 @@ public class QRCodeManager {
 
     /**
      * Try to parse / decrypt provided QR Code data.
+     *
      * @param qrCodeData QR Code to be parsed.
-     * @param handler Triggered once operation is done
+     * @param handler    Triggered once operation is done
      */
-    public void parseQRCode(@NonNull final SecureByteArray qrCodeData,
-                            @NonNull final Protocols.QRCodeManagerHandler handler) {
+    public void parseQRCode(
+            @NonNull final SecureByteArray qrCodeData,
+            @NonNull final Protocols.QRCodeManagerHandler handler
+    ) {
         // Two components in frame are user id and reg code.
-        final String components[] = new String(qrCodeData.toByteArray()).split(",");
+        final String[] components = new String(qrCodeData.toByteArray()).split(",");
 
         // Get actual values.
         if (components.length == 2) {
             handler.onParseFinished(true, components[0], Main.sharedInstance().secureStringFromString(components[1]), null);
         } else {
-            handler.onParseFinished(false,null, null, Main.getString(R.string.COMMON_MSG_WRONG_COMPONENTS));
+            handler.onParseFinished(false, null, null, Main.getString(R.string.COMMON_MSG_WRONG_COMPONENTS));
         }
     }
 

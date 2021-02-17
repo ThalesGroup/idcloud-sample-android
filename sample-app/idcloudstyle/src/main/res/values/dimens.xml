@@ -10,9 +10,9 @@
     <dimen name="dimensionButtonMargin">8dp</dimen>
 
     <!--All text sizes-->
-    <dimen name="dimensionTextSizeHeader">32dp</dimen>
-    <dimen name="dimensionTextSizeHeaderSecondary">22dp</dimen>
-    <dimen name="dimensionTextSizeNormal">16dp</dimen>
+    <dimen name="dimensionTextSizeHeader">32sp</dimen>
+    <dimen name="dimensionTextSizeHeaderSecondary">22sp</dimen>
+    <dimen name="dimensionTextSizeNormal">16sp</dimen>
 
     <!--Generic Offsets-->
     <dimen name="dimensionMarginBig">32dp</dimen>

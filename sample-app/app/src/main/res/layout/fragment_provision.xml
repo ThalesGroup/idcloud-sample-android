@@ -3,68 +3,68 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/img_gradient_primary"
     android:gravity="center"
-    android:background="@drawable/img_gradient_primary">
-
+    android:orientation="vertical">
 
     <!--Layout for top section. Logo etc...-->
     <include layout="@layout/view_logo" />
 
     <!--Layout for the rest of the screen without logo-->
     <LinearLayout
-        android:layout_weight="@integer/bottomPartAspect"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:layout_weight="@integer/bottomPartAspect"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/text_amount"
+            style="@style/AppTheme.EditInverted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="16"
+            android:autofillHints="@null"
             android:drawableEnd="@drawable/textbox_icon_person"
+            android:ems="16"
             android:gravity="start|center"
             android:hint="@string/ui_label_user_id"
-            android:inputType="textPersonName"
-            style="@style/AppTheme.EditInverted"/>
+            android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/text_beneficiary"
+            style="@style/AppTheme.EditInverted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="16"
+            android:autofillHints="@null"
             android:drawableEnd="@drawable/textbox_icon_lock"
+            android:ems="16"
             android:gravity="start|center"
             android:hint="@string/ui_label_registration_code"
-            android:inputType="textPersonName"
-            style="@style/AppTheme.EditInverted"/>
+            android:inputType="textPersonName" />
 
         <!--Spacer because buttons have margin from style -->
         <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dimensionMarginNormal"/>
+            android:layout_height="@dimen/dimensionMarginNormal" />
 
         <Button
             android:id="@+id/button_enroll"
+            style="@style/AppTheme.Button"
             android:drawableStart="@drawable/icon_small_pencil"
-            android:text="@string/ui_button_enroll"
-            style="@style/AppTheme.Button"/>
+            android:text="@string/ui_button_enroll" />
 
         <Button
             android:id="@+id/button_enroll_with_qr"
+            style="@style/AppTheme.Button"
             android:drawableStart="@drawable/icon_small_qr_code"
-            android:text="@string/ui_button_scan_and_enroll"
-            style="@style/AppTheme.Button"/>
+            android:text="@string/ui_button_scan_and_enroll" />
     </LinearLayout>
 
 
     <!--Thales logo-->
     <ImageView
-        android:id="@+id/imageView2"
         android:layout_width="130dp"
         android:layout_height="60dp"
-        app:srcCompat="@drawable/img_logo_thales"
-        android:contentDescription="@android:string/untitled" />
+        android:contentDescription="@android:string/untitled"
+        app:srcCompat="@drawable/img_logo_thales" />
 </LinearLayout>

@@ -33,7 +33,6 @@ import android.util.Base64;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.gemalto.eziomobilesampleapp.Configuration;
@@ -78,10 +77,12 @@ public class HttpManager {
 
     //region Public API
 
-    public void sendAuthRequest(@Nullable final SecureString otp, @Nullable final String error,
-                                @Nullable final AuthInput authInput,
-                                @Nullable final Protocols.PostMessageInterface delegate) {
-
+    public void sendAuthRequest(
+            @Nullable final SecureString otp,
+            @Nullable final String error,
+            @Nullable final AuthInput authInput,
+            @Nullable final Protocols.PostMessageInterface delegate
+    ) {
         final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
 
         // Send only valid results
@@ -111,9 +112,11 @@ public class HttpManager {
         }
     }
 
-    public void sendAuthRequestForChangePin(@Nullable final SecureString otp, @Nullable final String error,
-                                            @Nullable final Protocols.PostMessageInterface delegate) {
-
+    public void sendAuthRequestForChangePin(
+            @Nullable final SecureString otp,
+            @Nullable final String error,
+            @Nullable final Protocols.PostMessageInterface delegate
+    ) {
         final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
 
         // Send only valid results
@@ -138,10 +141,14 @@ public class HttpManager {
         }
     }
 
-    public void sendSignRequest(@Nullable final SecureString otp, @Nullable final String error,
-                                @Nullable final AuthInput authInput, @Nullable final String amount,
-                                @Nullable final String beneficiary,
-                                @Nullable final Protocols.PostMessageInterface delegate) {
+    public void sendSignRequest(
+            @Nullable final SecureString otp,
+            @Nullable final String error,
+            @Nullable final AuthInput authInput,
+            @Nullable final String amount,
+            @Nullable final String beneficiary,
+            @Nullable final Protocols.PostMessageInterface delegate
+    ) {
 
         final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
 
@@ -187,50 +194,49 @@ public class HttpManager {
         return retValue;
     }
 
-    private Response.Listener<String> getResponseListener(@Nullable final Protocols.PostMessageInterface delegate) {
-        return new Response.Listener<String>() {
-            @Override
-            public void onResponse(final String response) {
-                // Hide loading
-                final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
-                if (currentListener != null) {
-                    currentListener.loadingIndicatorHide();
-                }
+    private Response.Listener<String> getResponseListener(
+            @Nullable final Protocols.PostMessageInterface delegate
+    ) {
+        return response -> {
+            // Hide loading
+            final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
+            if (currentListener != null) {
+                currentListener.loadingIndicatorHide();
+            }
 
-                // Notify listener.
-                if (delegate != null) {
-                    delegate.onPostFinished(
-                            API_AUTH_RESPONSE_OK.equals(response) ||
-                                    API_SIGN_RESPONSE_OK.equals(response), response);
-                }
+            // Notify listener.
+            if (delegate != null) {
+                delegate.onPostFinished(
+                        API_AUTH_RESPONSE_OK.equals(response) ||
+                                API_SIGN_RESPONSE_OK.equals(response), response);
             }
         };
     }
 
-    private Response.ErrorListener getResponseErrorListener(@Nullable final Protocols.PostMessageInterface delegate) {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(final VolleyError error) {
-                // Hide loading
-                final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
-                if (currentListener != null) {
-                    currentListener.loadingIndicatorHide();
-                }
+    private Response.ErrorListener getResponseErrorListener(
+            @Nullable final Protocols.PostMessageInterface delegate
+    ) {
+        return error -> {
+            // Hide loading
+            final MainActivity currentListener = Main.sharedInstance().getCurrentListener();
+            if (currentListener != null) {
+                currentListener.loadingIndicatorHide();
+            }
 
-                // Notify listener.
-                if (delegate != null) {
-                    delegate.onPostFinished(false, error.toString());
-                }
+            // Notify listener.
+            if (delegate != null) {
+                delegate.onPostFinished(false, error.toString());
             }
         };
     }
 
-    private void doPostMessage(@NonNull final String url,
-                               @NonNull final String contentType,
-                               @Nullable final Map<String, String> headers,
-                               @Nullable final String body,
-                               @Nullable final Protocols.PostMessageInterface delegate) {
-
+    private void doPostMessage(
+            @NonNull final String url,
+            @NonNull final String contentType,
+            @Nullable final Map<String, String> headers,
+            @Nullable final String body,
+            @Nullable final Protocols.PostMessageInterface delegate
+    ) {
         // Prepare post headers
         final Map<String, String> headerParams = new HashMap<>();
         headerParams.put("Content-Type", contentType);

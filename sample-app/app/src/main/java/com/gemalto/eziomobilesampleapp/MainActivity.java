@@ -33,7 +33,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -50,7 +49,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -93,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private AbstractMainFragment mLastFragment = null;
-    private SwitchCompat mFaceIdSwitch = null;
     private SwitchCompat mTouchIdSwitch = null;
     private DrawerLayout mDrawer;
     private Toolbar mToolbar;
@@ -102,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected EzioSampleApp mMyApp = null;
     private boolean mExitConfirmed = false;
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             final Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
@@ -155,8 +152,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Check for permissions or display fragment with information.
         if (!checkMandatoryPermissions(true)) {
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                                       .replace(R.id.fragment_container, new FragmentMissingPermissions(), null)
-                                       .commit();
+                    .replace(R.id.fragment_container, new FragmentMissingPermissions(), null)
+                    .commit();
         }
 
         // Make application fullscreen
@@ -231,10 +228,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void showFragment(final AbstractMainFragment fragment) {
         mLastFragment = fragment;
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
-                                                                           R.anim.fade_out,
-                                                                           R.anim.fade_in,
-                                                                           R.anim.fade_out)
-                                   .replace(R.id.fragment_container, mLastFragment, null).addToBackStack(null).commit();
+                R.anim.fade_out,
+                R.anim.fade_in,
+                R.anim.fade_out)
+                .replace(R.id.fragment_container, mLastFragment, null).addToBackStack(null).commit();
     }
 
     /**
@@ -276,8 +273,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Shows or hides the loading indicator.
      *
-     * @param show
-     *         {@code True} to show the loading indicator, else {@code false}.
+     * @param show {@code True} to show the loading indicator, else {@code false}.
      */
     private void loadingIndicatorShow(final boolean show) {
         // Avoid switch to same state.
@@ -289,10 +285,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mLoadingBar = new FragmentLoadingIndicator();
 
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                                       .replace(R.id.fragment_container_loading_bar, mLoadingBar, null).commit();
+                    .replace(R.id.fragment_container_loading_bar, mLoadingBar, null).commit();
         } else {
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                                       .remove(mLoadingBar).commit();
+                    .remove(mLoadingBar).commit();
             mLoadingBar = null;
         }
 
@@ -304,8 +300,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Sets the caption of the loading indicator.
      *
-     * @param caption
-     *         Caption of the loading indicator.
+     * @param caption Caption of the loading indicator.
      */
     private void loadingIndicatorSetCaption(final String caption) {
         if (mLoadingBar != null) {
@@ -336,16 +331,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mDrawer = findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
-                                                                       mDrawer,
-                                                                       mToolbar,
-                                                                       R.string.navigation_drawer_open,
-                                                                       R.string.navigation_drawer_close);
+                mDrawer,
+                mToolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
         final NavigationView navigationView = findViewById(R.id.nav_view);
-        mFaceIdSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.nav_face_id).getActionView();
-        mFaceIdSwitch.setOnClickListener(this::onSwitchPressedFaceId);
 
         mTouchIdSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.nav_touch_id).getActionView();
         mTouchIdSwitch.setOnClickListener(this::onSwitchPressedTouchId);
@@ -388,18 +381,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             Main.sharedInstance().getManagerPush().processIncomingPush(data);
             // Mark intent as processed.
-            getIntent().removeExtra( PushManager.PUSH_MESSAGE_TYPE);
+            getIntent().removeExtra(PushManager.PUSH_MESSAGE_TYPE);
         }
     }
 
     //endregion
 
     //region User Interface
-
-    private void onSwitchPressedFaceId(final View sender) {
-        mFaceIdSwitch.setChecked(!mFaceIdSwitch.isChecked());
-        mLastFragment.toggleFaceId();
-    }
 
     private void onSwitchPressedTouchId(final View sender) {
         mTouchIdSwitch.setChecked(!mTouchIdSwitch.isChecked());
@@ -420,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             final int indexOfTopFragment = getSupportFragmentManager().getFragments().size() - 1;
             if (indexOfTopFragment >= 0) {
                 mLastFragment = (AbstractMainFragment) getSupportFragmentManager().getFragments()
-                                                                                  .get(indexOfTopFragment);
+                        .get(indexOfTopFragment);
                 mLastFragment.reloadGUI();
             }
 
@@ -432,12 +420,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             showMessage(getString(R.string.toast_exit));
             mExitConfirmed = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mExitConfirmed = false;
-                }
-            }, 3000);
+            new Handler().postDelayed(() -> mExitConfirmed = false, 3000);
         }
     }
 
@@ -461,16 +444,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Checks the required runtime permissions.
      *
-     * @param askForThem
-     *         {@code True} if dialog application should request missing permissions, else {@code false}.
+     * @param askForThem {@code True} if dialog application should request missing permissions, else {@code false}.
      * @return {@code True} if all permissions are present, else {@code false}.
      */
     public boolean checkMandatoryPermissions(final boolean askForThem) {
         return Main.checkPermissions(this,
-                                      askForThem,
-                                      Manifest.permission.READ_PHONE_STATE,
-                                      Manifest.permission.CAMERA,
-                                      Manifest.permission.INTERNET);
+                askForThem,
+                Manifest.permission.CAMERA);
     }
 
     /**
@@ -485,8 +465,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Shows the loading indicator with a given caption.
      *
-     * @param caption
-     *         Caption.
+     * @param caption Caption.
      */
     public void loadingIndicatorShow(final String caption) {
         loadingIndicatorShow(true);
@@ -501,28 +480,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * Updates the FaceId status.
-     */
-    public void updateFaceIdSupport() {
-        // Performance is not an issue. Call unified method to reload GUI.
-        if (mLastFragment != null) {
-            mLastFragment.reloadGUI();
-        }
-    }
-
-    /**
      * Approves the OTP.
      *
-     * @param message
-     *         Message.
-     * @param serverChallenge
-     *         Server challenge.
-     * @param handler
-     *         Handler.
+     * @param message         Message.
+     * @param serverChallenge Server challenge.
+     * @param handler         Handler.
      */
-    public void approveOTP(@NonNull final String message,
-                           @Nullable final SecureString serverChallenge,
-                           @NonNull final Protocols.OTPDelegate handler) {
+    public void approveOTP(
+            @NonNull final String message,
+            @Nullable final SecureString serverChallenge,
+            @NonNull final Protocols.OTPDelegate handler
+    ) {
         // Current fragment must be auth solver child.
         if (!(mLastFragment instanceof AbstractMainFragmentWithAuthSolver)) {
             return;
@@ -557,8 +525,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Enables or disables the action bar.
      *
-     * @param enable
-     *         {@code True} to enable, else {@code false}.
+     * @param enable {@code True} to enable, else {@code false}.
      */
     public void enableDrawer(final boolean enable) {
         final ActionBar actionBar = getSupportActionBar();
@@ -573,15 +540,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             mToolbar.setVisibility(View.GONE);
         }
-    }
-
-    public void closeDrawer() {
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar == null) {
-            return;
-        }
-
-        mDrawer.closeDrawer(Gravity.LEFT);
     }
 
     /**
@@ -610,15 +568,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final View view = findViewById(android.R.id.content);
         if (view != null) {
             final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (imm != null)
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
     /**
      * Shows an error dialog.
      *
-     * @param error
-     *         Error the show.
+     * @param error Error the show.
      */
     public void showErrorIfExists(final String error) {
         if (error != null) {
@@ -629,8 +587,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Shows a message dialog.
      *
-     * @param message
-     *         Message to display.
+     * @param message Message to display.
      */
     public void showMessage(@StringRes final int message) {
         showErrorIfExists(Main.getString(message));
@@ -639,26 +596,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Shows a message dialog.
      *
-     * @param message
-     *         Message to display.
+     * @param message Message to display.
      */
     public void showMessage(final String message) {
         final Context ctx = this;
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
-            }
-        });
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(ctx, message, Toast.LENGTH_LONG).show());
     }
 
     /**
      * Reloads the UI.
      */
+    @SuppressWarnings("deprecation")
     public void reloadGui() {
         final TokenDevice tokenDevice = Main.sharedInstance().getManagerToken().getTokenDevice();
         if (tokenDevice != null) {
-            mFaceIdSwitch.setChecked(tokenDevice.getTokenStatus().isFaceEnabled);
 
             final BioFingerprintAuthService service = BioFingerprintAuthService.create(AuthenticationModule.create());
             if (service.isSupported() && service.isConfigured()) {
@@ -693,20 +644,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * On pressed OTP button.
      *
-     * @param authInput
-     *         Auth input used to calculate OTP. Used for recalculation.
-     * @param challenge
-     *         Challenge to be signed.
-     * @param amount
-     *         Amount.
-     * @param beneficiary
-     *         Beneficiary.
+     * @param authInput   Auth input used to calculate OTP. Used for recalculation.
+     * @param challenge   Challenge to be signed.
+     * @param amount      Amount.
+     * @param beneficiary Beneficiary.
      */
-
-    public void showOtpFragment(final AuthInput authInput,
-                                final SecureString challenge,
-                                final String amount,
-                                final String beneficiary) {
+    public void showOtpFragment(
+            final AuthInput authInput,
+            final SecureString challenge,
+            final String amount,
+            final String beneficiary
+    ) {
         if (challenge != null) {
             showFragment(FragmentOtp.transactionSign(authInput, challenge, amount, beneficiary));
         } else {

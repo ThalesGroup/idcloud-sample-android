@@ -30,7 +30,6 @@ package com.gemalto.eziomobilesampleapp.gui.overlays;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.animation.Animation;
-import android.view.animation.Interpolator;
 import android.view.animation.Transformation;
 import android.widget.TextView;
 
@@ -56,23 +55,21 @@ public class CircleTimerAnimation extends Animation {
     /**
      * Creates a new {@code CircleTimerAnimation} instance.
      *
-     * @param circle
-     *         {@code CircleTimer} object.
+     * @param circle {@code CircleTimer} object.
      */
-    public CircleTimerAnimation(final CircleTimer circle, final TextView lifespanText,
-                                final int lifespanMax, final int lifespanCurrent) {
+    public CircleTimerAnimation(
+            CircleTimer circle,
+            TextView lifespanText,
+            int lifespanMax,
+            int lifespanCurrent
+    ) {
         super();
 
         // Duration is rest of the time.
         setDuration(lifespanCurrent * 1000);
 
         // Make time linear.
-        setInterpolator(new Interpolator() {
-            @Override
-            public float getInterpolation(final float value) {
-                return value;
-            }
-        });
+        setInterpolator(value -> value);
 
         mCircle = circle;
         mLifespanText = lifespanText;
@@ -85,11 +82,11 @@ public class CircleTimerAnimation extends Animation {
     //region Timer Tick
 
     @Override
-    protected void applyTransformation(final float interpolatedTime, final Transformation transformation) {
+    protected void applyTransformation(float interpolatedTime, Transformation transformation) {
         updateWithInterpolateTime(interpolatedTime);
     }
 
-    private void updateWithInterpolateTime(final float time) {
+    private void updateWithInterpolateTime(float time) {
         final float revPercentage = (1.f - time);
         final int remainingTime = (int) (revPercentage * mLifespanStart);
 
@@ -97,12 +94,7 @@ public class CircleTimerAnimation extends Animation {
         mCircle.requestLayout();
 
         if (remainingTime != mLifespanCurrent) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    mLifespanText.setText((remainingTime + 1) + "s");
-                }
-            });
+            new Handler(Looper.getMainLooper()).post(() -> mLifespanText.setText((remainingTime + 1) + "s"));
             mLifespanCurrent = remainingTime;
         }
     }

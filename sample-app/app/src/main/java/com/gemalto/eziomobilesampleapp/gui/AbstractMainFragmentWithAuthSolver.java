@@ -31,6 +31,8 @@ import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 
 import com.gemalto.eziomobilesampleapp.R;
 import com.gemalto.eziomobilesampleapp.gui.overlays.FragmentBioFingerprint;
@@ -39,17 +41,12 @@ import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.HttpManager;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.TokenDevice;
-import com.gemalto.idp.mobile.authentication.AuthInput;
 import com.gemalto.idp.mobile.authentication.AuthMode;
 import com.gemalto.idp.mobile.authentication.AuthenticationModule;
 import com.gemalto.idp.mobile.authentication.mode.biofingerprint.BioFingerprintAuthInput;
 import com.gemalto.idp.mobile.authentication.mode.biofingerprint.BioFingerprintAuthService;
 import com.gemalto.idp.mobile.authentication.mode.biofingerprint.BioFingerprintAuthenticationCallbacks;
 import com.gemalto.idp.mobile.authentication.mode.biofingerprint.BioFingerprintContainer;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthStatus;
-import com.gemalto.idp.mobile.authentication.mode.face.ui.FaceManager;
-import com.gemalto.idp.mobile.authentication.mode.face.ui.VerificationCallback;
-import com.gemalto.idp.mobile.authentication.mode.face.ui.VerifyFragment;
 import com.gemalto.idp.mobile.authentication.mode.pin.PinAuthInput;
 import com.gemalto.idp.mobile.core.IdpException;
 import com.gemalto.idp.mobile.core.util.SecureString;
@@ -68,7 +65,6 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
      * Retrieves the authentication method based on the priority: <br>
      *
      * <ol>
-     * <li>Face id</li>
      * <li>Touch id</li>
      * <li>PIN</li>
      * </ol>
@@ -80,14 +76,10 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
         final TokenDevice.TokenStatus status = Main.sharedInstance().getManagerToken().getTokenDevice()
                 .getTokenStatus();
 
-        if (status.isFaceEnabled) {
-            authInputGetFaceId(handler);
-        } else if (status.isTouchEnabled) {
+        if (status.isTouchEnabled) {
             authInputGetTouchId(handler);
         } else {
-            authInputGetPin((firstPin, secondPin) -> {
-                handler.onFinished(firstPin, null);
-            }, false);
+            authInputGetPin((firstPin, secondPin) -> handler.onFinished(firstPin, null), false);
         }
     }
 
@@ -95,21 +87,22 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
      * Generates the OTP using the authentication method based on the priority: <br>
      *
      * <ol>
-     * <li>Face id</li>
      * <li>Touch id</li>
      * <li>PIN</li>
      * </ol>
      *
      * @param handler Callback.
      */
-    public void totpWithMostComfortableOne(@Nullable final SecureString serverChallenge,
-                                           @NonNull final Protocols.OTPDelegate handler) {
+    public void totpWithMostComfortableOne(
+            @Nullable final SecureString serverChallenge,
+            @NonNull final Protocols.OTPDelegate handler
+    ) {
         authInputGetMostComfortableOne((authInput, error) -> {
             if (authInput != null) {
                 Main.sharedInstance().getManagerToken().getTokenDevice()
                         .totpWithAuthInput(authInput, serverChallenge, handler);
             } else {
-                handler.onOTPDelegateFinished(null, error, authInput, serverChallenge);
+                handler.onOTPDelegateFinished(null, error, null, serverChallenge);
             }
         });
     }
@@ -124,14 +117,23 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
      * @param handler   Callback.
      * @param changePin {@code True} if scenario is change pin, else {@code false}.
      */
-    public void authInputGetPin(@NonNull final Protocols.SecureInputHandler handler, final boolean changePin) {
-        final FragmentSecureKeypad secureKeypad = FragmentSecureKeypad.create(handler, changePin);
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, secureKeypad, null)
-                .addToBackStack(null)
-                .commit();
+    public void authInputGetPin(
+            @NonNull Protocols.SecureInputHandler handler,
+            boolean changePin
+    ) {
+        do {
+            final FragmentSecureKeypad secureKeypad = FragmentSecureKeypad.create(handler, changePin);
+            FragmentActivity activity = getActivity();
+            if (activity == null) break;
 
+            FragmentManager fm = activity.getSupportFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                    .replace(R.id.fragment_container, secureKeypad, null)
+                    .addToBackStack(null)
+                    .commit();
+
+        } while (false);
     }
 
     protected void authInputGetAndVerifyPin(final Protocols.AuthInputHandler handler) {
@@ -159,55 +161,6 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
 
     //endregion
 
-    //region Face id
-
-    /**
-     * Creates the authentication using Face id.
-     *
-     * @param handler Callback.
-     */
-    public void authInputGetFaceId(@NonNull final Protocols.AuthInputHandler handler) {
-        final VerifyFragment verifier = FaceManager.getInstance()
-                .getVerificationFragment(Main.sharedInstance().getManagerToken()
-                        .getTokenDevice().getToken(), 0, 1);
-        verifier.setVerificationCallback(new VerificationCallback() {
-            @Override
-            public void onVerificationSuccess(final AuthInput authInput) {
-                getMainActivity().hideLastStackFragment();
-                handler.onFinished(authInput, null);
-            }
-
-            @Override
-            public void onCancel() {
-                getMainActivity().hideLastStackFragment();
-            }
-
-            @Override
-            public void onVerificationFailed(final FaceAuthStatus status) {
-                getMainActivity().hideLastStackFragment();
-            }
-
-            @Override
-            public void onVerificationRetry(final FaceAuthStatus status, final int remainingRetries) {
-                // Unused
-            }
-
-            @Override
-            public void onError(final IdpException exception) {
-                getMainActivity().hideLastStackFragment();
-            }
-        });
-
-        // Display verifier as main fragment.
-        getMainActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, verifier, null)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    //endregion
-
     //region Touch id
 
     /**
@@ -215,6 +168,7 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
      *
      * @param handler Callback.
      */
+    @SuppressWarnings("deprecation")
     public void authInputGetTouchId(@NonNull final Protocols.AuthInputHandler handler) {
         final BioFingerprintAuthService service = BioFingerprintAuthService.create(AuthenticationModule.create());
         final BioFingerprintContainer container = service.getBioFingerprintContainer();
@@ -226,9 +180,7 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
                         cancelSignal.cancel();
 
                         // Fallback to pin variant.
-                        authInputGetPin((firstPin, secondPin) -> {
-                            handler.onFinished(firstPin, null);
-                        }, false);
+                        authInputGetPin((firstPin, secondPin) -> handler.onFinished(firstPin, null), false);
                     }
 
                     @Override
@@ -297,8 +249,10 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
      *
      * @param mode Authentication mode to enable.
      */
-    protected void enableAuthMode(final AuthMode mode,
-                                  @StringRes final int successMessageResId) {
+    protected void enableAuthMode(
+            final AuthMode mode,
+            @StringRes final int successMessageResId
+    ) {
         final TokenDevice device = Main.sharedInstance().getManagerToken().getTokenDevice();
 
         // We must enable multi-auth mode before activating any specific one.
@@ -308,7 +262,6 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
                 device.getToken().activateAuthMode(mode, firstPin);
                 getMainActivity().showMessage(Main.getString(successMessageResId));
 
-                Main.sharedInstance().updateGemaltoFaceIdStatus();
             } catch (IdpException e) {
                 getMainActivity().showErrorIfExists(e.getLocalizedMessage());
             } finally {
@@ -321,26 +274,19 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
      * Disables the authentication mode.
      *
      * @param mode Authentication mode to disable.
-     * @return {@code True} if authentication mode was disabled successfully, else {@code false}.
      */
-    protected boolean disableAuthMode(final AuthMode mode) {
+    protected void disableAuthMode(final AuthMode mode) {
         final TokenDevice device = Main.sharedInstance().getManagerToken().getTokenDevice();
 
         try {
             if (device.getToken().isAuthModeActive(mode)) {
                 device.getToken().deactivateAuthMode(mode);
-
-                return true;
             }
         } catch (IdpException exception) {
             getMainActivity().showErrorIfExists(exception.getLocalizedMessage());
-
-            return false;
         } finally {
             reloadGUI();
         }
-
-        return false;
     }
 
     /**
@@ -348,29 +294,38 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
      *
      * @param handler Callback.
      */
-    private void enableMultiauthWithCompletionHandler(@NonNull final Protocols.SecureInputHandler handler) {
+    private void enableMultiauthWithCompletionHandler(
+            @NonNull final Protocols.SecureInputHandler handler
+    ) {
         final TokenDevice device = Main.sharedInstance().getManagerToken().getTokenDevice();
 
-        // Check whenever multiauthmode is already enabled.
+        // Check whenever multi-authMode is already enabled.
         try {
             final boolean isEnabled = device.getToken().isMultiAuthModeEnabled();
 
             // In both cases we will need auth pin, because it's used for
             // multi-auth upgrade as well as enabling specific authmodes.
             authInputGetAndVerifyPin((authInput, error) -> {
-                // If multi-auth is not enabled and we do have pin, we can try to upgrade it.
-                if (!isEnabled) {
-                    try {
-                        device.getToken().upgradeToMultiAuthMode((PinAuthInput) authInput);
-                    } catch (IdpException e) {
-                        getMainActivity().showErrorIfExists(e.getLocalizedMessage());
+                do {
+                    if (error != null) {
+                        getMainActivity().showErrorIfExists(error);
+                        break;
                     }
-                }
-                // Notify handler
-                if (authInput != null) {
-                    handler.onSecureInputFinished((PinAuthInput) authInput, null);
-                }
-                getMainActivity().showErrorIfExists(error);
+
+                    // If multi-auth is not enabled and we do have pin, we can try to upgrade it.
+                    if (!isEnabled) {
+                        try {
+                            device.getToken().upgradeToMultiAuthMode((PinAuthInput) authInput);
+                        } catch (IdpException e) {
+                            getMainActivity().showErrorIfExists(e.getLocalizedMessage());
+                        }
+                    }
+
+                    // Notify handler
+                    if (authInput != null) {
+                        handler.onSecureInputFinished((PinAuthInput) authInput, null);
+                    }
+                } while (false);
             });
         } catch (IdpException exception) {
             getMainActivity().showErrorIfExists(exception.getLocalizedMessage());

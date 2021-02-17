@@ -34,7 +34,6 @@ import com.gemalto.eziomobilesampleapp.helpers.Protocols;
 import com.gemalto.idp.mobile.authentication.AuthInput;
 import com.gemalto.idp.mobile.authentication.AuthenticationModule;
 import com.gemalto.idp.mobile.authentication.mode.biofingerprint.BioFingerprintAuthService;
-import com.gemalto.idp.mobile.authentication.mode.face.FaceAuthService;
 import com.gemalto.idp.mobile.authentication.mode.pin.PinAuthInput;
 import com.gemalto.idp.mobile.core.IdpException;
 import com.gemalto.idp.mobile.core.util.SecureString;
@@ -57,11 +56,9 @@ public class TokenDevice {
     /**
      * Keep all auth mode status in one struct.
      */
-    public class TokenStatus {
+    public static class TokenStatus {
         public boolean isTouchSupported = false;
-        public boolean isFaceSupported = false;
         public boolean isTouchEnabled = false;
-        public boolean isFaceEnabled = false;
     }
 
     private final OathToken mToken;
@@ -94,34 +91,30 @@ public class TokenDevice {
         return mToken;
     }
 
+    @SuppressWarnings("deprecation")
     public TokenStatus getTokenStatus() {
         final TokenStatus retValue = new TokenStatus();
 
         // Check all auth mode states so we can enable / disable proper buttons.
         final AuthenticationModule authMoule = AuthenticationModule.create();
         final BioFingerprintAuthService touchService = BioFingerprintAuthService.create(authMoule);
-        final FaceAuthService faceService = FaceAuthService.create(authMoule);
 
         retValue.isTouchSupported = touchService.isSupported() && touchService.isConfigured();
-        retValue.isFaceSupported = faceService.isInitialized() && faceService.isSupported() && faceService.isConfigured();
         try {
             retValue.isTouchEnabled = mToken.isAuthModeActive(touchService.getAuthMode());
         } catch (IdpException e) {
             retValue.isTouchEnabled = false;
-        }
-        try {
-            retValue.isFaceEnabled = faceService.isInitialized() && mToken.isAuthModeActive(faceService.getAuthMode());
-        } catch (IdpException e) {
-            retValue.isFaceEnabled = false;
         }
 
         return retValue;
     }
 
     // Generate OTP with any supported auth input.
-    public void totpWithAuthInput(final AuthInput authInput,
-                                  final SecureString serverChallenge,
-                                  final Protocols.OTPDelegate handler) {
+    public void totpWithAuthInput(
+            final AuthInput authInput,
+            final SecureString serverChallenge,
+            final Protocols.OTPDelegate handler
+    ) {
 
         SecureString otp = null;
         String error = null;

@@ -27,6 +27,7 @@
 
 package com.gemalto.eziomobilesampleapp.gui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -52,9 +53,12 @@ public class FragmentMissingPermissions extends AbstractMainFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater,
-                             @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    @SuppressLint("InflateParams")
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState
+    ) {
         final View retValue = inflater.inflate(R.layout.fragment_missing_permissions, null);
 
         mButtonPermissions = retValue.findViewById(R.id.permissions_button);
