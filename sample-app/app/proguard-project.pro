@@ -11,18 +11,18 @@
 -printconfiguration build/obfuscation-rules.pro
 
 
--keep class * extends android.** { *; }
--keep class * extends com.android.** { *; }
--keep class * extends com.google.** { *; }
+-keep, includedescriptorclasses class android.** { *; }
+-keep, includedescriptorclasses class androidx.** { *; }
+-keep, includedescriptorclasses class com.android.** { *; }
+-keep, includedescriptorclasses class com.google.** { *; }
+-keep, includedescriptorclasses class me.dm7.** { *; }
 -dontwarn org.apache.http.**
 -dontwarn java.awt.**
+-dontwarn androidx.**
+-dontwarn com.gemalto.**
+-dontnote com.google.**
 
 # There is an issue on R8 on GSON. Please refer to: https://r8.googlesource.com/r8/+/refs/heads/master/compatibility-faq.md
-# option 1
--keepclassmembers,allowobfuscation class util.a.y.** {
-  <fields>;
-}
-
 # option 2
-#-dontshrink
+-dontshrink
 
