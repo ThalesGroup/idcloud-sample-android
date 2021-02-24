@@ -600,7 +600,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public void showMessage(final String message) {
         final Context ctx = this;
-        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(ctx, message, Toast.LENGTH_LONG).show());
+        if (message != null && message.trim().isEmpty() == false) {
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(ctx, message, Toast.LENGTH_LONG).show());
+        }
     }
 
     /**

@@ -66,6 +66,7 @@
 
     // Server Messages
     <string name="message_subject_authentication">Please authenticate to login to the tutorial site.</string>
+    <string name="message_subject_transaction">Please authenticate to approve the transaction.</string>
     <string name="message_not_found">Missing translation.</string>
     <string name="message_not_you">Not Initiated by you?</string>
 
