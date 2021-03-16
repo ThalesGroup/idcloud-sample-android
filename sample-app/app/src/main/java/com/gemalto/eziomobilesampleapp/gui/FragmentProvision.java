@@ -31,6 +31,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -209,6 +211,9 @@ public class FragmentProvision extends AbstractMainFragment implements FragmentQ
             final String error
     ) {
 
+        // Hide any previous dialogs if exists.
+        dialogFragmentHide();
+
         // First check parser result.
         if (qrCodeData == null) {
             getMainActivity().showErrorIfExists(error);
@@ -238,11 +243,38 @@ public class FragmentProvision extends AbstractMainFragment implements FragmentQ
         fragment.init(FragmentProvision.this, 0);
 
         if (getActivity() != null)
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .replace(R.id.fragment_container, fragment, null)
-                    .addToBackStack(null)
-                    .commit();
+            dialogFragmentShow(fragment, DIALOG_TAG_QR_CODE_READER, true);
+    }
+
+    private String mLastDialogFragmentTag = null;
+    private static final String DIALOG_TAG_QR_CODE_READER = "DIALOG_TAG_QR_CODE_READER";
+    public void dialogFragmentShow(
+            DialogFragment dialog,
+            String dialogTag,
+            boolean fullscreen
+    ) {
+        // Hide any previous dialogs if exists.
+        dialogFragmentHide();
+
+        // If desired make dialog appear in fullscreen.
+        if (fullscreen) {
+            dialog.setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        }
+
+        // Save last tag and display fragment.
+        mLastDialogFragmentTag = dialogTag;
+        dialog.show(getActivity().getSupportFragmentManager(), mLastDialogFragmentTag);
+    }
+
+    public void dialogFragmentHide() {
+        // Hide fragment if exists
+        if (mLastDialogFragmentTag != null) {
+            Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(mLastDialogFragmentTag);
+            if (fragment instanceof DialogFragment) {
+                ((DialogFragment) fragment).dismiss();
+            }
+            mLastDialogFragmentTag = null; // NOPMD
+        }
     }
 
     /**

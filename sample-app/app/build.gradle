@@ -48,10 +48,10 @@ dependencies {
     implementation "com.google.firebase:firebase-core:16.0.1"
 
     // QR Code Scanner
-    implementation "me.dm7.barcodescanner:zxing:1.9"
+    implementation "me.dm7.barcodescanner:zxing:1.9.13"
 
     // Networking
-    implementation "com.mcxiaoke.volley:library:1.0.0"
+    implementation "com.android.volley:volley:1.2.0"
 
     implementation "com.github.dmytrodanylyk.shadow-layout:library:1.0.1"
 

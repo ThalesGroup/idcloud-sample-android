@@ -31,7 +31,7 @@ import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +48,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 /**
  * Simple QR Code reader.
  */
-public class FragmentQRCodeReader extends Fragment implements ZXingScannerView.ResultHandler {
+public class FragmentQRCodeReader extends DialogFragment implements ZXingScannerView.ResultHandler {
 
     //region Defines
 

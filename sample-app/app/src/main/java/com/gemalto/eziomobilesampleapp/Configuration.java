@@ -42,7 +42,7 @@ public class Configuration {
 
     //region Common SDK
 
-    private static final String CUSTOM_FINGERPRINT_DATA = "";
+    private static final String CUSTOM_FINGERPRINT_DATA = "CUSTOM_FINGERPRINT_DATA";
 
     /**
      * Activation code is used to enable OOB features.
@@ -73,7 +73,7 @@ public class Configuration {
      * Optional value with custom finger print data. Used as input of encryption calculation
      */
     public static final DeviceFingerprintSource CFG_SDK_DEVICE_FINGERPRINT_SOURCE = new DeviceFingerprintSource(
-            "".getBytes(),
+            "com.gemalto.ezio.mobile.EzioMobileSdkExample".getBytes(),
             DeviceFingerprintSource.Type.SOFT);
 
     /**
@@ -264,27 +264,18 @@ public class Configuration {
     /**
      * Tuto page does require authentication.
      */
-    public static final String CFG_TUTO_BASICAUTH_USERNAME = "";
+    public static final String JWT = "";
 
     /**
      * Tuto page does require authentication.
      */
-    public static final String CFG_TUTO_BASICAUTH_PASSWORD = "";
+    public static final String API_KEY = "";
 
     /**
      * Base totu page URL. Used for In Band cases.
      */
-    public static final String CFG_TUTO_URL_ROOT = "";
+    public static final String AUTH_URL = "";
 
-    /**
-     *  Auth API url used for In Band cases.
-     */
-    public static final String CFG_TUTO_URL_AUTH = CFG_TUTO_URL_ROOT + "";
-
-    /**
-     * Transaction sign API url used for In Band cases.
-     */
-    public static final String CFG_TUTO_URL_SIGN = CFG_TUTO_URL_ROOT + "";
 
     //endregion
 

@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -45,6 +46,7 @@ import com.gemalto.idp.mobile.core.ApplicationContextHolder;
 import com.gemalto.idp.mobile.core.util.SecureString;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -54,24 +56,28 @@ public class HttpManager {
 
     //region Defines
 
-    private static final String API_AUTH_RESPONSE_OK = "Authentication succeeded";
-    private static final String API_SIGN_RESPONSE_OK = "Signature verification succeeded";
+    private static final String API_AUTH_RESPONSE_OK = "Authentication successful";
+    private static final String CONTENT_TYPE = "application/json";
 
-    private static final String CFG_TUTO_XML_AUTH = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" +
-            "<AuthenticationRequest> \n" +
-            "  <UserID>%s</UserID> \n" +
-            "  <OTP>%s</OTP> \n" +
-            "</AuthenticationRequest>";
+    private static final String CFG_JSON_AUTH = "{\n" +
+            "    \"name\": \"Auth_OTP\",\n" +
+            "    \"input\": {\n" +
+            "        \"userId\": \"%s\",\n" +
+            "        \"otp\" : \"%s\"\n" +
+            "    }\n" +
+            "}";
 
-    private static final String CFG_TUTO_XML_SIGN = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-            "<SignatureRequest>\n" +
-            "   <Transaction>\n" +
-            "       <Amount>%s</Amount>\n" +
-            "       <Beneficiary>%s</Beneficiary>\n" +
-            "   </Transaction>\n" +
-            "   <UserID>%s</UserID>\n" +
-            "   <OTP>%s</OTP>\n" +
-            "</SignatureRequest>";
+    private static final String CFG_JSON_SIGN = "{\n" +
+            "    \"name\": \"Sign_OTP\",\n" +
+            "    \"input\": {\n" +
+            "        \"userId\": \"%s\",\n" +
+            "        \"transactionData\": {\n" +
+            "            \"amount\": \"%s\",\n" +
+            "            \"beneficiary\": \"%s\"\n" +
+            "        },\n" +
+            "        \"otp\" : \"%s\"\n" +
+            "    }\n" +
+            "}";
 
     //endregion
 
@@ -95,13 +101,13 @@ public class HttpManager {
             // Demo app use user name for token name since it's unique.
             final String userName = Main.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
             // Final application might use some XML parser rather that simple format, to ensure data integrity.
-            final String body = String.format(CFG_TUTO_XML_AUTH, userName, otp.toString());
+            final String body = String.format(Locale.US, CFG_JSON_AUTH, userName, otp.toString());
 
             // We don't need otp any more. Wipe it.
             otp.wipe();
 
             // Post message and wait for results.
-            doPostMessage(Configuration.CFG_TUTO_URL_AUTH, "text/xml", authHeaders(), body, delegate);
+            doPostMessage(Configuration.AUTH_URL, CONTENT_TYPE, authHeaders(), body, delegate);
         } else if (currentListener != null) {
             currentListener.showErrorIfExists(error);
         }
@@ -129,13 +135,13 @@ public class HttpManager {
             // Demo app use user name for token name since it's unique.
             final String userName = Main.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
             // Final application might use some XML parser rather that simple format, to ensure data integrity.
-            final String body = String.format(CFG_TUTO_XML_AUTH, userName, otp.toString());
+            final String body = String.format(Locale.US, CFG_JSON_AUTH, userName, otp.toString());
 
             // We don't need otp any more. Wipe it.
             otp.wipe();
 
             // Post message and wait for results.
-            doPostMessage(Configuration.CFG_TUTO_URL_AUTH, "text/xml", authHeaders(), body, delegate);
+            doPostMessage(Configuration.AUTH_URL, CONTENT_TYPE, authHeaders(), body, delegate);
         } else if (currentListener != null) {
             currentListener.showErrorIfExists(error);
         }
@@ -162,13 +168,13 @@ public class HttpManager {
             // Demo app use user name for token name since it's unique.
             final String userName = Main.sharedInstance().getManagerToken().getTokenDevice().getToken().getName();
             // Final application might use some XML parser rather that simple format, to ensure data integrity.
-            final String body = String.format(CFG_TUTO_XML_SIGN, getValidString(amount), getValidString(beneficiary), userName, otp.toString());
+            final String body = String.format(Locale.US, CFG_JSON_SIGN, userName, getValidString(amount), getValidString(beneficiary), otp.toString());
 
             // We don't need otp any more. Wipe it.
             otp.wipe();
 
             // Post message and wait for results.
-            doPostMessage(Configuration.CFG_TUTO_URL_SIGN, "text/xml", authHeaders(), body, delegate);
+            doPostMessage(Configuration.AUTH_URL, CONTENT_TYPE, authHeaders(), body, delegate);
         } else if (currentListener != null) {
             currentListener.showErrorIfExists(error);
         }
@@ -188,9 +194,9 @@ public class HttpManager {
     }
 
     private Map<String, String> authHeaders() {
-        final String hash = "Basic " + new String(Base64.encode((Configuration.CFG_TUTO_BASICAUTH_USERNAME + ":" + Configuration.CFG_TUTO_BASICAUTH_PASSWORD).getBytes(), 0));
         final HashMap<String, String> retValue = new HashMap<>();
-        retValue.put("Authorization", hash);
+        retValue.put("Authorization", String.format(Locale.US, "Bearer %s", Configuration.JWT));
+        retValue.put("X-API-KEY", Configuration.API_KEY);
         return retValue;
     }
 
@@ -207,8 +213,7 @@ public class HttpManager {
             // Notify listener.
             if (delegate != null) {
                 delegate.onPostFinished(
-                        API_AUTH_RESPONSE_OK.equals(response) ||
-                                API_SIGN_RESPONSE_OK.equals(response), response);
+                        response.contains(API_AUTH_RESPONSE_OK), response);
             }
         };
     }
@@ -254,13 +259,17 @@ public class HttpManager {
                 getResponseListener(delegate), getResponseErrorListener(delegate)
         ) {
             @Override
-            public byte[] getBody() {
+            public byte[] getBody() throws AuthFailureError {
                 // Set post message body.
                 return body == null ? null : body.getBytes();
             }
 
+            public String getBodyContentType() {
+                return contentType;
+            }
+
             @Override
-            public Map<String, String> getHeaders() {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 return headerParams;
             }
         };

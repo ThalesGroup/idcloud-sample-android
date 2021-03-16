@@ -179,7 +179,7 @@ public class TokenManager {
         final ProvisioningConfiguration config = new EpsConfigurationBuilder(regCode,
                 provisionUrl,
                 Configuration.DOMAIN,
-                MobileProvisioningProtocol.PROVISIONING_PROTOCOL_V3,
+                MobileProvisioningProtocol.PROVISIONING_PROTOCOL_V5,
                 Configuration.CFG_OTP_RSA_KEY_ID,
                 Configuration.CFG_OTP_RSA_KEY_EXPONENT,
                 Configuration.CFG_OTP_RSA_KEY_MODULUS)
