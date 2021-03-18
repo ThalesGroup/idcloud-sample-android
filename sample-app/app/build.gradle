@@ -7,8 +7,8 @@ android {
     defaultConfig {
         applicationId "com.gemalto.eziomobilesampleapp"
 
-        versionCode 36
-        versionName "3.0.20"
+        versionCode 37
+        versionName "3.0.21"
         //multiDexEnabled true
 
         ndk {

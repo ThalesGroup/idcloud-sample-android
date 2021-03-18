@@ -16,10 +16,12 @@
 -keep, includedescriptorclasses class com.android.** { *; }
 -keep, includedescriptorclasses class com.google.** { *; }
 -keep, includedescriptorclasses class me.dm7.** { *; }
+-keep, includedescriptorclasses class org.chromium.** { *; }
 -dontwarn org.apache.http.**
 -dontwarn java.awt.**
 -dontwarn androidx.**
 -dontwarn com.gemalto.**
+-dontwarn com.android.**
 -dontnote com.google.**
 
 # There is an issue on R8 on GSON. Please refer to: https://r8.googlesource.com/r8/+/refs/heads/master/compatibility-faq.md
