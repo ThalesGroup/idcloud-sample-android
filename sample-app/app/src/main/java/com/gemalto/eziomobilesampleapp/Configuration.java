@@ -68,7 +68,7 @@ public class Configuration {
     /**
      * Domain.
      */
-    public static final String DOMAIN = "idcloudpartners";
+    public static final String DOMAIN = "";
 
     /**
      * Optional value with custom finger print data. Used as input of encryption calculation
