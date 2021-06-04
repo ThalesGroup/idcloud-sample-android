@@ -1,7 +1,7 @@
 apply plugin: "com.android.application"
 apply from: "${rootDir}/build-android-based.gradle"
 
-def EZIO_SDK = "${rootDir}/../../dist/android/default/external"
+def EZIO_SDK = "${rootDir}/app/libs"
 
 android {
     defaultConfig {
