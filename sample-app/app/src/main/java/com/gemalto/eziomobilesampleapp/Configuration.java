@@ -35,6 +35,7 @@ import com.gemalto.idp.mobile.msp.MspSignatureKey;
 import com.gemalto.idp.mobile.oob.OobConfiguration;
 import com.gemalto.idp.mobile.otp.OtpConfiguration;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -135,13 +136,13 @@ public class Configuration {
     /**
      * Replace this URL with your EPS URL.
      */
-    public static final String CFG_OTP_PROVISION_URL = "https://provisioner-eps-demo.rnd.gemaltodigitalbankingidcloud.com/provisioner/api/provisioning/pp";
+    public static final String CFG_OTP_PROVISION_URL = "";
 
     /**
      * Replace this string with your own EPS key ID.
      * This is specific to the configuration of the bank's system. Therefore other values should be used here.
      */
-    public static final String CFG_OTP_RSA_KEY_ID = "gtoolrnd_eps-public-key";
+    public static final String CFG_OTP_RSA_KEY_ID = "";
 
     /**
      * Configuration of example OCRA suite used in this demo.
@@ -207,13 +208,13 @@ public class Configuration {
      * Replace this URL with your OOB server URL.
      * This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
-    public static final String CFG_OOB_URL = "https://messenger-ecm-demo.rnd.gemaltodigitalbankingidcloud.com/messenger/api/client/v1/action";
+    public static final String CFG_OOB_URL = "";
 
     /**
      * Replace this domain with your OOB server domain.
      * This is specific to the configuration of the bank's system.  Therefore other values should be used here.
      */
-    public static final String CFG_OOB_DOMAIN = "gtoolrnd";
+    public static final String CFG_OOB_DOMAIN = "";
 
     /**
      * Replace this app id with your OOB server app id.
