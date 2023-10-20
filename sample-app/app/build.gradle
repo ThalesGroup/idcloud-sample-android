@@ -31,11 +31,10 @@ android {
 
 dependencies {
     // Android stuff
-    implementation "com.android.support:support-v4:${propAndroidSupport}"
-    implementation "com.android.support:appcompat-v7:${propAndroidSupport}"
-    implementation "com.android.support:design:${propAndroidSupport}"
-    implementation "com.android.support.constraint:constraint-layout:2.0.4"
-    implementation "com.android.support:support-vector-drawable:${propAndroidSupport}"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    implementation 'com.google.android.material:material:1.9.0'
 
     debugImplementation fileTree(dir: "${EZIO_SDK}/debug", include: ["protector-oath.aar"])
     releaseImplementation fileTree(dir: "${EZIO_SDK}/release", include: ["protector-oath.aar"])
@@ -44,16 +43,16 @@ dependencies {
     implementation "net.java.dev.jna:jna:5.5.0@aar"
 
     // FCM dependencies, depending on your use-case
-    implementation "com.google.firebase:firebase-messaging:17.3.0"
-    implementation "com.google.firebase:firebase-core:16.0.1"
+    implementation "com.google.firebase:firebase-messaging:23.2.1"
+    implementation "com.google.firebase:firebase-core:21.1.1"
 
     // QR Code Scanner
-    implementation "me.dm7.barcodescanner:zxing:1.9.13"
+    implementation "me.dm7.barcodescanner:zxing:1.9"
 
     // Networking
-    implementation "com.android.volley:volley:1.2.0"
+    implementation "com.android.volley:volley:1.2.1"
 
-    implementation "com.github.dmytrodanylyk.shadow-layout:library:1.0.1"
+    implementation "com.github.dmytrodanylyk.shadow-layout:library:1.0.3"
 
     // UI Style
     implementation project(":idcloudstyle")
