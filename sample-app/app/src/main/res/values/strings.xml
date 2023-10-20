@@ -36,7 +36,6 @@
     <string name="LOADING_MESSAGE_VALIDATING">Verifying</string>
     <string name="LOADING_MESSAGE_ENROLLING">Enrolling</string>
     <string name="LOADING_MESSAGE_INIT">Initialising</string>
-    <string name="LOADING_MESSAGE_VERIFYING_PIN">Verifying PIN</string>
 
 
     // OTP
@@ -53,7 +52,6 @@
     <string name="ui_button_scan_and_enroll">Use QR code</string>
     <string name="ui_button_enroll">Enroll</string>
     <string name="ui_button_otp_auth">Authentication</string>
-    <string name="ui_button_otp_verify">Verify Online</string>
     <string name="ui_button_otp_sign">Sign transaction</string>
     <string name="ui_button_otp_pull">Pull message</string>
     <string name="ui_button_otp_open">Open message</string>

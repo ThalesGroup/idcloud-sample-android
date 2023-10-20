@@ -31,8 +31,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,8 +71,6 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
     private String mBeneficiary = null;
 
     private final AlphaAnimation mTextChangeAnim = new AlphaAnimation(1.f, .0f);
-
-    private Button mButtonVerify;
 
     //endregion
 
@@ -128,9 +126,6 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
         mLifespan = retValue.findViewById(R.id.text_view_countdown);
         mCircleTimer = retValue.findViewById(R.id.circleTimer);
 
-        mButtonVerify = retValue.findViewById(R.id.button_otp_verify);
-        mButtonVerify.setOnClickListener(this::onButtonPressedVerify);
-
         // Animation for OTP text change
         mTextChangeAnim.setDuration(200);
         mTextChangeAnim.setRepeatCount(1);
@@ -181,8 +176,6 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
         // No matter what was set. If there is a loading indicator, we should disable everything.
         if (getMainActivity().isOverlayViewVisible()) {
             disableGUI();
-        } else {
-            mButtonVerify.setEnabled(true);
         }
 
         getMainActivity().enableDrawer(false);
@@ -194,7 +187,6 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
      */
     @Override
     public void disableGUI() {
-        mButtonVerify.setEnabled(false);
     }
 
     //endregion
@@ -271,33 +263,6 @@ public class FragmentOtp extends AbstractMainFragmentWithAuthSolver implements P
         }
 
         mLastOTP = otp != null ? otp.clone() : null;
-    }
-
-    //endregion
-
-    //region User Interface
-
-    private void onButtonPressedVerify(final View sender) {
-        // Both ath request and transaction sign does have same handler.
-        // Display message, and hide fragment on success.
-        final Protocols.PostMessageInterface resultListener = (success, message) -> {
-            getMainActivity().showMessage(message);
-
-            if (success) {
-                getMainActivity().onBackPressed();
-            }
-        };
-
-        if (mLastOTP == null) {
-            return;
-        }
-
-        if (mAmount != null && mBeneficiary != null) {
-            Main.sharedInstance().getManagerHttp()
-                    .sendSignRequest(mLastOTP.clone(), null, null, mAmount, mBeneficiary, resultListener);
-        } else {
-            Main.sharedInstance().getManagerHttp().sendAuthRequest(mLastOTP.clone(), null, null, resultListener);
-        }
     }
 
     //endregion

@@ -31,12 +31,13 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
+
 import android.widget.Toast;
 
 import com.gemalto.eziomobilesampleapp.Configuration;
@@ -44,7 +45,6 @@ import com.gemalto.eziomobilesampleapp.EzioSampleApp;
 import com.gemalto.eziomobilesampleapp.MainActivity;
 import com.gemalto.eziomobilesampleapp.R;
 import com.gemalto.eziomobilesampleapp.helpers.app.storage.SharedPreferences;
-import com.gemalto.eziomobilesampleapp.helpers.ezio.HttpManager;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.PushManager;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.QRCodeManager;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.TokenManager;
@@ -81,7 +81,7 @@ public class Main {
     private PushManager mManagerPush = null;
     private TokenManager mManagerToken = null;
     private QRCodeManager mManagerQRCode = null;
-    private HttpManager mManagerHttp = null;
+
     private IdpCore mCore = null;
     private Protocols.GenericHandler mUiHandler;
 
@@ -122,7 +122,6 @@ public class Main {
         mStorageFast = new SharedPreferences();
         mManagerPush = new PushManager();
         mManagerQRCode = new QRCodeManager();
-        mManagerHttp = new HttpManager();
     }
 
     /**
@@ -329,13 +328,6 @@ public class Main {
      */
     public synchronized TokenManager getManagerToken() {
         return mManagerToken;
-    }
-
-    /**
-     * @return Manager used for handling http communication.
-     */
-    public synchronized HttpManager getManagerHttp() {
-        return mManagerHttp;
     }
 
     /**

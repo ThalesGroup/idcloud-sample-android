@@ -29,8 +29,8 @@ package com.gemalto.eziomobilesampleapp.helpers;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.gemalto.idp.mobile.authentication.AuthInput;
 import com.gemalto.idp.mobile.authentication.mode.pin.PinAuthInput;

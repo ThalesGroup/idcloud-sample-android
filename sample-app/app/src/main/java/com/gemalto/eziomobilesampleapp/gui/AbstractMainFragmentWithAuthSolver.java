@@ -28,18 +28,13 @@
 package com.gemalto.eziomobilesampleapp.gui;
 
 import android.os.CancellationSignal;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
+
 
 import com.gemalto.eziomobilesampleapp.R;
 import com.gemalto.eziomobilesampleapp.gui.overlays.FragmentBioFingerprint;
 import com.gemalto.eziomobilesampleapp.gui.overlays.FragmentSecureKeypad;
 import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.eziomobilesampleapp.helpers.Protocols;
-import com.gemalto.eziomobilesampleapp.helpers.ezio.HttpManager;
 import com.gemalto.eziomobilesampleapp.helpers.ezio.TokenDevice;
 import com.gemalto.idp.mobile.authentication.AuthMode;
 import com.gemalto.idp.mobile.authentication.AuthenticationModule;
@@ -52,6 +47,12 @@ import com.gemalto.idp.mobile.core.IdpException;
 import com.gemalto.idp.mobile.core.util.SecureString;
 
 import static android.hardware.fingerprint.FingerprintManager.FINGERPRINT_ERROR_CANCELED;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * Add auth input / OTP handlers to main fragment.
@@ -143,18 +144,15 @@ public abstract class AbstractMainFragmentWithAuthSolver extends AbstractMainFra
             // once OTP generated
             tokenDevice.totpWithAuthInput(firstPin, null, (otp, error, authInput, serverChallenge) -> {
 
-                // Verify the OTP on the backend
-                final HttpManager httpManager = Main.sharedInstance().getManagerHttp();
-                httpManager.sendAuthRequestForChangePin(otp, error, (success, message) -> {
-                    if (success) {
-                        handler.onFinished(firstPin, null);
-                    } else {
-                        // OTP not verified => do not change the PIN
-                        handler.onFinished(null, message != null
-                                ? message
-                                : Main.getString(R.string.verify_pin_network_issue));
-                    }
-                });
+                if (error == null) {
+                    handler.onFinished(firstPin, null);
+                } else {
+                    // OTP not verified => do not change the PIN
+                    handler.onFinished(null, error != null
+                            ? error
+                            : Main.getString(R.string.verify_pin_network_issue));
+                }
+
             });
         }, false);
     }

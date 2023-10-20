@@ -86,11 +86,6 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
-            android:id="@+id/button_otp_verify"
-            style="@style/AppTheme.Button"
-            android:drawableStart="@drawable/icon_small_upload"
-            android:text="@string/ui_button_otp_verify" />
     </LinearLayout>
 
     <!--Thales logo-->

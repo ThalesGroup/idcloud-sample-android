@@ -29,21 +29,25 @@ package com.gemalto.eziomobilesampleapp.gui.overlays;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 import com.gemalto.eziomobilesampleapp.MainActivity;
 import com.gemalto.eziomobilesampleapp.helpers.Main;
 import com.gemalto.idp.mobile.core.util.SecureByteArray;
 import com.google.zxing.Result;
 
+
 import java.math.BigInteger;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
 
 /**
  * Simple QR Code reader.

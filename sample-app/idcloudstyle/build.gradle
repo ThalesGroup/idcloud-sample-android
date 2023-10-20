@@ -11,9 +11,6 @@ android {
 
 dependencies {
     // Android stuff
-    implementation "com.android.support:support-v4:${propAndroidSupport}"
-    implementation "com.android.support:appcompat-v7:${propAndroidSupport}"
-    implementation "com.android.support:design:${propAndroidSupport}"
-    implementation "com.android.support.constraint:constraint-layout:2.0.4"
-    implementation "com.android.support:support-vector-drawable:${propAndroidSupport}"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }

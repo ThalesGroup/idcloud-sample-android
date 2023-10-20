@@ -27,7 +27,7 @@
 
 package com.gemalto.eziomobilesampleapp.helpers.ezio;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.gemalto.eziomobilesampleapp.R;
 import com.gemalto.eziomobilesampleapp.helpers.Main;
