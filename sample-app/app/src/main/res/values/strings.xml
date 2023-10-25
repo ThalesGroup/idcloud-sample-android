@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IdCloud Sample App</string>
+    <string name="app_name">IdCloud Sample</string>
     <string name="default_notification_channel_id">default</string>
 
     <string name="toast_exit">Press Back again to Exit.</string>
@@ -63,8 +63,9 @@
     <string name="ui_label_amount_sign">15</string>
 
     // Server Messages
-    <string name="message_subject_authentication">Please authenticate to login to the tutorial site.</string>
-    <string name="message_subject_transaction">Please authenticate to approve the transaction.</string>
+    <string name="message_subject_authentication">Please authenticate to login.</string>
+    <string name="message_subject_transaction">Please authenticate to approve transfer of $%amount to %beneficiary</string>
+    <string name="message_subject_transaction_default">Please authenticate to approve the transaction:</string>
     <string name="message_not_found">Missing translation.</string>
     <string name="message_not_you">Not Initiated by you?</string>
 
