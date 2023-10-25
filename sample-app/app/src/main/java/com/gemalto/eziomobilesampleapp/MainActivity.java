@@ -353,7 +353,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         versionSdk.setText(String.format("SDK Version: %s", IdpCore.getVersion()));
 
         final TextView privacyPolicy = findViewById(R.id.textViewPrivacy);
-        privacyPolicy.setOnClickListener(this::onTextPressedPrivacyPolicy);
+        if (Configuration.CFG_PRIVACY_POLICY_URL != null) {
+            privacyPolicy.setOnClickListener(this::onTextPressedPrivacyPolicy);
+        } else {
+            privacyPolicy.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**

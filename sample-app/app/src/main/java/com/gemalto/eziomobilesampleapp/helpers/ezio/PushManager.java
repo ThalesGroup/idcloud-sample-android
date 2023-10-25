@@ -334,9 +334,18 @@ public class PushManager {
 
         // Get message subject key and fill in all values.
         String subject = Main.getStringByKeyName(request.getSubject().toString());
-        for (final Map.Entry<String, String> entry : request.getMeta().entrySet()) {
-            final String placeholder = "%" + entry.getKey();
-            subject = subject.replace(placeholder, entry.getValue());
+        String origSubject = subject;
+        String params = "";
+        if (request.getMeta().size() > 0) {
+            for (final Map.Entry<String, String> entry : request.getMeta().entrySet()) {
+                final String placeholder = "%" + entry.getKey();
+                subject = subject.replace(placeholder, entry.getValue());
+                params += "\n" + entry.getKey() + ": " + entry.getValue();
+            }
+            if (origSubject.equals(subject)) {
+                // Message string does not contain the request fields, append them to message instead
+                subject = Main.getString(R.string.message_subject_transaction_default) + params;
+            }
         }
 
         try {

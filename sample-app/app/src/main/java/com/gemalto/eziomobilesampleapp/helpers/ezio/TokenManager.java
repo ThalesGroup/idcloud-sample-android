@@ -87,7 +87,7 @@ public class TokenManager {
         if (tokenName != null) {
             // Try to get instance of saved token.
             try {
-                token = mOathManager.getToken(tokenName, Configuration.getCustomFingerprintData());
+                token = mOathManager.getToken(tokenName, Configuration.CUSTOM_FINGERPRINT_DATA);
                 mTokenDevice = new TokenDevice(token);
             } catch (final IdpException exception) {
                 // Error in such case mean, that we have broken configuration or some internal state of SDK.
@@ -185,12 +185,9 @@ public class TokenManager {
                 Configuration.CFG_OTP_RSA_KEY_MODULUS)
                 .setTlsConfiguration(Configuration.CFG_SDK_TLS_CONFIGURATION).build();
 
-        final DeviceFingerprintSource
-                deviceFingerprintSource = new DeviceFingerprintSource(Configuration.getCustomFingerprintData(),
-                DeviceFingerprintSource.Type.SOFT);
         final DeviceFingerprintTokenPolicy
                 deviceFingerprintTokenPolicy = new DeviceFingerprintTokenPolicy(true,
-                deviceFingerprintSource);
+                Configuration.CFG_SDK_DEVICE_FINGERPRINT_SOURCE);
 
         mOathManager.createToken(userId,
                 config,

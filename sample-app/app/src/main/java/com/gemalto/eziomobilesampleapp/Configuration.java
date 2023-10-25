@@ -35,15 +35,13 @@ import com.gemalto.idp.mobile.msp.MspSignatureKey;
 import com.gemalto.idp.mobile.oob.OobConfiguration;
 import com.gemalto.idp.mobile.otp.OtpConfiguration;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class Configuration {
 
     //region Common SDK
 
-    private static final String CUSTOM_FINGERPRINT_DATA = "CUSTOM_FINGERPRINT_DATA";
+    public static final byte[] CUSTOM_FINGERPRINT_DATA = "CUSTOM_FINGERPRINT_DATA".getBytes();
 
     /**
      * Activation code is used to enable OOB features.
@@ -74,8 +72,10 @@ public class Configuration {
      * Optional value with custom finger print data. Used as input of encryption calculation
      */
     public static final DeviceFingerprintSource CFG_SDK_DEVICE_FINGERPRINT_SOURCE = new DeviceFingerprintSource(
-            "com.gemalto.ezio.mobile.EzioMobileSdkExample".getBytes(),
-            DeviceFingerprintSource.Type.SOFT);
+            CUSTOM_FINGERPRINT_DATA,
+            DeviceFingerprintSource.isHardwareKeySupported() ?
+                    new DeviceFingerprintSource.Type[] { DeviceFingerprintSource.Type.HARDWARE_KEY, DeviceFingerprintSource.Type.SOFT }
+                    : new DeviceFingerprintSource.Type[] { DeviceFingerprintSource.Type.SOFT });
 
     /**
      * For debug purposes we can weaken TLS configuration.
@@ -279,20 +279,6 @@ public class Configuration {
 
 
     //endregion
-
-    /**
-     * Gets the custom fingerprint data.
-     *
-     * @return Custom fingerprint data.
-     */
-    public static byte[] getCustomFingerprintData() {
-        try {
-            return CUSTOM_FINGERPRINT_DATA.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // This should not happen.
-            throw new IllegalStateException(e);
-        }
-    }
 
     //region SecureLog configuration
 
