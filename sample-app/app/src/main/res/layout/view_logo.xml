@@ -33,7 +33,7 @@
                 android:layout_marginStart="@dimen/dimensionMarginNormal"
                 android:text="@string/app_name"
                 android:textAlignment="viewStart"
-                android:textColor="@color/idCloudRed"
+                android:textColor="@color/thalesBlue"
                 android:textSize="@dimen/dimensionTextSizeNormal" />
         </LinearLayout>
 
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimensionMarginSmall"
             android:text="@android:string/untitled"
-            android:textColor="@color/idCloudRed"
+            android:textColor="@color/thalesBlue"
             android:textSize="@dimen/dimensionTextSizeNormal" />
     </LinearLayout>
 

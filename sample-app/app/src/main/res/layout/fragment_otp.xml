@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimensionMarginSmall"
             android:text="@android:string/untitled"
-            android:textColor="@color/idCloudRed"
+            android:textColor="@color/thalesBlue"
             android:textSize="@dimen/dimensionTextSizeHeader" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimensionMarginSmall"
             android:text="@android:string/untitled"
-            android:textColor="@color/idCloudRed"
+            android:textColor="@color/thalesBlue"
             android:textSize="@dimen/dimensionTextSizeNormal" />
 
     </LinearLayout>
