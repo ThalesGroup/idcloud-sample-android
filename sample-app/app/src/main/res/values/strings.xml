@@ -29,7 +29,7 @@
 
     // Auth mode options
 
-    <string name="AUTH_MODE_TOUCH_ID_ENABLED">TouchId successfully enabled</string>
+    <string name="AUTH_MODE_BIOMETRICS_ENABLED">Biometrics successfully enabled</string>
 
     // Loading bar indicator
 

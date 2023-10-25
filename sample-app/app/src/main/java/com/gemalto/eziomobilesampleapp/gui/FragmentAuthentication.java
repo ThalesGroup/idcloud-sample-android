@@ -169,7 +169,7 @@ public class FragmentAuthentication extends AbstractMainFragmentWithAuthSolver {
         if (status.isTouchEnabled) {
             disableAuthMode(service.getAuthMode());
         } else {
-            enableAuthMode(service.getAuthMode(), R.string.AUTH_MODE_TOUCH_ID_ENABLED);
+            enableAuthMode(service.getAuthMode(), R.string.AUTH_MODE_BIOMETRICS_ENABLED);
         }
     }
 
