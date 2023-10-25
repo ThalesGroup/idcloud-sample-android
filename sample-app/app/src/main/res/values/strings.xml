@@ -81,7 +81,7 @@
     <string name="navigation_drawer_privacy">Privacy Policy</string>
 
     // side menu
-    <string name="touch_id">Touch ID</string>
+    <string name="biometrics">Biometrics</string>
     <string name="change_pin">Change Pin</string>
     <string name="verify_pin_network_issue">Failed to verify pin. Make sure your internet connection is working.</string>
 
