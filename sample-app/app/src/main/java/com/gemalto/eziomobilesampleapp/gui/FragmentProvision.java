@@ -190,6 +190,10 @@ public class FragmentProvision extends AbstractMainFragment implements FragmentQ
 
             // Token was created. Switch tabs.
             if (token != null) {
+
+                if (Build.VERSION.SDK_INT > 32) {
+                    Main.checkPermissions(main.getCurrentListener(), true, Manifest.permission.POST_NOTIFICATIONS);
+                }
                 getMainActivity().showAuthenticationFragment();
             } else {
                 getMainActivity().showErrorIfExists(error);
