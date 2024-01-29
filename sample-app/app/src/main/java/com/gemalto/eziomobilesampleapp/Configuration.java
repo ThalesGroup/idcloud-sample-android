@@ -259,26 +259,7 @@ public class Configuration {
     public static final Uri CFG_PRIVACY_POLICY_URL = Uri.parse("");
 
     //endregion
-
-
-    //region TUTO PAGE CONFIG
-    /**
-     * Tuto page does require authentication.
-     */
-    public static final String JWT = "";
-
-    /**
-     * Tuto page does require authentication.
-     */
-    public static final String API_KEY = "";
-
-    /**
-     * Base totu page URL. Used for In Band cases.
-     */
-    public static final String AUTH_URL = "";
-
-
-    //endregion
+    
 
     //region SecureLog configuration
 
