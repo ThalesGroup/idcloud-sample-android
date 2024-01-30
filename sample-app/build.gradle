@@ -5,12 +5,11 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
-        classpath "com.google.gms:google-services:4.3.10"
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "com.google.gms:google-services:4.4.0"
         classpath 'net.sf.proguard:proguard-gradle:6.2.2'
     }
 }
@@ -19,7 +18,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
 }
 
