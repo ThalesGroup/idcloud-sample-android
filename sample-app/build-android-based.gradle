@@ -5,8 +5,8 @@ allprojects {
         propMinSdkVersion = 23
         propTargetSdkVersion = 33
 
-        propVersionCode = 640
-        propVersionName = "6.4.0"
+        propVersionCode = 650
+        propVersionName = "6.5.0"
     }
 }
 
