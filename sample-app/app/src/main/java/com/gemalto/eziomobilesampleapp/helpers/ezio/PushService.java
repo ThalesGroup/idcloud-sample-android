@@ -98,7 +98,7 @@ public class PushService extends FirebaseMessagingService {
             notificationIntent.putExtra(key, data.get(key));
         }
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         final String channelId = getString(R.string.default_notification_channel_id);
         final String message = data.containsKey(DATA_KEY_MESSAGE) ? data.get(DATA_KEY_MESSAGE) : getString(R.string.PUSH_APPROVE_QUESTION);
