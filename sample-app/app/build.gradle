@@ -24,8 +24,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     namespace "com.gemalto.eziomobilesampleapp"
@@ -42,7 +42,7 @@ dependencies {
     releaseImplementation fileTree(dir: "${EZIO_SDK}/release", include: ["protector-oath.aar"])
 
     // JNA lib
-    implementation "net.java.dev.jna:jna:5.5.0@aar"
+    implementation "net.java.dev.jna:jna:5.17.0@aar"
 
     // FCM dependencies, depending on your use-case
     implementation "com.google.firebase:firebase-messaging:23.2.1"

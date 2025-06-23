@@ -1,12 +1,12 @@
 // Common android build version properties
 allprojects {
     ext {
-        propCompileSdkVersion = 34
-        propMinSdkVersion = 26
-        propTargetSdkVersion = 34
+        propCompileSdkVersion = 35
+        propMinSdkVersion = 28
+        propTargetSdkVersion = 35
 
-        propVersionCode = 660
-        propVersionName = "6.6.0"
+        propVersionCode = 662
+        propVersionName = "6.6.2"
     }
 }
 
