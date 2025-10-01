@@ -2,6 +2,9 @@
     <string name="app_name">IdCloud Sample</string>
     <string name="default_notification_channel_id">default</string>
 
+    <string name="default_font" translatable="false">sans-serif-light</string>
+
+
     <string name="toast_exit">Press Back again to Exit.</string>
 
     // Secure key pad + pin related stuff
@@ -82,6 +85,8 @@
 
     // side menu
     <string name="biometrics">Biometrics</string>
+    <string name="enable_biometrics">Enable Biometrics</string>
+    <string name="disable_biometrics">Disable Biometrics</string>
     <string name="change_pin">Change Pin</string>
     <string name="verify_pin_network_issue">Failed to verify pin. Make sure your internet connection is working.</string>
 
