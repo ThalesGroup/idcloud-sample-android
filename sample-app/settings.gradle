@@ -1,2 +1,2 @@
-include ':app', ':idcloudstyle'
-rootProject.name="IdCloud-Sample"
+rootProject.name = "IdCloud-Sample"
+include ':app'
