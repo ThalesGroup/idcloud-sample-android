@@ -3,6 +3,8 @@ plugins {
 }
 apply plugin: "com.android.application"
 
+def EZIO_SDK = "${rootDir}/app/libs"
+
 android {
     compileSdk 36
     defaultConfig {
@@ -48,8 +50,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.core:core-ktx:1.12.0'
 
-    debugImplementation distBinaries.EzioDebug
-    releaseImplementation distBinaries.EzioRelease
+    debugImplementation fileTree(dir: "${EZIO_SDK}/debug", include: ["protector-oath.aar"])
+    releaseImplementation fileTree(dir: "${EZIO_SDK}/release", include: ["protector-oath.aar"])
 
     // JNA lib
     implementation "net.java.dev.jna:jna:5.17.0@aar"

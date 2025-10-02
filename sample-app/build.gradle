@@ -26,13 +26,6 @@ allprojects {
     }
 }
 
-ext {
-    distBinaries = [
-            EzioDebug  : [name: 'protector-oath', ext: 'aar'],
-            EzioRelease: [name: 'protector-oath', ext: 'aar']
-    ]
-}
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
