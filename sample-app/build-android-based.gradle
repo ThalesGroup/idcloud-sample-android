@@ -11,16 +11,14 @@ allprojects {
 }
 
 // Common android build config
-if (project.plugins.hasPlugin('com.android.application') || project.plugins.hasPlugin('com.android.library')) {
-    android {
-        compileSdkVersion propCompileSdkVersion
+android {
+    compileSdkVersion propCompileSdkVersion
 
-        defaultConfig {
-            minSdkVersion propMinSdkVersion
-            targetSdkVersion propTargetSdkVersion
+    defaultConfig {
+        minSdkVersion propMinSdkVersion
+        targetSdkVersion propTargetSdkVersion
 
-            versionCode propVersionCode
-            versionName propVersionName
-        }
+        versionCode propVersionCode
+        versionName propVersionName
     }
 }

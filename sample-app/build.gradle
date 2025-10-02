@@ -9,28 +9,16 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.9.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22"
         classpath "com.google.gms:google-services:4.4.2"
         classpath 'net.sf.proguard:proguard-gradle:6.2.2'
     }
 }
 
 allprojects {
-    apply from: rootProject.file('build-android-based.gradle')
     repositories {
         google()
         mavenCentral()
-        flatDir {
-            dirs rootProject.file('dist/eziomobile/debug'), rootProject.file('dist/eziomobile/release')
-        }
     }
-}
-
-ext {
-    distBinaries = [
-            EzioDebug  : [name: 'protector-oath', ext: 'aar'],
-            EzioRelease: [name: 'protector-oath', ext: 'aar']
-    ]
 }
 
 task clean(type: Delete) {
