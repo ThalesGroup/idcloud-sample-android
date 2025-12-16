@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var mLoadingBar: FragmentLoadingIndicator? = null
     private var mIncomingMessage: FragmentIncomingMessage? = null
     private var mLastFragment: AbstractMainFragment? = null
+    private var mTouchIdSwitch: SwitchCompat? = null
     private var mDrawer: DrawerLayout? = null
     private var mToolbar: Toolbar? = null
 
@@ -308,6 +309,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDrawer?.addDrawerListener(toggle)
         toggle.syncState()
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        mTouchIdSwitch = navigationView.menu.findItem(R.id.nav_touch_id).actionView as SwitchCompat?
         navigationView.setNavigationItemSelectedListener(this)
         val versionApp = findViewById<TextView>(R.id.textViewAppVersion)
         versionApp.text = String.format("App Version: %s", BuildConfig.VERSION_NAME)
@@ -571,11 +573,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         biometricsMenuItem.isVisible = true
 
         // Set title based on whether biometrics is enabled or disabled
-        val isTouchEnabled = tokenDevice?.tokenStatus?.isTouchEnabled ?: false
-        biometricsMenuItem.title = if (isTouchEnabled) {
-            getString(R.string.disable_biometrics)
+        biometricsMenuItem.title = if (tokenDevice?.tokenStatus?.isTouchEnabled ?: true) {
+                getString(R.string.disable_biometrics)
         } else {
-            getString(R.string.enable_biometrics)
+                getString(R.string.enable_biometrics)
         }
     }
 

@@ -23,6 +23,7 @@
 -dontwarn com.gemalto.**
 -dontwarn com.android.**
 -dontnote com.google.**
+-dontwarn com.google.android.gms.**
 
 # There is an issue on R8 on GSON. Please refer to: https://r8.googlesource.com/r8/+/refs/heads/master/compatibility-faq.md
 # option 2
