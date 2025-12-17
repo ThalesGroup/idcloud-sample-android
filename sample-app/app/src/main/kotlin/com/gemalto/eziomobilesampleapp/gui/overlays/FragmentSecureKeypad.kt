@@ -188,6 +188,10 @@ class FragmentSecureKeypad : Fragment(), SecureKeypadListener {
         // Unused
     }
 
+    override fun onShiftButtonPressed() {
+        // Unused
+    }
+
     override fun onFinish(pinAuthInput: PinAuthInput, pinAuthInput1: PinAuthInput?) {
         // Hide self.
         val mainActivity = getActivity() as MainActivity?
