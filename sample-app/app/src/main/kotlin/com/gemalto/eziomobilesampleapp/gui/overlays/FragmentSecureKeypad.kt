@@ -92,6 +92,7 @@ class FragmentSecureKeypad : Fragment(), SecureKeypadListener {
 
         // Get secure keypad builder.
         builder = SecureInputService.create(UiModule.create()).getSecureInputBuilder()
+        builder?.setAccessibilityEnabled(true)
 
         // Configure secure keypad behavior and visual.
         builder?.setScreenBackgroundColor(getResources().getColor(android.R.color.transparent))
